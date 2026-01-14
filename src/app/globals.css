@@ -1,42 +1,55 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 * {
-  box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
+  font-family: "Spoqa-Hans";
+  word-break: keep-all;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+img {
+  display: block;
+  float: left;
 }
 
 a {
-  color: inherit;
+  color: #000;
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+header,
+section,
+footer {
+  width: 100%;
+}
+
+button {
+  background: transparent;
+  outline: none;
+  border: 0;
+  cursor: pointer !important;
+  box-sizing: border-box;
+  outline-color: transparent;
+}
+
+input[type="checkbox"] {
+  display: none;
+}
+
+input,
+button {
+  all: unset;
+}
+
+body {
+  background: rgba(249, 249, 249, 0.7803921569);
+}
+
+.flex-Set {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
