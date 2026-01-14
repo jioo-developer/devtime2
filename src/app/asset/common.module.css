@@ -1,0 +1,93 @@
+:root {
+  // font size
+  --fontsize-small: 12px;
+  --fontsize-regular: 16px;
+  --fontsize-medium: 18px;
+  --fontsize-large: 20px;
+  // font size
+
+  // 줄 간격
+  --lineheight-one: 1;
+  --lineheight-heading: 1.25;
+  --lineheight-body: 1.5;
+  // 줄 간격
+
+  // 글자 색상
+  --mainTextcolor: #333;
+  --subTextcolor: #808080;
+  --pointTextcolor: #20c997;
+  --whiteColor: #fff;
+  // 글자 색상
+
+  // margin & padding
+  --gap-small: 12px;
+  --gap-medium: 16px;
+  --gap-large: 18px;
+  --gap-xlarge: 20px;
+  // margin & padding
+
+  // width
+  --half: 50%;
+  --threeSlice: 25%;
+  --fourSlice: 20%;
+  // width
+}
+
+.text-Blind {
+  font-size: 0;
+}
+
+.page-Reset {
+  margin: 0 auto;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.input__Blind__Wrap {
+  position: relative;
+
+  .label__area {
+    width: 100%;
+  }
+
+  &:has(.check__Toggle) {
+    display: flex;
+    align-items: center;
+  }
+  .check__Toggle {
+    position: absolute;
+    right: var(--gap-xlarge);
+    margin-top: 8px;
+    z-index: 900;
+  }
+}
+
+.skeleton__wrap {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 8xp;
+}
+
+.button__group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+  min-width: 200px;
+}
+
+.label__area {
+  width: 100%;
+}
+
+body:has(.post_section) {
+  position: relative;
+}
+
+.link-button {
+  padding: 0 !important;
+  a {
+    width: 100%;
+  }
+}

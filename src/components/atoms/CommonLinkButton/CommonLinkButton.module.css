@@ -1,0 +1,78 @@
+/* 공통 베이스 */
+.base {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+
+/* padding 제거 */
+.noPadding {
+  padding: 0 !important;
+}
+
+/* ===== Theme ===== */
+
+.white {
+  background: transparent;
+  color: var(--mainTextcolor);
+  border: 1px solid #d1d1d1;
+}
+
+.white a {
+  color: #000 !important;
+}
+
+.success {
+  background: var(--pointTextcolor);
+  color: var(--whiteColor);
+}
+
+.primary {
+  background: #2a96ee;
+  color: var(--whiteColor);
+}
+
+.none {
+  background: transparent;
+  color: var(--mainTextcolor);
+  border: 0;
+}
+
+.none a {
+  color: #000 !important;
+}
+
+.disable {
+  background: gray;
+  color: var(--whiteColor);
+}
+
+.warnning {
+  background: rgb(255, 135, 135);
+  color: var(--whiteColor);
+}
+
+/* ===== Size ===== */
+
+.sm {
+  font-size: var(--fontsize-small);
+  padding: 0.666em 1em;
+}
+
+.rg {
+  font-size: var(--fontsize-regular);
+  padding: 0.75em 1em;
+}
+
+.md {
+  font-size: var(--fontsize-medium);
+  padding: 0.888em 1.5em;
+}
+
+.lg {
+  font-size: var(--fontsize-large);
+  padding: 1.2em 1.6em;
+}
