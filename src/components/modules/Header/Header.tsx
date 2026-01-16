@@ -1,0 +1,27 @@
+import React from "react";
+import { cookies } from "next/headers";
+import HeaderLogo from "@/asset/images/header_logo.svg";
+import styles from "./style.module.css";
+import CommonImage from "@/components/atoms/CommonImage";
+import AccountMenu from "./AccountMenu";
+import Navigation from "./Navigation";
+
+function Header() {
+  const token = cookies().get("authToken")?.value;
+
+  return (
+    <header className={styles.header}>
+      <div className={styles.headerIn}>
+        <div className={styles.leftCon}>
+          <CommonImage src={HeaderLogo} alt="로고" width={148} height={40} />
+          <Navigation />
+        </div>
+        <div className={styles.rightCon}>
+          <AccountMenu isLoggedIn={!!token} />
+        </div>
+      </div>
+    </header>
+  );
+}
+
+export default Header;

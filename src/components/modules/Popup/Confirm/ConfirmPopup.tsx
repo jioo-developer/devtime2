@@ -1,21 +1,40 @@
+"use client";
+
+import React from "react";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
-import CommonPopup from "@/components/atoms/CommonPopup/CommonPopup";
-import { usePopupStore } from "@/store/popupStore";
+import styles from "./ConfirmPopup.module.css";
 
-const ConfirmPopup = () => {
-  const { setMessage, callback } = usePopupStore();
+interface ConfirmPopupProps {
+  title?: string;
+  message: string;
+  onConfirm: () => void;
+  onCancel?: () => void;
+  confirmText?: string;
+  cancelText?: string;
+}
+
+export default function ConfirmPopup({
+  title = "확인",
+  message,
+  onConfirm,
+  onCancel,
+  confirmText = "확인",
+  cancelText = "취소",
+}: ConfirmPopupProps) {
   return (
-    <CommonPopup type="confirm">
-      <div className="button__group">
-        <CommonButton theme="white" onClick={() => setMessage("")}>
-          취소
-        </CommonButton>
-        <CommonButton theme="success" onClick={() => callback && callback()}>
-          확인
-        </CommonButton>
+    <div className={styles.overlay}>
+      <div className={styles.popup}>
+        <h2 className={styles.title}>{title}</h2>
+        <p className={styles.message}>{message}</p>
+        <div className={styles.buttonGroup}>
+          <CommonButton theme="secondary" onClick={onCancel} width="48%">
+            {cancelText}
+          </CommonButton>
+          <CommonButton theme="primary" onClick={onConfirm} width="48%">
+            {confirmText}
+          </CommonButton>
+        </div>
       </div>
-    </CommonPopup>
+    </div>
   );
-};
-
-export default ConfirmPopup;
+}
