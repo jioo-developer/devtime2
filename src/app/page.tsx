@@ -1,3 +1,4 @@
-export default function Home() {
-  return <div></div>;
+import MainPage from "./main/page";
+export default function Main() {
+  return <MainPage />;
 }
