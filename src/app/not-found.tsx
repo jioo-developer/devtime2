@@ -11,7 +11,7 @@ const ErrorPage = () => {
     <div className={styles.notfoundRoot}>
       <div className={styles.notfoundWrapper}>
         <h1 className={styles.title}>페이지를 찾을 수 없습니다.</h1>
-        <CommonButton theme="primary" onClick={() => router.push("/auth")}>
+        <CommonButton theme="primary" onClick={() => router.back()}>
           돌아가기
         </CommonButton>
       </div>
