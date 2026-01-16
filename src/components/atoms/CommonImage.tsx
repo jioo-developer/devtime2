@@ -1,33 +1,49 @@
-import Image from "next/image";
+"use client";
+import Image, { type StaticImageData } from "next/image";
 import { useState } from "react";
 
-interface ImageProps {
+interface CommonImageProps {
   alt: string;
-  src: string;
-  width: number;
-  height: number;
+  src: string | StaticImageData;
+  width?: number;
+  height?: number;
+  fill?: boolean;
   className?: string;
 }
 
 export default function CommonImage({
   alt,
   src,
-  height,
   width,
+  height,
+  fill = false,
   className,
-}: ImageProps) {
-  const [isImgError, setIsImgError] = useState<boolean>(false);
+}: CommonImageProps) {
+  const [isImgError, setIsImgError] = useState(false);
+
+  if (fill) {
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className={className}
+        sizes="100vw"
+        style={{ objectFit: "cover" }}
+        onError={() => setIsImgError(true)}
+      />
+    );
+  }
 
   return (
     <Image
       src={src}
       alt={alt}
-      className={className && className}
       width={width}
       height={height}
+      className={className}
       sizes="100vw"
       style={{
-        width: "100%",
         height: isImgError ? height : "auto",
       }}
       onError={() => setIsImgError(true)}

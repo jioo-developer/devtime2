@@ -1,4 +1,4 @@
-import styles from "./CommonButton.module.css";
+import styles from "./ommonButton.module.css";
 import { ButtonHTMLAttributes, ReactNode } from "react";
 import clsx from "clsx";
 
@@ -6,9 +6,11 @@ export interface CommonButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   size?: "sm" | "rg" | "md" | "lg";
-  theme: "white" | "success" | "primary" | "disable" | "warnning" | "none";
-  padding?: "none";
+  theme: "primary" | "secondary" | "tertiary" | "disable" | "none" | "overlap";
+  isPadding?: boolean;
   testId?: string;
+  width?: number | string;
+  height?: number | string;
 }
 
 function CommonButton({
@@ -18,8 +20,10 @@ function CommonButton({
   size = "rg",
   theme,
   type = "button",
-  padding,
+  isPadding = true,
   testId,
+  width = 88,
+  height = 44,
 }: CommonButtonProps) {
   return (
     <button
@@ -31,8 +35,12 @@ function CommonButton({
         styles.baseButton,
         styles[size],
         styles[theme],
-        padding === "none" && styles.noPadding
+        !isPadding && styles.paddingNone
       )}
+      style={{
+        width,
+        height,
+      }}
     >
       {children}
     </button>

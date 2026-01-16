@@ -1,0 +1,109 @@
+.autocompleteWrapper {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+}
+
+.label {
+  display: block;
+  font-size: var(--fontsize-body-small);
+  font-weight: var(--font-weight-medium);
+  color: var(--gray-900);
+  margin-bottom: var(--gap-md);
+}
+
+.input {
+  width: 100%;
+  padding: 10px var(--gap-lg);
+  background-color: var(--gray-white);
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  font-size: var(--fontsize-body-small);
+  color: var(--gray-900);
+  transition: all 0.2s ease;
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--gray-300);
+}
+
+.input:hover {
+  border-color: var(--gray-300);
+}
+
+.input:focus,
+.input.open {
+  border-color: var(--primary-core);
+  box-shadow: 0 0 0 2px rgba(76, 121, 255, 0.1);
+}
+
+.menu {
+  position: absolute;
+  top: calc(100% + var(--gap-sm));
+  left: 0;
+  right: 0;
+  background-color: var(--gray-white);
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: var(--gap-sm) 0;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.menuItem {
+  padding: 10px var(--gap-lg);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  font-size: var(--fontsize-body-small);
+  color: var(--gray-900);
+}
+
+.menuItem:hover {
+  background-color: var(--gray-100);
+}
+
+.highlight {
+  font-weight: var(--font-weight-bold);
+  color: var(--gray-900);
+}
+
+.addButton {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+  padding: var(--gap-lg);
+  background-color: var(--gray-white);
+  border: none;
+  border-top: 1px solid var(--gray-200);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  font-size: var(--fontsize-body-small);
+  color: var(--primary-core);
+  font-weight: var(--font-weight-medium);
+}
+
+.addButton:hover {
+  background-color: var(--gray-100);
+}
+
+.addButton span {
+  flex: 1;
+  text-align: left;
+}
+
+.selectedItems {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-md);
+  margin-top: var(--gap-md);
+}

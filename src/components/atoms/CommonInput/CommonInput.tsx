@@ -18,6 +18,7 @@ export interface CommonInputProps<T extends FieldValues> {
   value?: string | number;
   label?: string;
   testId?: string;
+  success?: string;
 }
 
 function CommonInput<T extends FieldValues>({
@@ -30,6 +31,7 @@ function CommonInput<T extends FieldValues>({
   value,
   label,
   testId,
+  success,
 }: CommonInputProps<T>) {
   return (
     <label htmlFor={String(id)} className={styles.labelArea}>
@@ -47,6 +49,7 @@ function CommonInput<T extends FieldValues>({
       />
 
       {error && <span className={styles.error}>{error.message}</span>}
+      {!error && success && <span className={styles.success}>{success}</span>}
     </label>
   );
 }

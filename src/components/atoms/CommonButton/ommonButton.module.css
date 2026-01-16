@@ -5,73 +5,93 @@
   justify-content: center;
   border-radius: 8px;
   box-sizing: border-box;
+  font-weight: var(--font-weight-semibold);
+  transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 /* padding 제거 옵션 */
-.noPadding {
+.paddingNone {
   padding: 0 !important;
 }
 
 /* ===== Theme ===== */
 
-.white {
-  background: transparent;
-  color: var(--mainTextcolor);
-  border: 1px solid #d1d1d1;
-}
-
-.white a {
-  color: #000 !important;
-}
-
-.success {
-  background: var(--pointTextcolor);
-  color: var(--whiteColor);
-}
-
 .primary {
-  background: #2a96ee;
-  color: var(--whiteColor);
+  background: var(--primary-core);
+  color: var(--gray-white);
+  border: none;
+}
+
+.primary:hover:not(:disabled) {
+  background: var(--primary-vivid);
+}
+
+.secondary {
+  background: var(--primary-10);
+  color: var(--primary-core);
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.secondary:hover:not(:disabled) {
+  background: var(--primary-30);
+}
+
+.tertiary {
+  background: var(--gray-white);
+  color: var(--primary-core);
+  border: 2px solid var(--primary-core);
+  transition: all 0.2s ease;
+}
+
+.tertiary:hover:not(:disabled) {
+  background: var(--primary-10);
+}
+
+.overlap {
+  background: rgba(229, 231, 235, 1);
+  color: rgba(150, 157, 168, 1);
+}
+
+.overlap:hover:not(:disabled) {
+  background: var(--primary-core);
+  color: var(--gray-white);
+}
+
+.disable {
+  background: var(--gray-400);
+  color: var(--gray-white);
+  border: none;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .none {
   background: transparent;
-  color: var(--mainTextcolor);
-  border: 0;
-}
-
-.none a {
-  color: #000 !important;
-}
-
-.disable {
-  background: gray;
-  color: var(--whiteColor);
-}
-
-.warnning {
-  background: rgb(255, 135, 135);
-  color: var(--whiteColor);
+  color: var(--gray-700);
+  border: none;
 }
 
 /* ===== Size ===== */
 
 .sm {
-  font-size: var(--fontsize-small);
-  padding: 0.666em 1em;
+  font-size: var(--fontsize-body-small);
+  padding: 0.571em 1.143em; /* 8px 16px */
+  margin-top: 26px;
 }
 
 .rg {
-  font-size: var(--fontsize-regular);
-  padding: 0.75em 1em;
+  font-size: var(--fontsize-body);
+  padding: 0.625em 1.25em; /* 10px 20px */
 }
 
 .md {
-  font-size: var(--fontsize-medium);
-  padding: 0.888em 1.5em;
+  font-size: var(--fontsize-subtitle);
+  padding: 0.666em 1.333em; /* 12px 24px */
 }
 
 .lg {
-  font-size: var(--fontsize-large);
-  padding: 1.2em 1.6em;
+  font-size: var(--fontsize-title);
+  padding: 0.7em 1.4em; /* 14px 28px */
 }

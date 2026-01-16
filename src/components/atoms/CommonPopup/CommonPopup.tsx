@@ -24,14 +24,12 @@ const CommonPopup = ({
 
   return (
     <>
-      {/* dark layer */}
       <div
         data-testid="popup-test"
         data-cy="popup-test"
         className={clsx(styles.fullscreen, styles.darkLayer)}
       />
 
-      {/* popup */}
       <div className={clsx(styles.fullscreen, styles.whiteBoxWrapper)}>
         <div
           className={styles.whiteBox}
@@ -50,7 +48,7 @@ const CommonPopup = ({
           </p>
 
           {isAlert ? (
-            <CommonButton theme="success" onClick={() => setMessage("")}>
+            <CommonButton theme="primary" onClick={() => setMessage("")}>
               확인
             </CommonButton>
           ) : (

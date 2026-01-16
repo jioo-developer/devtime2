@@ -7,6 +7,9 @@ export type PropsType = {
   stateValue: boolean;
   setStateHandler: (stateValue: boolean) => void;
   testId?: string;
+  color?: string;
+  size?: number;
+  stopPropagation?: boolean;
 };
 
 function CommonCheckbox({
@@ -14,13 +17,16 @@ function CommonCheckbox({
   setStateHandler,
   testId,
   childrens,
+  color = "var(--primary-core)",
+  size = 25,
+  stopPropagation = false,
 }: PropsType) {
   // render 함수
   const renderHandler = () => {
     if (childrens) {
       return stateValue ? childrens[0] : childrens[1];
     } else {
-      return defaultRenderContent(stateValue);
+      return defaultRenderContent(stateValue, color, size);
     }
   };
 
@@ -29,8 +35,13 @@ function CommonCheckbox({
       type="button"
       className="check__Toggle"
       data-testid={stateValue ? `${testId}-on` : `${testId}-off`}
-      style={{ maxHeight: 25 }}
-      onClick={() => setStateHandler(!stateValue)}
+      style={{ maxHeight: size }}
+      onClick={(e) => {
+        if (stopPropagation) {
+          e.stopPropagation();
+        }
+        setStateHandler(!stateValue);
+      }}
     >
       {renderHandler()}
     </button>
