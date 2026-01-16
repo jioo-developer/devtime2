@@ -13,7 +13,6 @@ li {
 
 img {
   display: block;
-  float: left;
 }
 
 a {
@@ -43,10 +42,6 @@ input[type="checkbox"] {
 input,
 button {
   all: unset;
-}
-
-body {
-  background: rgba(249, 249, 249, 0.7803921569);
 }
 
 .flex-Set {
