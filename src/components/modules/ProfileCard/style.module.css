@@ -1,0 +1,92 @@
+.profileCard {
+  display: flex;
+  gap: var(--gap-xl);
+  padding: 20px;
+  background-color: var(--gray-100);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.profileCard:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.leftSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap-md);
+  position: relative;
+}
+
+.rankBadge {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.profileImage {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.contentSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+}
+
+.username {
+  font-size: var(--fontsize-subtitle);
+  font-weight: var(--font-weight-bold);
+  color: var(--gray-900);
+  margin: 0;
+}
+
+.description {
+  font-size: var(--fontsize-body-small);
+  color: var(--primary-core);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-xl);
+  flex-wrap: wrap;
+}
+
+.statItem {
+  font-size: var(--fontsize-body-small);
+  color: var(--gray-500);
+}
+
+.statItem strong {
+  color: var(--gray-900);
+  font-weight: var(--font-weight-semibold);
+}
+
+.tags {
+  display: flex;
+  gap: var(--gap-md);
+  flex-wrap: wrap;
+  margin-top: var(--gap-sm);
+}

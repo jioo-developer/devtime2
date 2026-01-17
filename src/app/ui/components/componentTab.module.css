@@ -1,0 +1,72 @@
+.tabContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.section {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.sectionTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #212121;
+  margin: 0 0 24px 0;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #f5f5f5;
+}
+
+.componentBox {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.row {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tooltipButton {
+  padding: 10px 20px;
+  background-color: #5b7eff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.tooltipButton:hover {
+  background-color: #4a6de5;
+}
+
+.demoButton {
+  padding: 10px 20px;
+  background-color: var(--primary-core);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.demoButton:hover {
+  background-color: var(--primary-vivid);
+}
