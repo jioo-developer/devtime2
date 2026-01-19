@@ -1,0 +1,132 @@
+:root {
+  /* ------------------------- 폰트 ----------------------------------- */
+
+  /* Font Weights */
+  --font-weight-bold: 700;
+  --font-weight-semibold: 600;
+  --font-weight-medium: 500;
+  --font-weight-regular: 400;
+
+  /* 헤딩 */
+  --fontsize-heading: 24px;
+  --lineheight-heading: 1.25;
+
+  /* 타이틀 */
+  --fontsize-title: 20px;
+  --lineheight-title: 1.2;
+
+  /* 서브 타이틀 */
+  --fontsize-subtitle: 18px;
+  --lineheight-subtitle: 1.22;
+
+  /* 본문 */
+  --fontsize-body: 16px;
+  --lineheight-body: 1.25;
+
+  /* 서브 본문*/
+  --fontsize-body-small: 14px;
+  --lineheight-body-small: 1.29;
+
+  /* 캡션 */
+  --fontsize-caption: 12px;
+  --lineheight-caption: 1.33;
+
+  /* 라벨 */
+  --fontsize-label: 10px;
+  --lineheight-label: 1.2;
+
+  /* 컴포넌트 간의 여백 (Base Grid) */
+  --gap-xs: 2px;
+  --gap-sm: 4px;
+  --gap-md: 8px;
+  --gap-lg: 12px;
+  --gap-xl: 16px;
+  --gap-2xl: 24px;
+  --gap-3xl: 32px;
+
+  --margin-sm: 16px;
+  --margin-md: 24px;
+  --margin-lg: 32px;
+  --margin-xl: 40px;
+  --margin-2xl: 48px;
+  --margin-3xl: 64px;
+  --margin-4xl: 72px;
+
+  /* ------------------------ 컬러 ---------------------------------------- */
+
+  /* Primary Colors */
+  --primary-core: #4c79ff;
+  --primary-10: #e6ecff;
+  --primary-30: #accbff;
+  --primary-vivid: #316cff;
+  --primary-core-50: #a8bcff;
+  --primary-15: #88abff;
+  --primary-core-30: #6a99ff;
+
+  /* Secondary Colors */
+  --secondary-indigo: #0f3b96;
+  --secondary-informative: #067aff;
+  --secondary-negative: #e03e3e;
+  --secondary-notice: #ffc436;
+  --secondary-positive: #2dc071;
+  --secondary-fuchsia: #ff36f7;
+
+  /* Secondary Light Colors */
+  --secondary-indigo-light: #a3b7df;
+  --secondary-informative-light: #a6d8ff;
+  --secondary-negative-light: #ffb0b0;
+  --secondary-notice-light: #ffe5a7;
+  --secondary-positive-light: #a9e6c4;
+  --secondary-fuchsia-light: #ffb4fc;
+
+  /* Gray Scale */
+  --gray-white: #ffffff;
+  --gray-50: #fafafa;
+  --gray-100: #f5f5f5;
+  --gray-200: #e5e5e5;
+  --gray-300: #d4d4d4;
+  --gray-400: #a3a3a3;
+  --gray-500: #737373;
+  --gray-600: #525252;
+  --gray-700: #404040;
+  --gray-900: #171717;
+
+  /* State Colors */
+  --state-disabled: #999999;
+  --state-linear-850: #1e5abf;
+  --state-active-60: #2d62d3;
+  --state-focus: #417bff;
+  --state-dark-black: #2d3036;
+  --state-read-80: #39445f;
+  --state-review-50: #8e98b1;
+  --state-shadow1: #d0d3da;
+  --state-unselect2: #14141f;
+}
+
+.page-Reset {
+  margin: 0 auto;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+.skeleton__wrap {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 8xp;
+}
+
+.button__group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+  min-width: 200px;
+}
+
+.link-button {
+  padding: 0 !important;
+  a {
+    width: 100%;
+  }
+}
