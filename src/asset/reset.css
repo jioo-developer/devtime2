@@ -44,7 +44,7 @@ button {
   all: unset;
 }
 
-.flex-Set {
+.flexSet {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -56,6 +56,6 @@ button {
   height: 100vh;
 }
 
-.text-Blind {
+.textBlind {
   font-size: 0;
 }

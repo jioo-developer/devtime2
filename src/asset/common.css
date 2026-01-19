@@ -103,20 +103,20 @@
   --state-unselect2: #14141f;
 }
 
-.page-Reset {
+.pageReset {
   margin: 0 auto;
   min-height: 100vh;
   flex-direction: column;
 }
 
-.skeleton__wrap {
+.skeletonWrap {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 8xp;
+  gap: 8px;
 }
 
-.button__group {
+.buttonGroup {
   display: flex;
   justify-content: flex-end;
   gap: 8px;
@@ -124,7 +124,7 @@
   min-width: 200px;
 }
 
-.link-button {
+.linkButton {
   padding: 0 !important;
   a {
     width: 100%;
