@@ -1,4 +1,5 @@
 import localFont from "next/font/local";
+import TanstackProvider from "@/provider/TanstackProvider";
 import "../asset/reset.css";
 import "../asset/common.css";
 
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="ko" className={`${pretendard.variable}`}>
       <body>
-        <div className="wrap">{children}</div>
+        <TanstackProvider>
+          <div className="wrap">{children}</div>
+        </TanstackProvider>
       </body>
     </html>
   );

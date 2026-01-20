@@ -8,10 +8,9 @@ import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import AgreementList from "./component/AgreementList";
 import CommonInput from "@/components/atoms/CommonInput/CommonInput";
 import { useForm } from "react-hook-form";
-import {
-  handleCheckEmail,
-  handleCheckNickname,
-} from "./handler/handleValidation";
+import { useCheckEmail } from "./hooks/useCheckEmail";
+import { useCheckNickname } from "./hooks/useCheckNickname";
+import { useSignup } from "./hooks/useSignup";
 
 export type AuthFormData = {
   email: string;
@@ -20,12 +19,17 @@ export type AuthFormData = {
   passwordConfirmation: string;
 };
 
-function AuthPage() {
+interface AuthPageProps {
+  onSubmit?: (data: AuthFormData) => Promise<void>;
+}
+
+function AuthPage({ onSubmit }: AuthPageProps = {}) {
   const {
     register,
     watch,
     setError,
     clearErrors,
+    handleSubmit,
     formState: { errors },
   } = useForm<AuthFormData>({
     mode: "onChange",
@@ -33,6 +37,41 @@ function AuthPage() {
   const [emailSuccess, setEmailSuccess] = useState<string>("");
   const [nicknameSuccess, setNicknameSuccess] = useState<string>("");
   const [agreed, setAgreed] = useState(false);
+
+  const { mutate: checkEmail } = useCheckEmail({
+    setError,
+    clearErrors,
+    setSuccessMessage: setEmailSuccess,
+  });
+
+  const { mutate: checkNickname } = useCheckNickname({
+    setError,
+    clearErrors,
+    setSuccessMessage: setNicknameSuccess,
+  });
+
+  const { mutate } = useSignup();
+
+  const { email, nickname, password, passwordConfirmation } = watch();
+
+  const isFormValid =
+    !!email &&
+    !!emailSuccess &&
+    !!nickname &&
+    !!nicknameSuccess &&
+    !!password &&
+    !!passwordConfirmation &&
+    !errors.password &&
+    !errors.passwordConfirmation &&
+    agreed;
+
+  const handleFormSubmit = async (data: AuthFormData) => {
+    if (onSubmit) {
+      await onSubmit(data);
+    } else {
+      mutate(data);
+    }
+  };
 
   return (
     <main className="authLayout">
@@ -57,7 +96,11 @@ function AuthPage() {
 
       <section className="section formSection">
         <h2 className="formTitle">회원가입</h2>
-        <form className="authForm" data-testid="auth-form-test">
+        <form
+          className="authForm"
+          data-testid="auth-form-test"
+          onSubmit={handleSubmit(handleFormSubmit)}
+        >
           <div className="filedWrap">
             <CommonInput
               id="email"
@@ -66,6 +109,13 @@ function AuthPage() {
               type="text"
               placeholder="아이디를 입력하세요"
               register={register}
+              validation={{
+                required: "이메일을 입력하세요.",
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: "이메일 형식으로 작성해 주세요.",
+                },
+              }}
               error={errors.email}
               success={emailSuccess}
             />
@@ -74,14 +124,13 @@ function AuthPage() {
               theme="overlap"
               width={104.6}
               height={44}
-              onClick={() =>
-                handleCheckEmail({
-                  email: watch("email"),
-                  setError,
-                  clearErrors,
-                  setSuccessMessage: setEmailSuccess,
-                })
-              }
+              onClick={() => {
+                const emailValue = watch("email");
+                if (emailValue) {
+                  setEmailSuccess("");
+                  checkEmail(emailValue);
+                }
+              }}
             >
               중복 확인
             </CommonButton>
@@ -93,6 +142,9 @@ function AuthPage() {
               label="닉네임"
               placeholder="닉네임을 입력해주세요"
               register={register}
+              validation={{
+                required: "닉네임을 입력하세요.",
+              }}
               error={errors.nickname}
               success={nicknameSuccess}
             />
@@ -101,14 +153,13 @@ function AuthPage() {
               theme="overlap"
               width={104.6}
               height={44}
-              onClick={() =>
-                handleCheckNickname({
-                  nickname: watch("nickname"),
-                  setError,
-                  clearErrors,
-                  setSuccessMessage: setNicknameSuccess,
-                })
-              }
+              onClick={() => {
+                const nicknameValue = watch("nickname");
+                if (nicknameValue) {
+                  setNicknameSuccess("");
+                  checkNickname(nicknameValue);
+                }
+              }}
             >
               중복 확인
             </CommonButton>
@@ -149,9 +200,10 @@ function AuthPage() {
           />
           <AgreementList agreed={agreed} setAgreed={setAgreed} />
           <CommonButton
-            theme={agreed ? "primary" : "disable"}
+            theme={isFormValid ? "primary" : "disable"}
             type="submit"
             width={"100%"}
+            disabled={!isFormValid}
           >
             회원가입
           </CommonButton>
