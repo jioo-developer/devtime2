@@ -64,6 +64,8 @@ function ImageUploader({
               className={styles.uploadPreview}
               src={preview}
               alt="Preview"
+              width={200}
+              height={200}
             />
           )}
         </div>

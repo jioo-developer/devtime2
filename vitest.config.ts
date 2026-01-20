@@ -14,7 +14,17 @@ const dirname =
 
 export default defineConfig({
   test: {
+    globals: true,
     projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          environment: "jsdom",
+          include: ["src/**/*.test.{ts,tsx}"],
+          setupFiles: ["./vitest.setup.ts"],
+        },
+      },
       {
         extends: true,
         plugins: [
@@ -32,5 +42,10 @@ export default defineConfig({
         },
       },
     ],
+  },
+  resolve: {
+    alias: {
+      "@": path.resolve(dirname, "./src"),
+    },
   },
 });

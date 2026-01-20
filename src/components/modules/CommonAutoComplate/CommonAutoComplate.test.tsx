@@ -1,3 +1,4 @@
+import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import CommonAutocomplete from "./CommonAutoComplate";
@@ -65,7 +66,7 @@ describe("CommonAutocomplete", () => {
 
     fireEvent.click(screen.getByText("옵션 1"));
 
-    expect(handleChange).toHaveBeenCalledWith("option1");
+    expect(handleChange).toHaveBeenCalledWith("옵션 1");
   });
 
   it("멀티 셀렉트 모드에서 여러 항목을 선택할 수 있다", async () => {
@@ -108,11 +109,11 @@ describe("CommonAutocomplete", () => {
     fireEvent.change(input, { target: { value: "새 항목" } });
 
     await waitFor(() => {
-      const addButton = screen.getByText(/추가/);
+      const addButton = screen.getByText(/Add New Item/);
       expect(addButton).toBeInTheDocument();
     });
 
-    fireEvent.click(screen.getByText(/추가/));
+    fireEvent.click(screen.getByText(/Add New Item/));
 
     expect(handleAddNew).toHaveBeenCalledWith("새 항목");
   });

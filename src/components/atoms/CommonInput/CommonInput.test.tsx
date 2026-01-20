@@ -1,3 +1,4 @@
+import React from "react";
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { useForm } from "react-hook-form";
@@ -64,48 +65,57 @@ describe("CommonInput", () => {
   });
 
   it("타입이 password일 때 비밀번호 입력 필드로 렌더링된다", () => {
-    const { register } = useForm<{ password: string }>();
+    function PasswordWrapper() {
+      const { register } = useForm<{ password: string }>();
+      return (
+        <CommonInput
+          id="password"
+          type="password"
+          placeholder="비밀번호"
+          register={register}
+        />
+      );
+    }
 
-    render(
-      <CommonInput
-        id="password"
-        type="password"
-        placeholder="비밀번호"
-        register={register}
-      />,
-    );
+    render(<PasswordWrapper />);
 
     const input = screen.getByPlaceholderText("비밀번호");
     expect(input).toHaveAttribute("type", "password");
   });
 
   it("타입이 email일 때 이메일 입력 필드로 렌더링된다", () => {
-    const { register } = useForm<{ email: string }>();
+    function EmailWrapper() {
+      const { register } = useForm<{ email: string }>();
+      return (
+        <CommonInput
+          id="email"
+          type="email"
+          placeholder="이메일"
+          register={register}
+        />
+      );
+    }
 
-    render(
-      <CommonInput
-        id="email"
-        type="email"
-        placeholder="이메일"
-        register={register}
-      />,
-    );
+    render(<EmailWrapper />);
 
     const input = screen.getByPlaceholderText("이메일");
     expect(input).toHaveAttribute("type", "email");
   });
 
   it("타입이 number일 때 숫자 입력 필드로 렌더링된다", () => {
-    const { register } = useForm<{ age: number }>();
+    function NumberWrapper() {
+      const { register } = useForm<{ age: number }>();
+      return (
+        <CommonInput
+          id="age"
+          type="number"
+          placeholder="나이"
+          register={register}
+        />
+      );
+    }
 
-    render(
-      <CommonInput
-        id="age"
-        type="number"
-        placeholder="나이"
-        register={register}
-      />,
-    );
+    render(<NumberWrapper />);
 
     const input = screen.getByPlaceholderText("나이");
     expect(input).toHaveAttribute("type", "number");
@@ -118,24 +128,30 @@ describe("CommonInput", () => {
   });
 
   it("라벨 없이도 렌더링된다", () => {
-    const { register } = useForm<{ input: string }>();
+    function NoLabelWrapper() {
+      const { register } = useForm<{ input: string }>();
+      return <CommonInput id="input" placeholder="입력" register={register} />;
+    }
 
-    render(<CommonInput id="input" placeholder="입력" register={register} />);
+    render(<NoLabelWrapper />);
 
     expect(screen.getByPlaceholderText("입력")).toBeInTheDocument();
   });
 
   it("초기값이 설정된다", () => {
-    const { register } = useForm<{ input: string }>();
+    function ValueWrapper() {
+      const { register } = useForm<{ input: string }>();
+      return (
+        <CommonInput
+          id="input"
+          value="초기값"
+          placeholder="입력"
+          register={register}
+        />
+      );
+    }
 
-    render(
-      <CommonInput
-        id="input"
-        value="초기값"
-        placeholder="입력"
-        register={register}
-      />,
-    );
+    render(<ValueWrapper />);
 
     const input = screen.getByPlaceholderText("입력") as HTMLInputElement;
     expect(input.value).toBe("초기값");

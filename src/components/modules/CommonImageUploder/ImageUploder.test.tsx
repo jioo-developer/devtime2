@@ -1,3 +1,4 @@
+import React from "react";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ImageUploader from "./ImageUploder";
@@ -24,9 +25,9 @@ describe("ImageUploader", () => {
   it("파일 입력 요소가 올바른 accept 속성을 가진다", () => {
     render(<ImageUploader acceptedFormats={[".png", ".jpg", ".jpeg"]} />);
 
-    const fileInput = screen
-      .getByRole("textbox", { hidden: true })
-      .closest("input[type='file']");
+    const fileInput = document.querySelector(
+      'input[type="file"]',
+    ) as HTMLInputElement;
     expect(fileInput).toHaveAttribute("accept", ".png,.jpg,.jpeg");
   });
 
