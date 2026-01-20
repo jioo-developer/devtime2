@@ -18,16 +18,6 @@ export const AllVariants: Story = {
         <CommonBadge text="Medium" variant="primary" size="medium" />
         <CommonBadge text="Large" variant="primary" size="large" />
       </div>
-      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-        <CommonBadge text="Small" variant="secondary" size="small" />
-        <CommonBadge text="Medium" variant="secondary" size="medium" />
-        <CommonBadge text="Large" variant="secondary" size="large" />
-      </div>
-      <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-        <CommonBadge text="Small" variant="gray" size="small" />
-        <CommonBadge text="Medium" variant="gray" size="medium" />
-        <CommonBadge text="Large" variant="gray" size="large" />
-      </div>
     </div>
   ),
 };
