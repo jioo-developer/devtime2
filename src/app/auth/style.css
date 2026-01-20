@@ -1,0 +1,175 @@
+.authLayout {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+
+  .section {
+    width: 50%;
+  }
+
+  .logoSection {
+    display: flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+
+  .background {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--gap-xl);
+    position: relative;
+    z-index: 2;
+  }
+
+  .contentText {
+    font-size: var(--fontsize-title);
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--lineheight-title);
+    color: var(--gray-white);
+  }
+
+  .formSection {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    flex-direction: column;
+    gap: var(--margin-lg);
+  }
+
+  .formTitle {
+    font-size: var(--fontsize-heading);
+    font-weight: var(--font-weight-bold);
+    line-height: var(--lineheight-heading);
+    color: var(--primary-core);
+  }
+
+  .authForm {
+    width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-3xl);
+  }
+
+  .filedWrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--gap-md);
+  }
+
+  .filedWrap > label {
+    flex: 1;
+  }
+
+  .filedWrap:has(.error, .success) {
+    align-items: center;
+  }
+
+  .agreementList {
+    margin-top: var(--gap-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap-md);
+  }
+
+  .ListTop {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ListLabel {
+    font-size: var(--fontsize-body-small);
+    line-height: var(--lineheight-body-small);
+    font-weight: var(--font-weight-medium);
+    color: var(--gray-600);
+  }
+
+  .checkWrap {
+    display: flex;
+    gap: var(--gap-md);
+    align-items: center;
+  }
+
+  .checkLabel {
+    color: var(--primary-core);
+  }
+
+  .listWrap {
+    width: 100%;
+    max-width: 420px;
+    height: 110px;
+    overflow-y: auto;
+    border: 1px solid var(--gray-200);
+    border-radius: 8px;
+    padding: var(--gap-lg);
+    background-color: var(--gray-50);
+    box-sizing: border-box;
+    color: var(--gray-600);
+  }
+
+  .listWrap::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .listWrap::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .listWrap::-webkit-scrollbar-thumb {
+    background: var(--gray-400);
+    border-radius: 3px;
+  }
+
+  .listWrap::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-500);
+  }
+
+  .listText {
+    font-size: var(--fontsize-body-small);
+    line-height: var(--lineheight-body-small);
+    color: var(--gray-600);
+    white-space: pre-line;
+  }
+
+  .listText p {
+    margin-bottom: var(--gap-lg);
+  }
+
+  .listText p:last-child {
+    margin-bottom: 0;
+  }
+
+  .goLogin p,
+  .goLogin span {
+    font-size: var(--fontsize-body);
+    font-weight: var(--font-weight-regular);
+    line-height: var(--lineheight-body);
+    color: var(--primary-core);
+  }
+
+  .goLogin p {
+    display: flex;
+    gap: var(--gap-md);
+    align-items: center;
+  }
+
+  .goLogin span {
+    font-weight: var(--font-weight-bold);
+    cursor: pointer;
+  }
+}
