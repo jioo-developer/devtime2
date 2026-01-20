@@ -1,0 +1,130 @@
+.checkboxWrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.checkmark svg {
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
+}
+
+/* ===== Colors ===== */
+
+/* Blue */
+.blue .checkmark {
+  background-color: var(--gray-white);
+  border: 2px solid var(--gray-400);
+  color: var(--gray-white);
+}
+
+.blue .checkbox:checked + .checkmark {
+  background-color: var(--primary-core);
+  border-color: var(--primary-core);
+}
+
+/* Red */
+.red .checkmark {
+  background-color: var(--gray-white);
+  border: 2px solid var(--gray-400);
+  color: var(--gray-white);
+}
+
+.red .checkbox:checked + .checkmark {
+  background-color: var(--secondary-negative);
+  border-color: var(--secondary-negative);
+}
+
+/* White */
+.white .checkmark {
+  background-color: transparent;
+  border: 2px solid var(--gray-white);
+  color: var(--gray-white);
+}
+
+.white .checkbox:checked + .checkmark {
+  background-color: var(--gray-white);
+  border-color: var(--gray-white);
+  color: var(--primary-core);
+}
+
+/* Grey */
+.grey .checkmark {
+  background-color: var(--gray-100);
+  border: 2px solid var(--gray-400);
+  color: var(--gray-white);
+}
+
+.grey .checkbox:checked + .checkmark {
+  background-color: var(--gray-600);
+  border-color: var(--gray-600);
+}
+
+/* Checked 상태 - 체크 아이콘 표시 */
+.checkbox:checked + .checkmark svg {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Hover 상태 */
+.blue:hover .checkmark {
+  border-color: var(--primary-core);
+}
+
+.red:hover .checkmark {
+  border-color: var(--secondary-negative);
+}
+
+.white:hover .checkmark {
+  border-color: var(--gray-200);
+}
+
+.grey:hover .checkmark {
+  border-color: var(--gray-600);
+}
+
+/* Focus 상태 */
+.checkbox:focus + .checkmark {
+  outline: 2px solid var(--secondary-fuchsia);
+  outline-offset: 2px;
+}
+
+/* Disabled 상태 */
+.checkbox:disabled + .checkmark {
+  background-color: var(--gray-200);
+  border-color: var(--gray-300);
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.checkbox:disabled:checked + .checkmark {
+  background-color: var(--gray-400);
+  border-color: var(--gray-400);
+}
+
+.checkboxWrapper:has(.checkbox:disabled) {
+  cursor: not-allowed;
+}

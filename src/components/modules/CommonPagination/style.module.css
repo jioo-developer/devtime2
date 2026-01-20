@@ -1,0 +1,77 @@
+.pageButton,
+.navButton {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 var(--gap-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--gray-200);
+  background-color: var(--gray-white);
+  color: var(--gray-700);
+  font-size: var(--fontsize-body-small);
+  font-weight: var(--font-weight-medium);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pageButton:hover:not(.active),
+.navButton:hover:not(.disabled) {
+  background-color: var(--gray-100);
+  border-color: var(--gray-300);
+}
+
+.pageButton.active {
+  background-color: var(--primary-core);
+  border-color: var(--primary-core);
+  color: var(--gray-white);
+  cursor: default;
+  font-weight: var(--font-weight-semibold);
+  transition: none;
+}
+
+.navButton.disabled {
+  background-color: var(--gray-100);
+  border-color: var(--gray-200);
+  color: var(--gray-400);
+  cursor: not-allowed;
+}
+
+.ellipsis {
+  min-width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gray-600);
+  font-size: var(--fontsize-body-small);
+  padding: 0 var(--gap-sm);
+}
+
+/* 접근성 */
+.pageButton:focus-visible,
+.navButton:focus-visible {
+  outline: 2px solid var(--primary-core);
+  outline-offset: 2px;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-sm);
+  user-select: none;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .pagination {
+    gap: 2px;
+  }
+
+  .pageButton,
+  .navButton {
+    min-width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+}

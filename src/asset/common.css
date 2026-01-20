@@ -130,3 +130,17 @@
     width: 100%;
   }
 }
+
+/* error message */
+.error {
+  font-size: var(--fontsize-body-small);
+  color: var(--secondary-negative);
+  padding-left: 5px;
+}
+
+/* success message */
+.success {
+  font-size: var(--fontsize-body-small);
+  color: #22c55e;
+  padding-left: 5px;
+}
