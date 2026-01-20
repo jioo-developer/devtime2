@@ -1,6 +1,6 @@
 import React from "react";
 import styles from "./style.module.css";
-import CommonImage from "@/components/atoms/CommonImage";
+import CommonImage from "@/components/atoms/CommonImage/CommonImage";
 import DefaultImage from "@/asset/images/default_profile_image.svg";
 interface AccountMenuProps {
   isLoggedIn: boolean;

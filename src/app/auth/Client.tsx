@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import "./style.css";
-import CommonImage from "@/components/atoms/CommonImage";
+import CommonImage from "@/components/atoms/CommonImage/CommonImage";
 import Logo from "@/asset/images/Logo.svg";
 import Background from "@/asset/images/logo_background.jpg";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";

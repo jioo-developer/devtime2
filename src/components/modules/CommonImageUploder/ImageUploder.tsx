@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef } from "react";
 import styles from "./style.module.css";
-import CommonImage from "@/components/atoms/CommonImage";
+import CommonImage from "@/components/atoms/CommonImage/CommonImage";
 
 interface ImageUploaderProps {
   label?: string;
