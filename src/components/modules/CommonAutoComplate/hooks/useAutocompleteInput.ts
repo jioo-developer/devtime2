@@ -1,13 +1,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { AutocompleteOption } from "../component/AutoComplateItems";
 
-type Params = {
+type UseAutocompleteInputParams = {
   options: AutocompleteOption[];
   value?: string;
   onChange?: (value: string) => void;
 };
 
-export function useAutocompleteInput({ options, value, onChange }: Params) {
+export function useAutocompleteInput({
+  options,
+  value,
+  onChange,
+}: UseAutocompleteInputParams) {
   const [inputValue, setInputValue] = useState(value || "");
 
   useEffect(() => {

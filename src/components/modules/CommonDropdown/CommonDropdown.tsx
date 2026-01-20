@@ -8,12 +8,12 @@ import {
   DropdownItem,
 } from "./component/DropdownItems";
 
-type Option = { value: string; label: string };
+type DropdownOption = { value: string; label: string };
 
 type CommonDropdownProps = {
   label?: string;
   placeholder?: string;
-  options: Option[];
+  options: DropdownOption[];
   value?: string;
   onChange?: (value: string) => void;
   className?: string;

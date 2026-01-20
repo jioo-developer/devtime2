@@ -2,7 +2,7 @@ import { FormEvent, TextareaHTMLAttributes, useRef } from "react";
 import styles from "./style.module.css";
 import clsx from "clsx";
 
-type AutoResizeTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
+type AutoResizeTextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   label?: string;
   error?: string;
 };
@@ -13,7 +13,7 @@ export function CommonTextArea({
   error,
   className,
   ...props
-}: AutoResizeTextareaProps) {
+}: AutoResizeTextAreaProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
 
   const handleInput = (e: FormEvent<HTMLTextAreaElement>) => {
