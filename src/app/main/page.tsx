@@ -1,5 +1,3 @@
-import ClientComponent from "./Client";
-
 export default async function Page() {
-  return <ClientComponent />;
+  return <div>메인페이지</div>;
 }
