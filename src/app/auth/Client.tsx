@@ -152,7 +152,6 @@ function AuthPage() {
             theme={agreed ? "primary" : "disable"}
             type="submit"
             width={"100%"}
-            disabled={!agreed}
           >
             회원가입
           </CommonButton>

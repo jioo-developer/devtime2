@@ -66,12 +66,16 @@
   .filedWrap {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: flex-end;
     gap: var(--gap-md);
+  }
 
-    button {
-      margin-top: auto;
-    }
+  .filedWrap > label {
+    flex: 1;
+  }
+
+  .filedWrap:has(.error, .success) {
+    align-items: center;
   }
 
   .agreementList {
