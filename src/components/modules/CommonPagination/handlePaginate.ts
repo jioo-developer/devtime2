@@ -4,17 +4,6 @@ function range(start: number, end: number): number[] {
   return Array.from({ length: end - start + 1 }, (_, i) => start + i);
 }
 
-function getPageBounds(
-  currentPage: number,
-  totalPages: number,
-  siblingCount: number,
-) {
-  return {
-    left: Math.max(currentPage - siblingCount, 1),
-    right: Math.min(currentPage + siblingCount, totalPages),
-  };
-}
-
 export function getPaginationItems(
   currentPage: number,
   totalPages: number,
@@ -29,7 +18,8 @@ export function getPaginationItems(
     return range(1, totalPages);
   }
 
-  const { left, right } = getPageBounds(currentPage, totalPages, siblingCount);
+  const left = Math.max(currentPage - siblingCount, 1);
+  const right = Math.min(currentPage + siblingCount, totalPages);
 
   const showLeftDots = left > 2;
   const showRightDots = right < totalPages - 1;
