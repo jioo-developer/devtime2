@@ -1,0 +1,75 @@
+.loginLayout {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.backgroundImage {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  z-index: 0;
+  overflow: visible;
+}
+
+.loginWrap {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.loginContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 485px;
+  height: 598px;
+  padding: 72px 86px 64px 86px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 20px;
+  box-shadow: 0 40px 100px 40px rgba(3, 104, 255, 0.05);
+  box-sizing: border-box;
+}
+
+.logo {
+  width: auto;
+  height: 80px;
+  object-fit: contain;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.loginForm label {
+  margin-top: 42px;
+}
+
+.goSignup {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 24px;
+}
+
+.goSignup span {
+  color: var(--secondary-informative);
+  font-size: var(--fontsize-body-small);
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s;
+  font-weight: var(--font-weight-semibold);
+}
+
+.goSignup span:hover {
+  color: var(--primary-vivid);
+  text-decoration: underline;
+}
