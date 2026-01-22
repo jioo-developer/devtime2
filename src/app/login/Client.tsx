@@ -1,10 +1,11 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import CommonImage from "@/components/atoms/CommonImage/CommonImage";
 import CommonInput from "@/components/atoms/CommonInput/CommonInput";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
+import CommonCheckbox from "@/components/atoms/CommonCheckbox/CommonCheckbox";
 import LoginBgImage from "@/asset/images/login-background-image.png";
 import LogoBlue from "@/asset/images/logo_blue.svg";
 import { useLogin } from "./hooks/useLogin";
@@ -22,10 +23,12 @@ function Client() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isAuthCheck, setisAuthCheck] = useState(true);
+  const checkboxRef = useRef<HTMLInputElement>(null);
   const {
     register,
     watch,
     handleSubmit,
+    setValue,
     formState: { errors },
     trigger,
   } = useForm<LoginFormData>({
@@ -40,11 +43,32 @@ function Client() {
 
   const onSubmit = async (data: LoginFormData) => {
     if(isFormValid) {
+      // 체크박스 상태 확인하여 이메일 저장
+      if (checkboxRef.current?.checked) {
+        localStorage.setItem("savedEmail", data.email);
+      } else {
+        localStorage.removeItem("savedEmail");
+      }
       login(data);
     } else {
       await trigger(["email", "password"]);
     }
   };
+
+  
+  // 저장된 이메일 불러오기
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    const saved = localStorage.getItem("savedEmail");
+    if (saved) {
+      setValue("email", saved);
+      // 체크박스도 체크 상태로 설정
+      if (checkboxRef.current) {
+        checkboxRef.current.checked = true;
+      }
+    }
+  }, [setValue]);
 
   // 로그인된 상태면 로그인 페이지 접근 불가 (렌더링 전에 체크)
   useEffect(() => {
@@ -61,6 +85,7 @@ function Client() {
     }
     setisAuthCheck(false);
   }, [router, searchParams]);
+
 
   if (isAuthCheck) {
     return null;
@@ -95,7 +120,29 @@ function Client() {
               }}
               error={errors.email}
             />
-
+              <div className="saveEmailCheckboxWrap">
+              <CommonCheckbox
+                size={18}
+                ref={checkboxRef}
+                onChange={(e) => {
+                  if (!e.target.checked) {
+                    // 체크 해제 시 저장된 이메일 삭제
+                    localStorage.removeItem("savedEmail");
+                  }
+                }}
+                testId="save-email-checkbox"
+              />
+              <label
+                htmlFor="save-email-checkbox"
+                onClick={() => {
+                  if (checkboxRef.current) {
+                    checkboxRef.current.click();
+                  }
+                }}
+              >
+                아이디 저장
+              </label>
+            </div>
             <CommonInput
               id="password"
               testId="password-input"
@@ -116,12 +163,11 @@ function Client() {
               }}
               error={errors.password}
             />
-
             <CommonButton
               theme={isFormValid ? "primary" : "disable"}
               type="submit"
               width="100%"
-              style={{ marginTop: 48 }}
+              style={{ marginTop: 42 }}
               disabled={!isFormValid}
             >
               로그인

@@ -22,6 +22,20 @@
   z-index: 1;
 }
 
+.saveEmailCheckboxWrap {
+  display: flex;
+  align-items: center;
+  margin-top: 12px;
+  gap: var(--gap-md);
+
+  label {
+    margin-top: 0 !important;
+    font-size: var(--fontsize-body-small);
+    color: var(--gray-600);
+    cursor: pointer;
+  }
+}
+
 .loginContent {
   display: flex;
   flex-direction: column;
