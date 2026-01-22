@@ -1,6 +1,7 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter, useSearchParams } from "next/navigation";
 import CommonImage from "@/components/atoms/CommonImage/CommonImage";
 import CommonInput from "@/components/atoms/CommonInput/CommonInput";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
@@ -9,6 +10,8 @@ import LogoBlue from "@/asset/images/logo_blue.svg";
 import { useLogin } from "./hooks/useLogin";
 import "./style.css";
 import Link from "next/link";
+import { safeInternalPath } from "@/utils/pathUtils";
+import { isAccessTokenValid } from "@/utils/cookieUtils";
 
 type LoginFormData = {
   email: string;
@@ -16,11 +19,14 @@ type LoginFormData = {
 };
 
 function Client() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     register,
     watch,
     handleSubmit,
     formState: { errors },
+    trigger,
   } = useForm<LoginFormData>({
     mode: "onChange",
   });
@@ -32,8 +38,24 @@ function Client() {
     !!email && !!password && !errors.email && !errors.password;
 
   const onSubmit = async (data: LoginFormData) => {
-    login(data);
+    if(isFormValid) {
+      login(data);
+    } else {
+      await trigger(["email", "password"]);
+    }
   };
+
+    // 로그인된 상태면 로그인 페이지 접근 불가 (뒤로 가기 방지)
+    useEffect(() => {
+      // 쿠키에서 만료 시간 확인
+      if (isAccessTokenValid()) {
+        const token = localStorage.getItem("accessToken");
+        if (token) {
+          const redirectParam = safeInternalPath(searchParams.get("redirect"));
+          router.replace(redirectParam ?? "/");
+        }
+      }
+    }, [router, searchParams]);
 
   return (
     <main className="loginLayout">
