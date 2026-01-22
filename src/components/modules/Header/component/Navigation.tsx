@@ -1,12 +1,21 @@
 import React from "react";
-import styles from "./style.module.css";
+import Link from "next/link";
+import styles from "../style.module.css";
 
 function Navigation() {
   return (
     <nav>
       <ul className={styles.navigation}>
-        <li>대시보드</li>
-        <li>랭킹</li>
+        <li>
+          <Link href="/dashboard" prefetch>
+            대시보드
+          </Link>
+        </li>
+        <li>
+          <Link href="/ranking" prefetch>
+            랭킹
+          </Link>
+        </li>
       </ul>
     </nav>
   );
