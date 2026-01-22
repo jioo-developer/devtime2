@@ -2,11 +2,13 @@ import { useMutation } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { AuthFormData } from "../Client";
 import { useModalStore } from "@/store/modalStore";
+import { useRouter } from "next/navigation";
 import React from "react";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 
 export const useSignup = () => {
   const push = useModalStore((state) => state.push);
+  const router = useRouter();
 
   return useMutation({
     mutationFn: (data: AuthFormData) => {
@@ -27,7 +29,10 @@ export const useSignup = () => {
           CommonButton,
           {
             theme: "primary",
-            onClick: () => closeTop(),
+            onClick: () => {
+              closeTop();
+              router.push("/login");
+            },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any,
           "확인",

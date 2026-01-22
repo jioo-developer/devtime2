@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useRouter, useSearchParams } from "next/navigation";
 import CommonImage from "@/components/atoms/CommonImage/CommonImage";
@@ -21,6 +21,7 @@ type LoginFormData = {
 function Client() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isAuthCheck, setisAuthCheck] = useState(true);
   const {
     register,
     watch,
@@ -45,17 +46,25 @@ function Client() {
     }
   };
 
-    // 로그인된 상태면 로그인 페이지 접근 불가 (뒤로 가기 방지)
-    useEffect(() => {
-      // 쿠키에서 만료 시간 확인
-      if (isAccessTokenValid()) {
-        const token = localStorage.getItem("accessToken");
-        if (token) {
-          const redirectParam = safeInternalPath(searchParams.get("redirect"));
-          router.replace(redirectParam ?? "/");
-        }
+  // 로그인된 상태면 로그인 페이지 접근 불가 (렌더링 전에 체크)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    // 쿠키에서 만료 시간 확인
+    if (isAccessTokenValid()) {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        const redirectParam = safeInternalPath(searchParams.get("redirect"));
+        router.replace(redirectParam ?? "/");
+        return;
       }
-    }, [router, searchParams]);
+    }
+    setisAuthCheck(false);
+  }, [router, searchParams]);
+
+  if (isAuthCheck) {
+    return null;
+  }
 
   return (
     <main className="loginLayout">
