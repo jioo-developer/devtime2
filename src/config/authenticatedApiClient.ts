@@ -1,134 +1,13 @@
-import {
-  isAccessTokenValid,
-  isRefreshTokenValid,
-  setAccessTokenExpiry,
-  setRefreshTokenExpiry,
-  clearTokenExpiryCookies,
-} from "@/utils/cookieUtils";
+import { getAccessToken, clearTokens } from "./utils/tokenStorage";
+import { ensureAccessTokenOrRedirect, redirectToLogin } from "./utils/authRedirect";
+import { refreshAccessToken } from "./utils/tokenRefresh";
 
-type RefreshResponse = {
-  accessToken?: string;
-  refreshToken?: string;
-};
-
-let refreshPromise: Promise<string | null> | null = null;
-
-function getAccessToken(): string | null {
-  if (typeof window === "undefined") return null;
-  
-  // 쿠키에서 만료 시간 확인
-  if (!isAccessTokenValid()) {
-    // 만료되었으면 localStorage 삭제
-    try {
-      window.localStorage.removeItem("accessToken");
-    } catch {
-      // ignore
-    }
-    return null;
-  }
-  
-  try {
-    return window.localStorage.getItem("accessToken");
-  } catch {
-    return null;
-  }
-}
-
-function getRefreshToken(): string | null {
-  if (typeof window === "undefined") return null;
-  
-  // 쿠키에서 만료 시간 확인
-  if (!isRefreshTokenValid()) {
-    // 만료되었으면 localStorage 삭제
-    try {
-      window.localStorage.removeItem("refreshToken");
-      window.localStorage.removeItem("accessToken"); // Refresh Token 만료 시 Access Token도 삭제
-    } catch {
-      // ignore
-    }
-    return null;
-  }
-  
-  try {
-    return window.localStorage.getItem("refreshToken");
-  } catch {
-    return null;
-  }
-}
-
-function setTokens(accessToken?: string, refreshToken?: string) {
-  if (typeof window === "undefined") return;
-  try {
-    if (accessToken) {
-      window.localStorage.setItem("accessToken", accessToken);
-      setAccessTokenExpiry(); // Access Token 만료 시간 쿠키 설정
-    }
-    if (refreshToken) {
-      window.localStorage.setItem("refreshToken", refreshToken);
-      setRefreshTokenExpiry(); // Refresh Token 만료 시간 쿠키 설정
-    }
-  } catch {
-    // ignore
-  }
-}
-
-function clearTokens() {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.removeItem("accessToken");
-    window.localStorage.removeItem("refreshToken");
-    clearTokenExpiryCookies(); // 쿠키도 삭제
-  } catch {
-    // ignore
-  }
-}
-
-function redirectToLogin() {
-  if (typeof window === "undefined") return;
-  const current =
-    window.location.pathname + window.location.search + window.location.hash;
-  const redirect = encodeURIComponent(current || "/");
-  window.location.replace(`/login?redirect=${redirect}`);
-}
-
-function ensureAccessTokenOrRedirect(): string | null {
-  const token = getAccessToken();
-  if (token) return token;
-  // 토큰이 아예 없으면 네트워크 요청 자체를 보내지 않고 즉시 로그인으로
-  clearTokens();
-  redirectToLogin();
-  return null;
-}
-
-async function refreshAccessToken(baseUrl: string): Promise<string | null> {
-  const refreshToken = getRefreshToken();
-  if (!refreshToken) return null;
-
-  // 단일 락: 동시에 여러 401이 터져도 refresh는 1번만
-  if (refreshPromise) return refreshPromise;
-
-  refreshPromise = (async () => {
-    const res = await fetch(`${baseUrl}/api/auth/refresh`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ refreshToken }),
-    });
-
-    if (!res.ok) return null;
-
-    const data = (await res.json().catch(() => null)) as RefreshResponse | null;
-    const newAccessToken = data?.accessToken ?? null;
-    if (!newAccessToken) return null;
-
-    setTokens(newAccessToken, data?.refreshToken);
-    return newAccessToken;
-  })().finally(() => {
-    refreshPromise = null;
-  });
-
-  return refreshPromise;
-}
-
+/**
+ * 인증된 HTTP 요청 처리
+ * - 토큰이 없으면 로그인 페이지로 리다이렉트
+ * - 401 에러 발생 시 토큰 갱신 후 1회 재시도
+ * - 재시도 후에도 실패하면 로그인 페이지로 리다이렉트
+ */
 async function request<T>(
   baseUrl: string,
   endpoint: string,
@@ -136,7 +15,7 @@ async function request<T>(
 ): Promise<T> {
   // 최초 요청에서 토큰 없으면 즉시 리다이렉트(왕복 X)
   if (!init._retried) {
-    const token = ensureAccessTokenOrRedirect();
+    const token = ensureAccessTokenOrRedirect(getAccessToken);
     if (!token) throw new Error(`${init.method ?? "GET"} ${endpoint} unauthorized`);
   }
 
