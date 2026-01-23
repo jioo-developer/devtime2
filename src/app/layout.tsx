@@ -1,5 +1,6 @@
 import localFont from "next/font/local";
 import TanstackProvider from "@/provider/TanstackProvider";
+import UIModalStack from "@/components/atoms/CommonModal/modalContainer";
 import "../asset/reset.css";
 import "../asset/common.css";
 
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body>
         <TanstackProvider>
           <div className="wrap">{children}</div>
+          <UIModalStack />
         </TanstackProvider>
       </body>
     </html>
