@@ -5,6 +5,7 @@ import {
   RegisterOptions,
   UseFormRegister,
 } from "react-hook-form";
+import { CSSProperties } from "react";
 import styles from "./style.module.css";
 import clsx from "clsx";
 
@@ -19,6 +20,7 @@ export interface CommonInputProps<T extends FieldValues> {
   label?: string;
   testId?: string;
   success?: string;
+  style?: CSSProperties;
 }
 
 function CommonInput<T extends FieldValues>({
@@ -32,6 +34,7 @@ function CommonInput<T extends FieldValues>({
   label,
   testId,
   success,
+  style,
 }: CommonInputProps<T>) {
   return (
     <label htmlFor={String(id)} className={styles.labelArea}>
@@ -44,6 +47,7 @@ function CommonInput<T extends FieldValues>({
         placeholder={placeholder}
         data-testid={testId}
         className={clsx(styles.input)}
+        style={style}
         {...(register && register(id, validation))}
       />
 

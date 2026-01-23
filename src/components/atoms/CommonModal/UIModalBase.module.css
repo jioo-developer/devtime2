@@ -45,9 +45,9 @@
 }
 
 .title {
-  font-size: 1.125rem;
-  color: #3d3d3e;
-  font-weight: bold;
+  font-size: var(--fontsize-heading);
+  color: var(--gray-600);
+  font-weight: var(--font-weight-bold);
   flex: 1;
 }
 

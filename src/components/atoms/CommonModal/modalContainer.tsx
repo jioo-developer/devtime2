@@ -46,9 +46,12 @@ export default function UIModalStack() {
             footer={modal.footer}
             testId={modal.testId}
             BackdropMiss={modal.BackdropMiss ?? true}
+            showCloseButton={modal.showCloseButton}
             onRequestClose={() => close(modal.id)} //   닫기 요청 -> store에서 제거
             isTop={isTop} //   top 여부 전달
             zIndex={BASE_Z + index * GAP_Z} //   스택 순서대로 위로 쌓기
+            width={modal.width}
+            height={modal.height}
           >
             {modal.content}
           </UIModalBase>
