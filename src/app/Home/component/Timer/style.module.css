@@ -21,7 +21,7 @@
 }
 
 .timeSegment {
-  background:url("../../../asset/images/time_card.svg") no-repeat center center;
+  background:url("../../../../asset/images/time_card.svg") no-repeat center center;
   background-size: 100% 100%;
   width: 264px;
   height: 298px;
@@ -44,6 +44,13 @@
   align-items: center;
   justify-content: center;
   gap: calc(var(--margin-xl) * 2);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--gap-md);
+  margin-top: var(--gap-xl);
 }
 
 @media all and (max-width:1200px) {

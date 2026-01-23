@@ -7,7 +7,11 @@ export const ApiClient = {
     },
   },
 
-  async get<T>(endpoint: string, params?: Record<string, string>): Promise<T> {
+  async get<T>(
+    endpoint: string,
+    params?: Record<string, string>,
+    headers?: HeadersInit,
+  ): Promise<T> {
     const queryString = params
       ? `?${new URLSearchParams(params).toString()}`
       : "";
@@ -15,7 +19,10 @@ export const ApiClient = {
       `${this.config.baseUrl}${endpoint}${queryString}`,
       {
         method: "GET",
-        headers: this.config.headers,
+        headers: {
+          ...this.config.headers,
+          ...headers,
+        },
       },
     );
 
@@ -26,10 +33,17 @@ export const ApiClient = {
     return response.json();
   },
 
-  async post<T>(endpoint: string, data?: unknown): Promise<T> {
+  async post<T>(
+    endpoint: string,
+    data?: unknown,
+    headers?: HeadersInit,
+  ): Promise<T> {
     const response = await fetch(`${this.config.baseUrl}${endpoint}`, {
       method: "POST",
-      headers: this.config.headers,
+      headers: {
+        ...this.config.headers,
+        ...headers,
+      },
       body: data ? JSON.stringify(data) : undefined,
     });
 
