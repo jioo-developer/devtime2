@@ -1,45 +1,33 @@
 "use client";
 import React, { useState } from "react";
-import { Path, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import CommonInput from "@/components/atoms/CommonInput/CommonInput";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import TodoListItem from "@/components/modules/TodoList/ListItem";
 import styles from "./style.module.css";
+import { useModalStore } from "@/store/modalStore";
 
 type TodoFormData = {
+  title: string;
   todoInput: string;
 };
 
-export interface TodoListFormProps {
-  sectionTitle?: string;
-  placeholder?: string;
-  addButtonText?: string;
-  onSubmit?: (todos: string[]) => void;
-  initialTodos?: string[];
-  showCloseButton?: boolean;
-}
-
-export default function TodoListForm({
-  sectionTitle = "할일 목록",
-  placeholder = "할 일을 추가해 주세요.",
-  addButtonText = "추가",
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onSubmit, // TODO: 모달 footer에서 사용 예정
-  initialTodos = [],
-}: TodoListFormProps) {
-  const [todos, setTodos] = useState<string[]>(initialTodos);
+export default function TodoListForm() {
+  const closeModal = useModalStore((state) => state.closeTop);
+  const [todos, setTodos] = useState<string[]>([]);
   const { register, handleSubmit, watch, reset } = useForm<TodoFormData>({
     defaultValues: {
+      title: "",
       todoInput: "",
     },
+    mode: "onChange",
   });
 
-  const todoInput = watch("todoInput");
 
   const onAddTodo = (data: TodoFormData) => {
     if (data.todoInput.trim()) {
       setTodos([...todos, data.todoInput.trim()]);
-      reset();
+      reset({ title: data.title, todoInput: "" });
     }
   };
 
@@ -53,6 +41,21 @@ export default function TodoListForm({
     setTodos(updatedTodos);
   };
 
+  const { title: titleValue, todoInput: todoInputValue } = watch();
+
+  const canStartTimer =
+    titleValue.trim().length > 0 &&
+    titleValue.trim().length <= 30 &&
+    todos.length >= 1 &&
+    todos.every((todo) => todo.trim().length > 0 && todo.trim().length <= 30);
+
+  const handleStartTimer = () => {
+    if (!canStartTimer) return;
+
+    console.log("타이머 시작", { title: titleValue.trim(), todos });
+    closeModal();
+  };
+
   return (
     <div className={styles.goalForm}>
       <div className={styles.todoSection}>
@@ -60,29 +63,44 @@ export default function TodoListForm({
           onSubmit={handleSubmit(onAddTodo)}
           className={styles.inputGroup}
         >
+          <h3 className={styles.sectionTitle}>오늘의 목표</h3>
           <CommonInput
-            id={sectionTitle as Path<TodoFormData>}
-            placeholder={placeholder}
+            id="title"
+            type="text"
+            placeholder="목표를 입력해 주세요. (최대 30자)"
             register={register}
-            style={{ border: 0, marginBottom: 36 }}
+            style={{ border: 0, borderBottom: "1px solid var(--gray-200)", marginBottom: 36 }}
+            validation={{
+              required: "목표를 입력해 주세요.",
+              maxLength: {
+                value: 30,
+                message: "최대 30자까지 입력 가능합니다.",
+              },
+            }}
           />
-          <h3 className={styles.sectionTitle}>{sectionTitle}</h3>
+          <h3 className={styles.sectionTitle}>할일 목록</h3>
           <div className={styles.todoInput}>
             <CommonInput
               id="todoInput"
               type="text"
-              placeholder={placeholder}
+              placeholder="할 일을 입력해주세요. (최대 30자)"
               register={register}
               style={{ border: 0, borderBottom: "1px solid var(--gray-200)" }}
+              validation={{
+                maxLength: {
+                  value: 30,
+                  message: "최대 30자까지 입력 가능합니다.",
+                },
+              }}
             />
             <CommonButton
               type="button"
               theme="overlap"
               style={{ width: "auto" }}
-              disabled={!todoInput?.trim()}
+              disabled={!todoInputValue.trim()}
               onClick={handleSubmit(onAddTodo)}
             >
-              {addButtonText}
+              추가
             </CommonButton>
           </div>
         </form>
@@ -99,6 +117,19 @@ export default function TodoListForm({
             ))}
           </div>
         )}
+
+        <div className={styles.footer}>
+          <CommonButton theme="secondary" onClick={() => closeModal()}>
+            취소
+          </CommonButton>
+          <CommonButton
+            theme={canStartTimer ? "primary" : "disable"}
+            disabled={!canStartTimer}
+            onClick={handleStartTimer}
+          >
+            타이머 시작하기
+          </CommonButton>
+        </div>
       </div>
     </div>
   );
