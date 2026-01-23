@@ -79,8 +79,8 @@
 }
 
 .overlap {
-  background: rgba(229, 231, 235, 1);
-  color: rgba(150, 157, 168, 1);
+  background: var(--gray-200);
+  color: var(--gray-400);
 }
 
 .overlap:hover:not(:disabled) {
