@@ -9,25 +9,29 @@ export type SplitTime = {
 
 export function calculateSplitTimes(
   startTime: string,
-  endTime: Date = new Date()
+  endTime: Date = new Date(),
+  pausedDuration: number = 0 // 밀리초
 ): SplitTime[] {
   const start = new Date(startTime);
   const splitTimes: SplitTime[] = [];
+
+  // 실제 경과 시간 = 종료 시간 - 시작 시간 - 일시정지 시간
+  const actualEndTime = new Date(endTime.getTime() - pausedDuration);
 
   // 시작일의 자정
   const startMidnight = new Date(start);
   startMidnight.setHours(0, 0, 0, 0);
 
-  // 종료일의 자정
-  const endMidnight = new Date(endTime);
+  // 실제 종료일의 자정
+  const endMidnight = new Date(actualEndTime);
   endMidnight.setHours(0, 0, 0, 0);
 
   // 같은 날이면
   if (startMidnight.getTime() === endMidnight.getTime()) {
-    const timeSpent = endTime.getTime() - start.getTime();
+    const timeSpent = actualEndTime.getTime() - start.getTime();
     splitTimes.push({
       date: formatDate(startMidnight),
-      timeSpent,
+      timeSpent: Math.max(0, timeSpent),
     });
     return splitTimes;
   }
@@ -38,7 +42,7 @@ export function calculateSplitTimes(
   const firstDayTime = firstDayEnd.getTime() - start.getTime();
   splitTimes.push({
     date: formatDate(startMidnight),
-    timeSpent: firstDayTime,
+    timeSpent: Math.max(0, firstDayTime),
   });
 
   // 중간 날들 (전체 날짜)
@@ -56,11 +60,11 @@ export function calculateSplitTimes(
     currentDay.setDate(currentDay.getDate() + 1);
   }
 
-  // 마지막 날 (자정부터 종료 시간까지)
-  const lastDayTime = endTime.getTime() - endMidnight.getTime();
+  // 마지막 날 (자정부터 실제 종료 시간까지)
+  const lastDayTime = actualEndTime.getTime() - endMidnight.getTime();
   splitTimes.push({
     date: formatDate(endMidnight),
-    timeSpent: lastDayTime,
+    timeSpent: Math.max(0, lastDayTime),
   });
 
   return splitTimes;
@@ -76,7 +80,7 @@ function formatDate(date: Date): string {
 /**
  * startTime부터 현재까지의 splitTimes를 계산
  */
-export function getCurrentSplitTimes(startTime?: string): SplitTime[] {
+export function getCurrentSplitTimes(startTime?: string, pausedDuration: number = 0): SplitTime[] {
   if (!startTime) return [];
-  return calculateSplitTimes(startTime, new Date());
+  return calculateSplitTimes(startTime, new Date(), pausedDuration);
 }

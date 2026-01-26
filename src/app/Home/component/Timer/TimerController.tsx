@@ -14,7 +14,7 @@ function Timer() {
     const { startTimer, pauseTimer, showListTimer, resetTimer, finishTimer } = useTimerActions();
     useRestoreTimer({ timerData });
 
-    const { hours, minutes, seconds } = useElapsedTimer({
+    const { hours, minutes, seconds, pausedDuration } = useElapsedTimer({
         startTime: timerData?.startTime,
         isTimerRunning,
         isTimerPaused,
@@ -26,6 +26,7 @@ function Timer() {
         startTime: timerData?.startTime,
         isTimerRunning,
         isTimerPaused,
+        pausedDuration,
     });
 
     return (
@@ -36,9 +37,9 @@ function Timer() {
             hours={hours}
             minutes={minutes}
             seconds={seconds}
-            onStartClick={() => startTimer(timerData?.timerId, timerData?.startTime)}
-            onPauseClick={() => pauseTimer(timerData?.timerId, timerData?.startTime)}
-            onFinishClick={() => finishTimer(timerData?.timerId, timerData?.startTime, timerData?.studyLogId)}
+            onStartClick={() => startTimer(timerData?.timerId, timerData?.startTime, pausedDuration)}
+            onPauseClick={() => pauseTimer(timerData?.timerId, timerData?.startTime, pausedDuration)}
+            onFinishClick={() => finishTimer(timerData?.timerId, timerData?.startTime, timerData?.studyLogId, pausedDuration)}
             onShowListClick={() => showListTimer(timerData?.studyLogId)}
             onResetClick={() => resetTimer(timerData?.timerId)}
         />

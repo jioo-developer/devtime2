@@ -76,9 +76,24 @@ export function useElapsedTimer({
   const minutes = Math.floor((elapsedSeconds % 3600) / 60);
   const seconds = elapsedSeconds % 60;
 
+  // 일시정지 시간 계산 (밀리초)
+  const getPausedDuration = (): number => {
+    if (!startTime || !isTimerRunning) return 0;
+    
+    let totalPaused = pausedDurationRef.current;
+    
+    // 현재 일시정지 중이면 현재까지의 일시정지 시간도 추가
+    if (isTimerPaused && pauseStartRef.current !== null) {
+      totalPaused += Date.now() - pauseStartRef.current;
+    }
+    
+    return totalPaused;
+  };
+
   return {
     hours: String(hours).padStart(2, "0"),
     minutes: String(minutes).padStart(2, "0"),
     seconds: String(seconds).padStart(2, "0"),
+    pausedDuration: getPausedDuration(),
   };
 }

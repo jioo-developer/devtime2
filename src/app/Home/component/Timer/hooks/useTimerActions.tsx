@@ -24,10 +24,10 @@ export function useTimerActions() {
   const { pauseTimerMutation, resumeTimerMutation, resetTimerMutation, finishTimerMutation, updateTasksMutation } =
     useTimerMutations();
 
-  const startTimer = (timerId?: string, startTime?: string) => {
+  const startTimer = (timerId?: string, startTime?: string, pausedDuration?: number) => {
     // 일시정지 상태면 재개
     if (isTimerPaused && timerId && startTime) {
-      const splitTimes = getCurrentSplitTimes(startTime);
+      const splitTimes = getCurrentSplitTimes(startTime, pausedDuration ?? 0);
       resumeTimerMutation.mutate(
         {
           timerId,
@@ -157,7 +157,7 @@ export function useTimerActions() {
     });
   };
 
-  const finishTimer = (timerId?: string, startTime?: string, studyLogId?: string) => {
+  const finishTimer = (timerId?: string, startTime?: string, studyLogId?: string, pausedDuration?: number) => {
     openModal({
       width: 640,
       height: 828,
@@ -174,7 +174,7 @@ export function useTimerActions() {
           onFinish={(reflection) => {
             if (timerId && startTime) {
               // splitTimes 계산
-              const splitTimes = calculateSplitTimes(startTime, new Date());
+              const splitTimes = calculateSplitTimes(startTime, new Date(), pausedDuration ?? 0);
 
               // 최종 할 일 목록 (완료된 것만 또는 모든 것 - 요구사항 확인 필요)
               // 일단 모든 할 일 목록을 보냄
@@ -222,10 +222,10 @@ export function useTimerActions() {
     });
   };
 
-  const pauseTimer = (timerId?: string, startTime?: string) => {
+  const pauseTimer = (timerId?: string, startTime?: string, pausedDuration?: number) => {
     if (timerId && startTime) {
       // 일시정지 시 즉시 동기화 (splitTimes 포함)
-      const splitTimes = getCurrentSplitTimes(startTime);
+      const splitTimes = getCurrentSplitTimes(startTime, pausedDuration ?? 0);
       pauseTimerMutation.mutate(
         {
           timerId,

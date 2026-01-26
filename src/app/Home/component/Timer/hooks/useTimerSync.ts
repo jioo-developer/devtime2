@@ -7,6 +7,7 @@ type UseTimerSyncParams = {
   startTime: string | undefined;
   isTimerRunning: boolean;
   isTimerPaused: boolean;
+  pausedDuration: number;
 };
 
 const SYNC_INTERVAL_MS = 10 * 60 * 1000; // 10분
@@ -16,6 +17,7 @@ export function useTimerSync({
   startTime,
   isTimerRunning,
   isTimerPaused,
+  pausedDuration,
 }: UseTimerSyncParams) {
   const syncTimerMutation = useSyncTimer();
   const syncIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -34,7 +36,7 @@ export function useTimerSync({
 
     // 즉시 첫 동기화
     const performSync = () => {
-      const splitTimes = calculateSplitTimes(startTime, new Date());
+      const splitTimes = calculateSplitTimes(startTime, new Date(), pausedDuration);
       syncTimerMutation.mutate(
         {
           timerId,
@@ -66,5 +68,5 @@ export function useTimerSync({
         syncIntervalRef.current = null;
       }
     };
-  }, [timerId, startTime, isTimerRunning, isTimerPaused, syncTimerMutation]);
+  }, [timerId, startTime, isTimerRunning, isTimerPaused, pausedDuration, syncTimerMutation]);
 }
