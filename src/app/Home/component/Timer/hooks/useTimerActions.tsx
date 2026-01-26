@@ -12,6 +12,7 @@ export function useTimerActions() {
     savedTitle,
     savedTodos,
     setIsTimerRunning,
+    setIsTimerPaused,
     setSavedTitle,
     setSavedTodos,
     setTodoTitle,
@@ -29,6 +30,7 @@ export function useTimerActions() {
             setSavedTitle(title);
             setSavedTodos(todos);
             setIsTimerRunning(true);
+            setIsTimerPaused(false);
           }}
         />
       ),
@@ -57,7 +59,7 @@ export function useTimerActions() {
       ),
       showCloseButton: false,
       footer: null,
-      BackdropMiss: true,
+      BackdropMiss: false,
     });
   };
 
@@ -75,6 +77,7 @@ export function useTimerActions() {
             theme="primary"
             onClick={() => {
               setIsTimerRunning(false);
+              setIsTimerPaused(false);
               setSavedTitle("");
               setSavedTodos([]);
               setTodoTitle("오늘도 열심히 달려봐요!");
@@ -108,6 +111,7 @@ export function useTimerActions() {
             console.log("공부 완료", { reflection, completedTodos });
             // TODO: API 호출로 데이터 저장
             setIsTimerRunning(false);
+            setIsTimerPaused(false);
             setSavedTitle("");
             setSavedTodos([]);
             setTodoTitle("오늘도 열심히 달려봐요!");

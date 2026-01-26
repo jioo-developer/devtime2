@@ -4,6 +4,8 @@ import React, { createContext, useContext, useState, Dispatch, SetStateAction, R
 interface TimerContextValue {
   isTimerRunning: boolean;
   setIsTimerRunning: Dispatch<SetStateAction<boolean>>;
+  isTimerPaused: boolean;
+  setIsTimerPaused: Dispatch<SetStateAction<boolean>>;
   savedTitle: string;
   setSavedTitle: Dispatch<SetStateAction<string>>;
   savedTodos: string[];
@@ -16,6 +18,7 @@ const TimerContext = createContext<TimerContextValue | undefined>(undefined);
 
 export function TimerProvider({ children }: { children: ReactNode }) {
   const [isTimerRunning, setIsTimerRunning] = useState(false);
+  const [isTimerPaused, setIsTimerPaused] = useState(false);
   const [savedTitle, setSavedTitle] = useState<string>("");
   const [savedTodos, setSavedTodos] = useState<string[]>([]);
   const [todoTitle, setTodoTitle] = useState<string>("오늘도 열심히 달려봐요!");
@@ -25,6 +28,8 @@ export function TimerProvider({ children }: { children: ReactNode }) {
       value={{
         isTimerRunning,
         setIsTimerRunning,
+        isTimerPaused,
+        setIsTimerPaused,
         savedTitle,
         setSavedTitle,
         savedTodos,

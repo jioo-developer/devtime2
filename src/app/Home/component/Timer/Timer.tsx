@@ -18,7 +18,7 @@ import { useTimerContext } from "../../provider/TimerContext";
 
 function Timer() {
   const { data: timerData } = useGetTimers() as UseQueryResult<TimerResponse, Error>;
-  const { isTimerRunning, todoTitle } = useTimerContext();
+  const { isTimerRunning, isTimerPaused, setIsTimerPaused, todoTitle } = useTimerContext();
   const { startTimer, showListTimer, resetTimer, finishTimer } = useTimerActions();
 
   console.log(timerData);
@@ -45,16 +45,23 @@ function Timer() {
           theme="none"
           className={styles.startButton}
           aria-label="시작"
-          onClick={startTimer}
-          title="타이머 시작"
-          disabled={isTimerRunning}
+          onClick={isTimerPaused ? () => setIsTimerPaused(false) : startTimer}
+          title={isTimerPaused ? "타이머 재개" : "타이머 시작"}
+          disabled={isTimerRunning && !isTimerPaused}
         >
-          <CommonImage src={isTimerRunning ? StartOff : StartOn} alt="시작" width={100} height={100} />
+          <CommonImage src={isTimerRunning && !isTimerPaused ? StartOff : StartOn} alt="시작" width={100} height={100} />
         </CommonButton>
 
-        <CommonButton theme="none" className={styles.pauseButton} aria-label="일시정지" title="타이머 일시정지">
+        <CommonButton
+          theme="none"
+          className={styles.pauseButton}
+          aria-label="일시정지"
+          title="타이머 일시정지"
+          onClick={() => setIsTimerPaused(true)}
+          disabled={!isTimerRunning || isTimerPaused}
+        >
           <CommonImage
-            src={isTimerRunning ? PauseOn : PauseOff}
+            src={isTimerRunning && !isTimerPaused ? PauseOn : PauseOff}
             alt="일시정지"
             width={100}
             height={100}
