@@ -20,10 +20,17 @@ export type EndModeProps = BaseTodoListFormProps & {
   onEditClick: () => void;
 };
 
+export type ResetModeProps = BaseTodoListFormProps & {
+  mode: "reset";
+  onReset: () => void;
+  onEditClick: () => void;
+};
+
 export type TodoListFormProps =
   | CreateModeProps
   | EditModeProps
-  | EndModeProps;
+  | EndModeProps
+  | ResetModeProps;
 
 export type TodoFormData = {
   title: string;

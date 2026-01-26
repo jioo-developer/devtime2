@@ -17,7 +17,12 @@ type EndModeFooterProps = {
   onFinish: () => void;
 };
 
-type FormFooterProps = CreateModeFooterProps | EditModeFooterProps | EndModeFooterProps;
+type ResetModeFooterProps = {
+  mode: "reset";
+  onReset: () => void;
+};
+
+type FormFooterProps = CreateModeFooterProps | EditModeFooterProps | EndModeFooterProps | ResetModeFooterProps;
 
 export function FormFooter(props: FormFooterProps) {
   const closeModal = useModalStore((state) => state.closeTop);
@@ -43,6 +48,19 @@ export function FormFooter(props: FormFooterProps) {
         </CommonButton>
         <CommonButton theme="primary" onClick={props.onFinish}>
           공부 완료하기
+        </CommonButton>
+      </div>
+    );
+  }
+
+  if (props.mode === "reset") {
+    return (
+      <div className="footer">
+        <CommonButton theme="secondary" onClick={() => closeModal()}>
+          취소
+        </CommonButton>
+        <CommonButton theme="primary" onClick={props.onReset}>
+          초기화하기
         </CommonButton>
       </div>
     );

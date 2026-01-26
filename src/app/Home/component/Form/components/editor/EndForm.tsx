@@ -10,6 +10,7 @@ import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import styles from "./EndForm.module.css";
 
 interface EndFormProps {
+  mode: "end" | "reset";
   onEditClick: () => void;
   form: UseFormReturn<TodoFormData>;
   todos: string[];
@@ -18,10 +19,12 @@ interface EndFormProps {
   handleAddTodo: () => void;
   handleRemoveTodo: (index: number) => void;
   handleTextChange: (index: number) => (nextText: string) => void;
-  onFinish: (reflection: string, completedTodos: boolean[]) => void;
+  onFinish?: (reflection: string, completedTodos: boolean[]) => void;
+  onReset?: () => void;
 }
 
 export function EndForm({
+  mode,
   onEditClick,
   form,
   todos,
@@ -31,6 +34,7 @@ export function EndForm({
   handleRemoveTodo,
   handleTextChange,
   onFinish,
+  onReset,
 }: EndFormProps) {
   const { register, handleSubmit } = form;
   const [completedTodos, setCompletedTodos] = useState<boolean[]>(
@@ -42,7 +46,11 @@ export function EndForm({
   }, [initialTodos]);
 
   const onFinishValid = (data: TodoFormData) => {
-    onFinish(data.reflection?.trim() ?? "", completedTodos);
+    if (mode === "end" && onFinish) {
+      onFinish(data.reflection?.trim() ?? "", completedTodos);
+    } else if (mode === "reset" && onReset) {
+      onReset();
+    }
   };
 
   return (
@@ -50,10 +58,12 @@ export function EndForm({
       <div className="todoSection">
         <div className={styles.headerSection}>
           <h2 className={styles.headerTitle}>
-            오늘도 수고하셨어요!
+            {mode === "reset" ? "기록을 초기화 하시겠습니까?" : "오늘도 수고하셨어요!"}
           </h2>
           <p className={styles.headerDescription}>
-            완료한 일을 체크하고, 오늘의 학습 회고를 작성해 주세요.
+            {mode === "reset"
+              ? "진행되던 타이머 기록은 삭제되고, 복구가 불가능합니다. 계속 초기화할까요?"
+              : "완료한 일을 체크하고, 오늘의 학습 회고를 작성해 주세요."}
           </p>
         </div>
 
@@ -84,21 +94,25 @@ export function EndForm({
           </div>
         </form>
 
-        <TodoListSection
-          mode="end"
-          todos={todos}
-          completedTodos={completedTodos}
-          onCompletedChange={setCompletedTodos}
-          onEditClick={onEditClick}
-          onTextChange={handleTextChange}
-          onDelete={handleRemoveTodo}
-        />
+        {mode === "end" && (
+          <>
+            <TodoListSection
+              mode="end"
+              todos={todos}
+              completedTodos={completedTodos}
+              onCompletedChange={setCompletedTodos}
+              onEditClick={onEditClick}
+              onTextChange={handleTextChange}
+              onDelete={handleRemoveTodo}
+            />
 
-        <form className="inputGroup">
-          <ReflectionSection register={register} />
-        </form>
+            <form className="inputGroup">
+              <ReflectionSection register={register} />
+            </form>
+          </>
+        )}
 
-        <FormFooter mode="end" onFinish={handleSubmit(onFinishValid)} />
+        <FormFooter mode={mode} onFinish={mode === "end" ? handleSubmit(onFinishValid) : undefined} onReset={mode === "reset" ? onReset : undefined} />
       </div>
     </div>
   );

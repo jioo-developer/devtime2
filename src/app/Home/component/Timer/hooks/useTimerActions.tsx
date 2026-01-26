@@ -64,7 +64,6 @@ export function useTimerActions() {
   const resetTimer = () => {
     openModal({
       width: 360,
-      height: 225,
       title: "기록을 초기화 하시겠습니까?",
       content: "진행되던 타이머 기록은 삭제되고, 복구가 불가능합니다. 계속 초기화할까요?",
       footer: (

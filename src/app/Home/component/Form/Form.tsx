@@ -81,6 +81,7 @@ function TodoListForm(props: TodoListFormProps) {
   if (props.mode === "end") {
     return (
       <EndForm
+        mode="end"
         onEditClick={props.onEditClick}
         form={form}
         todos={todos}
