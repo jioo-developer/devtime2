@@ -1,0 +1,39 @@
+.headerSection {
+  margin-bottom: 36px;
+}
+
+.headerTitle {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.headerDescription {
+  font-size: 14px;
+  color: #666;
+}
+
+.todoInputWrapper {
+  margin-bottom: 24px;
+}
+
+.inputNoBorder {
+  border: 0;
+}
+
+.todoInputWrapper {
+  margin-bottom: 24px;
+}
+
+.addButton {
+  width: auto;
+}
+
+.addButtonEnabled {
+  color: var(--primary-core);
+}
+
+.addButtonDisabled {
+  color: #969DA8;
+}
