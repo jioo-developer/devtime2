@@ -3,7 +3,7 @@ import React from "react";
 import { useGetTimers } from "../../hooks/useGetTimers";
 import { useRestoreTimer } from "../../hooks/useRestoreTimer";
 import { useTimerActions } from "./hooks/useTimerActions";
-import { useElapsedTimer } from "./hooks/useElapsedTimer";
+import { useElapsedTimer } from "./hooks/ElapsedTimerHelper";
 import { useTimerSync } from "./hooks/useTimerSync";
 import { useTimerContext } from "../../provider/TimerContext";
 import { TimerView } from "./Timer";

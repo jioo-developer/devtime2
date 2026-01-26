@@ -1,4 +1,12 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import {
+  stopInterval,
+  resetState,
+  enterPaused,
+  exitPaused,
+  getTotalPausedMs,
+  type TimerRefs,
+} from "./ElapsedTimerHelper";
 
 type UseElapsedTimerParams = {
   startTime: string | undefined; // ISO date string
@@ -6,94 +14,61 @@ type UseElapsedTimerParams = {
   isTimerPaused: boolean;
 };
 
-export function useElapsedTimer({
+export function useElapsedTimerCore({
   startTime,
   isTimerRunning,
   isTimerPaused,
 }: UseElapsedTimerParams) {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
-  const pauseStartRef = useRef<number | null>(null);
-  const pausedDurationRef = useRef<number>(0);
+
+  const refs = useRef<TimerRefs>({
+    intervalId: null,
+    pauseStartMs: null,
+    totalPausedMs: 0,
+  });
 
   useEffect(() => {
-    if (!startTime || !isTimerRunning) {
-      setElapsedSeconds(0);
-      pausedDurationRef.current = 0;
-      pauseStartRef.current = null;
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+    const timer = refs.current;
+
+    // 0) 실행 조건이 깨지면: 항상 "완전 리셋"
+    if (!isTimerRunning || !startTime) {
+      resetState(timer, setElapsedSeconds);
       return;
     }
 
+    // 1) 일시정지면: pause 상태 진입(시각 기록 + interval stop)
     if (isTimerPaused) {
-      // 일시정지 시작
-      if (pauseStartRef.current === null) {
-        pauseStartRef.current = Date.now();
-      }
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      enterPaused(timer);
       return;
     }
 
-    // 일시정지 해제
-    if (pauseStartRef.current !== null) {
-      const pauseDuration = Date.now() - pauseStartRef.current;
-      pausedDurationRef.current += pauseDuration;
-      pauseStartRef.current = null;
-    }
+    // 2) 일시정지 해제면: 누적 paused 반영
+    exitPaused(timer);
 
-    // 경과 시간 계산
-    const calculateElapsed = () => {
-      const start = new Date(startTime).getTime();
-      const now = Date.now();
-      const elapsed = Math.floor((now - start - pausedDurationRef.current) / 1000);
-      return Math.max(0, elapsed);
+    // 3) tick: startTime + 누적 paused 기준으로 elapsed 계산해서 state 반영
+    const tick = () => {
+      const startMs = new Date(startTime).getTime();
+      const nowMs = Date.now();
+      const elapsed = Math.floor((nowMs - startMs - timer.totalPausedMs) / 1000);
+      setElapsedSeconds(Math.max(0, elapsed));
     };
 
-    // 초기 값 설정
-    setElapsedSeconds(calculateElapsed());
+    // 4) 즉시 1회 반영 후, 1초마다 갱신
+    tick();
+    timer.intervalId = setInterval(tick, 1000);
 
-    // 1초마다 업데이트
-    intervalRef.current = setInterval(() => {
-      setElapsedSeconds(calculateElapsed());
-    }, 1000);
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
+    // 5) cleanup: interval 정리
+    return () => stopInterval(timer);
   }, [startTime, isTimerRunning, isTimerPaused]);
 
-  // 초를 시:분:초로 변환
-  const hours = Math.floor(elapsedSeconds / 3600);
-  const minutes = Math.floor((elapsedSeconds % 3600) / 60);
-  const seconds = elapsedSeconds % 60;
-
-  // 일시정지 시간 계산 (밀리초)
-  const getPausedDuration = (): number => {
-    if (!startTime || !isTimerRunning) return 0;
-    
-    let totalPaused = pausedDurationRef.current;
-    
-    // 현재 일시정지 중이면 현재까지의 일시정지 시간도 추가
-    if (isTimerPaused && pauseStartRef.current !== null) {
-      totalPaused += Date.now() - pauseStartRef.current;
-    }
-    
-    return totalPaused;
-  };
+  // pausedDurationMs는 "현재 paused 중인 시간"까지 포함한 총합으로 반환
+  const pausedDurationMs =
+    startTime && isTimerRunning
+      ? getTotalPausedMs(refs.current, isTimerPaused)
+      : 0;
 
   return {
-    hours: String(hours).padStart(2, "0"),
-    minutes: String(minutes).padStart(2, "0"),
-    seconds: String(seconds).padStart(2, "0"),
-    pausedDuration: getPausedDuration(),
+    elapsedSeconds,
+    pausedDurationMs,
   };
 }
