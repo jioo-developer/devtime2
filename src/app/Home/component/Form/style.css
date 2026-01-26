@@ -24,9 +24,9 @@
 
 .todoInput {
   display: flex;
-  margin-bottom: 36px;
+  margin: var(--gap-md) 0 36px 0;
   background: #F0F2F5;
-  padding: var(--gap-md);
+  padding: var(--gap-2xl);
   border-radius: var(--radius-md);
 
   input,button {
