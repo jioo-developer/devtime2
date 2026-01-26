@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
 import { getAuthHeaders } from "@/utils/authUtils";
@@ -17,7 +17,7 @@ const defaultTimerResponse: TimerResponse = {
   startTime: "",
 };
 
-export const useTimers = () => {
+export const useGetTimers = (): UseQueryResult<TimerResponse, Error> => {
   return useQuery({
     queryKey: [QueryKey.TIMERS],
 
