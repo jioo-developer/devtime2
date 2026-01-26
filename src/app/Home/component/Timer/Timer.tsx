@@ -2,33 +2,24 @@
 import React from "react";
 import CommonImage from "@/components/atoms/CommonImage/CommonImage";
 import StartOn from "@/asset/images/Start_on.svg";
+import StartOff from "@/asset/images/Start_off.svg";
 import PauseOff from "@/asset/images/Pause_off.svg";
 import FinishOff from "@/asset/images/Finish_off.svg";
-import { useModalStore } from "@/store/modalStore";
-import TodoListForm from "@/app/Home/component/Form/Form";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import styles from "./style.module.css";
+import showListIcon from "@/asset/images/showList.svg";
+import ResetIcon from "@/asset/images/Reset.svg";
+import { UseQueryResult } from "@tanstack/react-query";
+import { TimerResponse, useGetTimers } from "../../hooks/useGetTimers";
+import { useTimerActions } from "./hooks/useTimerActions";
+import { useTimerContext } from "../../provider/TimerContext";
 
-type TimerProps = {
-  timerId?: string;
-  studyLogId?: string;
-  startTime?: string;
-};
+function Timer() {
+  const { data: timerData } = useGetTimers() as UseQueryResult<TimerResponse, Error>;
+  const { isTimerRunning } = useTimerContext();
+  const { startTimer, showListTimer, resetTimer, finishTimer } = useTimerActions();
 
-function Timer({ timerId, studyLogId, startTime }: TimerProps = {}) {
-  console.log(timerId, studyLogId, startTime);
-  const openModal = useModalStore((state) => state.push);
-
-  const handleStartClick = () => {
-    openModal({
-      width: 640,
-      height: 828,
-      content: <TodoListForm />,
-      showCloseButton: false,
-      footer: null,
-      BackdropMiss: false,
-    });
-  };
+  console.log(timerData);
 
   return (
     <div className={styles.timerContainer}>
@@ -51,12 +42,13 @@ function Timer({ timerId, studyLogId, startTime }: TimerProps = {}) {
           theme="none"
           className={styles.startButton}
           aria-label="시작"
-          onClick={handleStartClick}
+          onClick={startTimer}
+          title="타이머 시작"
         >
-          <CommonImage src={StartOn} alt="시작" width={100} height={100} />
+          <CommonImage src={isTimerRunning ? StartOff : StartOn} alt="시작" width={100} height={100} />
         </CommonButton>
 
-        <CommonButton theme="none" className={styles.pauseButton} aria-label="일시정지">
+        <CommonButton theme="none" className={styles.pauseButton} aria-label="일시정지" title="타이머 일시정지">
           <CommonImage
             src={PauseOff}
             alt="일시정지"
@@ -65,9 +57,42 @@ function Timer({ timerId, studyLogId, startTime }: TimerProps = {}) {
           />
         </CommonButton>
 
-        <CommonButton theme="none" className={styles.finishButton} aria-label="종료">
+        <CommonButton
+          theme="none"
+          className={styles.finishButton}
+          aria-label="종료"
+          title="타이머 종료"
+          onClick={() => {
+            if (isTimerRunning) return;
+            finishTimer();
+          }}
+        >
           <CommonImage src={FinishOff} alt="종료" width={100} height={100} />
         </CommonButton>
+
+        {isTimerRunning && (
+          <div className={styles.isTimerRunning}>
+            <CommonButton
+              theme="none"
+              className={styles.finishButton}
+              aria-label="할일 목록"
+              title="할일 목록"
+              onClick={showListTimer}
+            >
+              <CommonImage src={showListIcon} alt="할일 목록" width={64} height={64} />
+            </CommonButton>
+
+            <CommonButton
+              theme="none"
+              className={styles.finishButton}
+              aria-label="초기화"
+              title="초기화"
+              onClick={resetTimer}
+            >
+              <CommonImage src={ResetIcon} alt="초기화" width={64} height={64} />
+            </CommonButton>
+          </div>
+        )}
       </div>
     </div>
   );
