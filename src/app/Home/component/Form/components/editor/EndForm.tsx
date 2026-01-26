@@ -5,8 +5,6 @@ import { TodoFormData } from "../../types";
 import { TodoListSection } from "./items/TodoListSection";
 import { ReflectionSection } from "./items/ReflectionSection";
 import { FormFooter } from "./items/FormFooter";
-import CommonInput from "@/components/atoms/CommonInput/CommonInput";
-import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import styles from "./EndForm.module.css";
 
 interface EndFormProps {
@@ -14,9 +12,7 @@ interface EndFormProps {
   onEditClick: () => void;
   form: UseFormReturn<TodoFormData>;
   todos: string[];
-  todoInputValue: string;
   initialTodos: string[];
-  handleAddTodo: () => void;
   handleRemoveTodo: (index: number) => void;
   handleTextChange: (index: number) => (nextText: string) => void;
   onFinish?: (reflection: string, completedTodos: boolean[]) => void;
@@ -28,15 +24,13 @@ export function EndForm({
   onEditClick,
   form,
   todos,
-  todoInputValue,
   initialTodos,
-  handleAddTodo,
   handleRemoveTodo,
   handleTextChange,
   onFinish,
   onReset,
 }: EndFormProps) {
-  const { register, handleSubmit } = form;
+  const { register, handleSubmit, formState: { errors } } = form;
   const [completedTodos, setCompletedTodos] = useState<boolean[]>(
     initialTodos.map(() => false)
   );
@@ -67,33 +61,6 @@ export function EndForm({
           </p>
         </div>
 
-        <form className="inputGroup">
-          <div className={`todoInput ${styles.todoInputWrapper}`}>
-            <CommonInput
-              id="todoInput"
-              type="text"
-              placeholder="할 일을 추가해 주세요."
-              register={register}
-              className={styles.inputNoBorder}
-              validation={{
-                maxLength: {
-                  value: 30,
-                  message: "최대 30자까지 입력 가능합니다.",
-                },
-              }}
-            />
-            <CommonButton
-              type="button"
-              theme="none"
-              className={`${styles.addButton} ${todoInputValue.trim() ? styles.addButtonEnabled : styles.addButtonDisabled}`}
-              disabled={!todoInputValue.trim()}
-              onClick={handleAddTodo}
-            >
-              추가
-            </CommonButton>
-          </div>
-        </form>
-
         {mode === "end" && (
           <>
             <TodoListSection
@@ -107,12 +74,16 @@ export function EndForm({
             />
 
             <form className="inputGroup">
-              <ReflectionSection register={register} />
+              <ReflectionSection register={register} error={errors.reflection} />
             </form>
           </>
         )}
 
-        <FormFooter mode={mode} onFinish={mode === "end" ? handleSubmit(onFinishValid) : undefined} onReset={mode === "reset" ? onReset : undefined} />
+        {mode === "end" ? (
+          <FormFooter mode="end" onFinish={handleSubmit(onFinishValid, onFinishInvalid)} />
+        ) : (
+          <FormFooter mode="reset" onReset={onReset!} />
+        )}
       </div>
     </div>
   );

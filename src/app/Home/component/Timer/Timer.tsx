@@ -3,7 +3,9 @@ import React from "react";
 import CommonImage from "@/components/atoms/CommonImage/CommonImage";
 import StartOn from "@/asset/images/Start_on.svg";
 import StartOff from "@/asset/images/Start_off.svg";
+import PauseOn from "@/asset/images/Pause_on.svg";
 import PauseOff from "@/asset/images/Pause_off.svg";
+import FinishOn from "@/asset/images/Finish_on.svg";
 import FinishOff from "@/asset/images/Finish_off.svg";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import styles from "./style.module.css";
@@ -45,13 +47,14 @@ function Timer() {
           aria-label="시작"
           onClick={startTimer}
           title="타이머 시작"
+          disabled={isTimerRunning}
         >
           <CommonImage src={isTimerRunning ? StartOff : StartOn} alt="시작" width={100} height={100} />
         </CommonButton>
 
         <CommonButton theme="none" className={styles.pauseButton} aria-label="일시정지" title="타이머 일시정지">
           <CommonImage
-            src={PauseOff}
+            src={isTimerRunning ? PauseOn : PauseOff}
             alt="일시정지"
             width={100}
             height={100}
@@ -63,12 +66,9 @@ function Timer() {
           className={styles.finishButton}
           aria-label="종료"
           title="타이머 종료"
-          onClick={() => {
-            if (isTimerRunning) return;
-            finishTimer();
-          }}
+          onClick={finishTimer}
         >
-          <CommonImage src={FinishOff} alt="종료" width={100} height={100} />
+          <CommonImage src={isTimerRunning ? FinishOn : FinishOff} alt="종료" width={100} height={100} />
         </CommonButton>
 
         {isTimerRunning && (

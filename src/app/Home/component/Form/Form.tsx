@@ -85,9 +85,7 @@ function TodoListForm(props: TodoListFormProps) {
         onEditClick={props.onEditClick}
         form={form}
         todos={todos}
-        todoInputValue={todoInputValue}
         initialTodos={props.initialTodos ?? []}
-        handleAddTodo={handleAddTodo}
         handleRemoveTodo={handleRemoveTodo}
         handleTextChange={handleTextChange}
         onFinish={props.onFinish}
