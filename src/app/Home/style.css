@@ -10,11 +10,3 @@
     padding-top : calc(var(--gap-3xl) * 3);
   }
 
-  .motivationalText {
-    font-size: calc(var(--fontsize-heading) * 3);
-    font-weight: var(--font-weight-bold);
-    color: var(--primary-30);
-    line-height: var(--lineheight-heading);
-    margin: 0;
-    text-align: center;
-  }

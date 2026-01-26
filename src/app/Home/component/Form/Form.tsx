@@ -37,8 +37,7 @@ function TodoListForm(props: TodoListFormProps) {
     const canStartTimer = isTimerStartValid(titleValue, todos);
 
     const onStartTimer = () => {
-      const { title } = getValues();
-      const trimmed = title.trim();
+      const trimmed = titleValue.trim();
 
       if (trimmed) props.setTodoTitle(trimmed);
 
@@ -46,7 +45,7 @@ function TodoListForm(props: TodoListFormProps) {
         props.onTimerStartSuccess(trimmed, todos);
         closeModal();
       }
-    };
+    }
 
     return (
       <CreateForm

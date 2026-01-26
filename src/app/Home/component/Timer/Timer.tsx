@@ -16,13 +16,14 @@ import { useTimerContext } from "../../provider/TimerContext";
 
 function Timer() {
   const { data: timerData } = useGetTimers() as UseQueryResult<TimerResponse, Error>;
-  const { isTimerRunning } = useTimerContext();
+  const { isTimerRunning, todoTitle } = useTimerContext();
   const { startTimer, showListTimer, resetTimer, finishTimer } = useTimerActions();
 
   console.log(timerData);
 
   return (
     <div className={styles.timerContainer}>
+      <h2 className={styles.timerTitle}>{todoTitle}</h2>
       <div className={styles.timerDisplay}>
         <div className={styles.timeSegment}>
           <div className={styles.timeValue}>00</div>
