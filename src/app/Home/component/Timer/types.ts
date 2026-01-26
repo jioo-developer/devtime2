@@ -18,6 +18,9 @@ export type TimerViewProps = {
   todoTitle: string;
   isTimerRunning: boolean;
   isTimerPaused: boolean;
+  hours: string;
+  minutes: string;
+  seconds: string;
   onStartClick: () => void;
   onPauseClick: () => void;
   onFinishClick: () => void;

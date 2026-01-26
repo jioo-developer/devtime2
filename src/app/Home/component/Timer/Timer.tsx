@@ -17,6 +17,9 @@ export function TimerView({
   todoTitle,
   isTimerRunning,
   isTimerPaused,
+  hours,
+  minutes,
+  seconds,
   onStartClick,
   onPauseClick,
   onFinishClick,
@@ -32,15 +35,15 @@ export function TimerView({
       <h2 className={styles.timerTitle}>{todoTitle}</h2>
       <div className={styles.timerDisplay}>
         <div className={styles.timeSegment}>
-          <div className={styles.timeValue}>00</div>
+          <div className={styles.timeValue}>{hours}</div>
         </div>
         <span className={styles.colon}>:</span>
         <div className={styles.timeSegment}>
-          <div className={styles.timeValue}>00</div>
+          <div className={styles.timeValue}>{minutes}</div>
         </div>
         <span className={styles.colon}>:</span>
         <div className={styles.timeSegment}>
-          <div className={styles.timeValue}>00</div>
+          <div className={styles.timeValue}>{seconds}</div>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useTimerContext } from "../provider/TimerContext";
 import { TimerResponse } from "./useGetTimers";
+import { useGetStudyLog } from "./useGetStudyLog";
 
 type UseRestoreTimerParams = {
   timerData: TimerResponse | undefined;
@@ -15,6 +16,9 @@ export function useRestoreTimer({ timerData }: UseRestoreTimerParams) {
     setTodoTitle,
   } = useTimerContext();
 
+  // studyLogId가 있으면 목표와 할 일 목록 조회
+  const { data: studyLogData } = useGetStudyLog(timerData?.studyLogId);
+
   useEffect(() => {
     if (!timerData) return;
 
@@ -24,8 +28,13 @@ export function useRestoreTimer({ timerData }: UseRestoreTimerParams) {
       // 타이머가 진행 중인 경우
       setIsTimerRunning(true);
       setIsTimerPaused(false);
-      // TODO: 서버에서 title과 todos도 받아와서 복원
-      // 현재는 API 응답에 title과 todos가 없으므로 나중에 추가 필요
+      
+      // studyLog에서 목표와 할 일 목록 복원
+      if (studyLogData) {
+        setSavedTitle(studyLogData.todayGoal);
+        setTodoTitle(studyLogData.todayGoal);
+        setSavedTodos(studyLogData.tasks);
+      }
     } else {
       // 타이머가 없는 경우 초기 상태로 설정
       setIsTimerRunning(false);
@@ -36,6 +45,7 @@ export function useRestoreTimer({ timerData }: UseRestoreTimerParams) {
     }
   }, [
     timerData,
+    studyLogData,
     setIsTimerRunning,
     setIsTimerPaused,
     setSavedTitle,
