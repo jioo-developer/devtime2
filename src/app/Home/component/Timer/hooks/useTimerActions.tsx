@@ -4,9 +4,8 @@ import TodoListForm from "@/app/Home/component/Form/Form";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerContext } from "../../../provider/TimerContext";
-import { usePauseTimer } from "../../../hooks/usePauseTimer";
-import { useResumeTimer } from "../../../hooks/useResumeTimer";
-import { useResetTimer } from "../../../hooks/useResetTimer";
+import { useTimerMutations } from "../../../hooks/useTimerMutations";
+import { calculateSplitTimes } from "../../../utils/calculateSplitTimes";
 
 export function useTimerActions() {
   const openModal = useModalStore.getState().push;
@@ -22,9 +21,8 @@ export function useTimerActions() {
     setTodoTitle,
   } = useTimerContext();
 
-  const pauseTimerMutation = usePauseTimer();
-  const resumeTimerMutation = useResumeTimer();
-  const resetTimerMutation = useResetTimer();
+  const { pauseTimerMutation, resumeTimerMutation, resetTimerMutation, finishTimerMutation } =
+    useTimerMutations();
 
   const startTimer = (timerId?: string) => {
     // 일시정지 상태면 재개
@@ -128,7 +126,7 @@ export function useTimerActions() {
     });
   };
 
-  const finishTimer = () => {
+  const finishTimer = (timerId?: string, startTime?: string) => {
     openModal({
       width: 640,
       height: 828,
@@ -142,15 +140,48 @@ export function useTimerActions() {
             closeModal();
             showListTimer();
           }}
-          onFinish={(reflection, completedTodos) => {
-            console.log("공부 완료", { reflection, completedTodos });
-            // TODO: API 호출로 데이터 저장
-            setIsTimerRunning(false);
-            setIsTimerPaused(false);
-            setSavedTitle("");
-            setSavedTodos([]);
-            setTodoTitle("오늘도 열심히 달려봐요!");
-            closeModal();
+          onFinish={(reflection) => {
+            if (timerId && startTime) {
+              // splitTimes 계산
+              const splitTimes = calculateSplitTimes(startTime, new Date());
+
+              // 최종 할 일 목록 (완료된 것만 또는 모든 것 - 요구사항 확인 필요)
+              // 일단 모든 할 일 목록을 보냄
+              const finalTasks = savedTodos;
+
+              finishTimerMutation.mutate(
+                {
+                  timerId,
+                  data: {
+                    splitTimes,
+                    tasks: finalTasks,
+                    reflection: reflection.trim(),
+                  },
+                },
+                {
+                  onSuccess: () => {
+                    setIsTimerRunning(false);
+                    setIsTimerPaused(false);
+                    setSavedTitle("");
+                    setSavedTodos([]);
+                    setTodoTitle("오늘도 열심히 달려봐요!");
+                    closeModal();
+                  },
+                  onError: (error) => {
+                    console.error("타이머 종료 실패:", error);
+                    closeModal();
+                  },
+                }
+              );
+            } else {
+              // timerId나 startTime이 없으면 로컬 상태만 초기화
+              setIsTimerRunning(false);
+              setIsTimerPaused(false);
+              setSavedTitle("");
+              setSavedTodos([]);
+              setTodoTitle("오늘도 열심히 달려봐요!");
+              closeModal();
+            }
           }}
         />
       ),

@@ -29,7 +29,7 @@ function Timer() {
             seconds={seconds}
             onStartClick={() => startTimer(timerData?.timerId)}
             onPauseClick={() => pauseTimer(timerData?.timerId)}
-            onFinishClick={finishTimer}
+            onFinishClick={() => finishTimer(timerData?.timerId, timerData?.startTime)}
             onShowListClick={showListTimer}
             onResetClick={() => resetTimer(timerData?.timerId)}
         />
