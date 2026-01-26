@@ -18,20 +18,14 @@ const defaultTimerResponse: TimerResponse = {
 };
 
 export const useGetTimers = (): UseQueryResult<TimerResponse, Error> => {
-  return useQuery({
+  return useQuery<TimerResponse, Error>({
     queryKey: [QueryKey.TIMERS],
-
     queryFn: async () => {
-      try {
-        return await ApiClient.get<TimerResponse>(
-          "/api/timers",
-          undefined,
-          getAuthHeaders()
-        );
-      } catch (error) {
-        console.error("타이머 데이터를 가져오는데 실패했습니다:", error);
-        throw error;
-      }
+      return await ApiClient.get<TimerResponse>(
+        "/api/timers",
+        undefined,
+        getAuthHeaders()
+      );
     },
     retry: false,
     initialData: defaultTimerResponse,

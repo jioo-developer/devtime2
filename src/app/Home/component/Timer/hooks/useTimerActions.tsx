@@ -11,6 +11,7 @@ export function useTimerActions() {
   const {
     savedTitle,
     savedTodos,
+    isTimerPaused,
     setIsTimerRunning,
     setIsTimerPaused,
     setSavedTitle,
@@ -19,6 +20,11 @@ export function useTimerActions() {
   } = useTimerContext();
 
   const startTimer = () => {
+    // 일시정지 상태면 재개
+    if (isTimerPaused) {
+      setIsTimerPaused(false);
+      return;
+    }
     openModal({
       width: 640,
       height: 828,
@@ -125,8 +131,13 @@ export function useTimerActions() {
     });
   };
 
+  const pauseTimer = () => {
+    setIsTimerPaused(true);
+  };
+
   return {
     startTimer,
+    pauseTimer,
     showListTimer,
     resetTimer,
     finishTimer,
