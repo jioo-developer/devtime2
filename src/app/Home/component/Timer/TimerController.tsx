@@ -29,8 +29,8 @@ function Timer() {
             seconds={seconds}
             onStartClick={() => startTimer(timerData?.timerId)}
             onPauseClick={() => pauseTimer(timerData?.timerId)}
-            onFinishClick={() => finishTimer(timerData?.timerId, timerData?.startTime)}
-            onShowListClick={showListTimer}
+            onFinishClick={() => finishTimer(timerData?.timerId, timerData?.startTime, timerData?.studyLogId)}
+            onShowListClick={() => showListTimer(timerData?.studyLogId)}
             onResetClick={() => resetTimer(timerData?.timerId)}
         />
     );

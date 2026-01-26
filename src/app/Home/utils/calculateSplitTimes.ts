@@ -14,9 +14,6 @@ export function calculateSplitTimes(
   const start = new Date(startTime);
   const splitTimes: SplitTime[] = [];
 
-  const currentDate = new Date(start);
-  currentDate.setHours(0, 0, 0, 0); // 자정으로 설정
-
   // 시작일의 자정
   const startMidnight = new Date(start);
   startMidnight.setHours(0, 0, 0, 0);

@@ -21,7 +21,7 @@ export function useTimerActions() {
     setTodoTitle,
   } = useTimerContext();
 
-  const { pauseTimerMutation, resumeTimerMutation, resetTimerMutation, finishTimerMutation } =
+  const { pauseTimerMutation, resumeTimerMutation, resetTimerMutation, finishTimerMutation, updateTasksMutation } =
     useTimerMutations();
 
   const startTimer = (timerId?: string) => {
@@ -55,7 +55,7 @@ export function useTimerActions() {
     });
   };
 
-  const showListTimer = () => {
+  const showListTimer = (studyLogId?: string) => {
     openModal({
       width: 640,
       height: 828,
@@ -66,9 +66,33 @@ export function useTimerActions() {
           initialTitle={savedTitle}
           initialTodos={savedTodos}
           onSave={(title, todos) => {
-            setSavedTitle(title);
-            setSavedTodos(todos);
-            closeModal();
+            if (studyLogId) {
+              updateTasksMutation.mutate(
+                {
+                  studyLogId,
+                  data: { tasks: todos },
+                },
+                {
+                  onSuccess: () => {
+                    setSavedTitle(title);
+                    setSavedTodos(todos);
+                    closeModal();
+                  },
+                  onError: (error) => {
+                    console.error("할 일 목록 업데이트 실패:", error);
+                    // 에러가 발생해도 로컬 상태는 업데이트
+                    setSavedTitle(title);
+                    setSavedTodos(todos);
+                    closeModal();
+                  },
+                }
+              );
+            } else {
+              // studyLogId가 없으면 로컬 상태만 업데이트
+              setSavedTitle(title);
+              setSavedTodos(todos);
+              closeModal();
+            }
           }}
         />
       ),
@@ -126,7 +150,7 @@ export function useTimerActions() {
     });
   };
 
-  const finishTimer = (timerId?: string, startTime?: string) => {
+  const finishTimer = (timerId?: string, startTime?: string, studyLogId?: string) => {
     openModal({
       width: 640,
       height: 828,
@@ -138,7 +162,7 @@ export function useTimerActions() {
           initialTodos={savedTodos}
           onEditClick={() => {
             closeModal();
-            showListTimer();
+            showListTimer(studyLogId);
           }}
           onFinish={(reflection) => {
             if (timerId && startTime) {
