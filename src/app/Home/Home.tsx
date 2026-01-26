@@ -1,31 +1,24 @@
 "use client";
 import Timer from "@/app/Home/component/Timer/Timer";
-import { useTimers } from "./hooks/useTimers";
+import { TimerProvider, useTimerContext } from "@/app/Home/provider/TimerContext";
 import "./style.css";
 
-export default function Page() {
-  const { data: timerData, isLoading } = useTimers();
-  // 진행 중 타이머가 있는지 확인
-  const hasActiveTimer =
-    timerData &&
-    timerData.timerId &&
-    timerData.studyLogId &&
-    timerData.startTime
+function HomeView() {
+  const { todoTitle } = useTimerContext();
 
   return (
     <main className="mainPageWrap">
-      <h2 className="motivationalText">오늘도 열심히 달려봐요!</h2>
-      {isLoading ? (
-        <div>로딩 중...</div>
-      ) : hasActiveTimer ? (
-        <Timer
-          timerId={timerData.timerId}
-          studyLogId={timerData.studyLogId}
-          startTime={timerData.startTime}
-        />
-      ) : (
-        <Timer />
-      )}
+      <h2 className="motivationalText">{todoTitle}</h2>
+      <Timer />
     </main>
   );
 }
+
+export default function Home() {
+  return (
+    <TimerProvider>
+      <HomeView />
+    </TimerProvider>
+  );
+}
+// 레이아웃을 만들어서 넣어도 될 꺼 같은데 너무 오버로직 같아서 여기다가 만듬
