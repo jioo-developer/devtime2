@@ -1,5 +1,5 @@
 "use client";
-import Timer from "@/app/Home/component/Timer/Timer";
+import Timer from "@/app/Home/component/Timer/TimerController";
 import { TimerProvider } from "@/app/Home/provider/TimerContext";
 import "./style.css";
 
