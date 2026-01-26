@@ -43,8 +43,8 @@ export function useTimerSync({
           data: { splitTimes },
         },
         {
-          onError: (error) => {
-            console.error("타이머 동기화 실패:", error);
+          onError: () => {
+            // 동기화 실패 시 무시 (다음 동기화에서 재시도)
           },
         }
       );

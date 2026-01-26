@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { TodoFormData, TodoListFormProps } from "./types";
 import { useTodoForm } from "./hooks/useTodoForm";
 import { isTimerStartValid } from "./utils/timerValidation";
-import { useModalStore } from "@/store/modalStore";
 import { CreateForm } from "./components/editor/CreateForm";
 import { EditForm } from "./components/editor/EditForm";
 import { EndForm } from "./components/editor/EndForm";
@@ -22,7 +21,6 @@ function TodoListForm(props: TodoListFormProps) {
   const { watch, reset, getValues } = form;
   // useForm 관련 셋팅
 
-  const closeModal = useModalStore((state) => state.closeTop);
 
   const {
     todos,
@@ -43,7 +41,6 @@ function TodoListForm(props: TodoListFormProps) {
 
       if (canStartTimer) {
         props.onTimerStartSuccess(trimmed, todos);
-        closeModal();
       }
     }
 

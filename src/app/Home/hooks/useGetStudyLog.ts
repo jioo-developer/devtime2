@@ -24,6 +24,8 @@ export const useGetStudyLog = (
       );
     },
     enabled: Boolean(studyLogId),
-    retry: false,
+    retry: 3,
+    staleTime: 0, // 항상 최신 데이터를 가져오도록
+    refetchOnMount: true, // 마운트 시 항상 재요청
   });
 };
