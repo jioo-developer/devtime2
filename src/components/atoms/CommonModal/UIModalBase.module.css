@@ -23,8 +23,7 @@
 
 /* popup box */
 .panel {
-  box-sizing: border-box;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   background: var(--gray-white);
   box-shadow: var(--shadow-modal);
   padding: var(--gap-3xl);

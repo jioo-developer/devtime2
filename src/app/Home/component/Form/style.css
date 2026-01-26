@@ -24,11 +24,17 @@
 
 .todoInput {
   display: flex;
-  gap: var(--gap-xl);
   margin-bottom: 36px;
+  background: #F0F2F5;
+  padding: var(--gap-md);
+  border-radius: var(--radius-md);
+
+  input,button {
+    border-radius: 0;
+  }
 }
 
-.todoInput :global(input) {
+.todoInput input {
   flex: 1;
 }
 
@@ -47,4 +53,24 @@
   display: flex;
   justify-content: flex-end;
   gap: 0 var(--gap-lg);
+}
+.goalForm #title,
+.goalForm #title::placeholder {
+  font-size: calc(var(--fontsize-body) *2);
+}
+
+.goalForm #title::placeholder{
+  font-weight: var(--font-weight-bold);
+  color:#ccd0d6;
+}
+
+.goalForm #todoInput::placeholder {
+  font-size: var( --fontsize-body);
+  font-weight: var(--font-weight-medium);
+  color:#ccd0d6;
+}
+
+.goalForm .todoInput button:hover:not(:disabled) {
+  background: transparent;
+  color: var(--primary-core);
 }

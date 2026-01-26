@@ -32,11 +32,6 @@
   background: var(--state-active-60);
 }
 
-.primary:focus:not(:disabled) {
-  outline: 2px solid var(--secondary-fuchsia);
-  outline-offset: 2px;
-}
-
 .secondary {
   background: var(--primary-10);
   color: var(--primary-core);
@@ -51,11 +46,6 @@
 .secondary:active:not(:disabled) {
   background: var(--primary-30);
   opacity: 0.8;
-}
-
-.secondary:focus:not(:disabled) {
-  outline: 2px solid var(--secondary-fuchsia);
-  outline-offset: 2px;
 }
 
 .tertiary {
@@ -73,11 +63,6 @@
   background: var(--primary-30);
 }
 
-.tertiary:focus:not(:disabled) {
-  outline: 2px solid var(--secondary-fuchsia);
-  outline-offset: 2px;
-}
-
 .overlap {
   background: var(--gray-200);
   color: var(--gray-400);
@@ -91,11 +76,6 @@
 .overlap:active:not(:disabled) {
   background: var(--primary-vivid);
   color: var(--gray-white);
-}
-
-.overlap:focus:not(:disabled) {
-  outline: 2px solid var(--secondary-fuchsia);
-  outline-offset: 2px;
 }
 
 .disable {
@@ -119,11 +99,6 @@
 
 .none:active:not(:disabled) {
   background: var(--gray-200);
-}
-
-.none:focus:not(:disabled) {
-  outline: 2px solid var(--secondary-fuchsia);
-  outline-offset: 2px;
 }
 
 /* ===== Font Size ===== */

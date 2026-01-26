@@ -58,3 +58,8 @@
     gap: var(--gap-xl);
   }
 }
+
+.isTimerRunning {
+  display: flex;
+  gap: var(--gap-2xl);
+}
