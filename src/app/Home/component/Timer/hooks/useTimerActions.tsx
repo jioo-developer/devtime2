@@ -4,6 +4,9 @@ import TodoListForm from "@/app/Home/component/Form/Form";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerContext } from "../../../provider/TimerContext";
+import { usePauseTimer } from "../../../hooks/usePauseTimer";
+import { useResumeTimer } from "../../../hooks/useResumeTimer";
+import { useResetTimer } from "../../../hooks/useResetTimer";
 
 export function useTimerActions() {
   const openModal = useModalStore.getState().push;
@@ -19,10 +22,18 @@ export function useTimerActions() {
     setTodoTitle,
   } = useTimerContext();
 
-  const startTimer = () => {
+  const pauseTimerMutation = usePauseTimer();
+  const resumeTimerMutation = useResumeTimer();
+  const resetTimerMutation = useResetTimer();
+
+  const startTimer = (timerId?: string) => {
     // 일시정지 상태면 재개
-    if (isTimerPaused) {
-      setIsTimerPaused(false);
+    if (isTimerPaused && timerId) {
+      resumeTimerMutation.mutate(timerId, {
+        onSuccess: () => {
+          setIsTimerPaused(false);
+        },
+      });
       return;
     }
     openModal({
@@ -69,7 +80,7 @@ export function useTimerActions() {
     });
   };
 
-  const resetTimer = () => {
+  const resetTimer = (timerId?: string) => {
     openModal({
       width: 360,
       title: "기록을 초기화 하시겠습니까?",
@@ -82,12 +93,30 @@ export function useTimerActions() {
           <CommonButton
             theme="primary"
             onClick={() => {
-              setIsTimerRunning(false);
-              setIsTimerPaused(false);
-              setSavedTitle("");
-              setSavedTodos([]);
-              setTodoTitle("오늘도 열심히 달려봐요!");
-              closeModal();
+              if (timerId) {
+                resetTimerMutation.mutate(timerId, {
+                  onSuccess: () => {
+                    setIsTimerRunning(false);
+                    setIsTimerPaused(false);
+                    setSavedTitle("");
+                    setSavedTodos([]);
+                    setTodoTitle("오늘도 열심히 달려봐요!");
+                    closeModal();
+                  },
+                  onError: (error) => {
+                    console.error("타이머 초기화 실패:", error);
+                    closeModal();
+                  },
+                });
+              } else {
+                // timerId가 없으면 로컬 상태만 초기화
+                setIsTimerRunning(false);
+                setIsTimerPaused(false);
+                setSavedTitle("");
+                setSavedTodos([]);
+                setTodoTitle("오늘도 열심히 달려봐요!");
+                closeModal();
+              }
             }}
           >
             초기화하기
@@ -131,8 +160,19 @@ export function useTimerActions() {
     });
   };
 
-  const pauseTimer = () => {
-    setIsTimerPaused(true);
+  const pauseTimer = (timerId?: string) => {
+    if (timerId) {
+      pauseTimerMutation.mutate(timerId, {
+        onSuccess: () => {
+          setIsTimerPaused(true);
+        },
+        onError: (error) => {
+          console.error("타이머 일시정지 실패:", error);
+        },
+      });
+    } else {
+      setIsTimerPaused(true);
+    }
   };
 
   return {

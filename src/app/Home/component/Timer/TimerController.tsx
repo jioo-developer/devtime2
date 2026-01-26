@@ -27,11 +27,11 @@ function Timer() {
             hours={hours}
             minutes={minutes}
             seconds={seconds}
-            onStartClick={startTimer}
-            onPauseClick={pauseTimer}
+            onStartClick={() => startTimer(timerData?.timerId)}
+            onPauseClick={() => pauseTimer(timerData?.timerId)}
             onFinishClick={finishTimer}
             onShowListClick={showListTimer}
-            onResetClick={resetTimer}
+            onResetClick={() => resetTimer(timerData?.timerId)}
         />
     );
 }

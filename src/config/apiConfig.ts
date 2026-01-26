@@ -53,4 +53,46 @@ export const ApiClient = {
 
     return response.json();
   },
+
+  async put<T>(
+    endpoint: string,
+    data?: unknown,
+    headers?: HeadersInit,
+  ): Promise<T> {
+    const response = await fetch(`${this.config.baseUrl}${endpoint}`, {
+      method: "PUT",
+      headers: {
+        ...this.config.headers,
+        ...headers,
+      },
+      body: data ? JSON.stringify(data) : undefined,
+    });
+
+    if (!response.ok) {
+      throw new Error(`PUT ${endpoint} failed`);
+    }
+
+    return response.json();
+  },
+
+  async delete<T>(
+    endpoint: string,
+    data?: unknown,
+    headers?: HeadersInit,
+  ): Promise<T> {
+    const response = await fetch(`${this.config.baseUrl}${endpoint}`, {
+      method: "DELETE",
+      headers: {
+        ...this.config.headers,
+        ...headers,
+      },
+      body: data ? JSON.stringify(data) : undefined,
+    });
+
+    if (!response.ok) {
+      throw new Error(`DELETE ${endpoint} failed`);
+    }
+
+    return response.json();
+  },
 };
