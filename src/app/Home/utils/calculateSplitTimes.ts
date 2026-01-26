@@ -72,3 +72,11 @@ function formatDate(date: Date): string {
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
+
+/**
+ * startTime부터 현재까지의 splitTimes를 계산
+ */
+export function getCurrentSplitTimes(startTime?: string): SplitTime[] {
+  if (!startTime) return [];
+  return calculateSplitTimes(startTime, new Date());
+}

@@ -4,8 +4,8 @@ import TodoListForm from "@/app/Home/component/Form/Form";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerContext } from "../../../provider/TimerContext";
-import { useTimerMutations } from "../../../hooks/useTimerMutations";
-import { calculateSplitTimes } from "../../../utils/calculateSplitTimes";
+import { useTimerMutations } from "../../../hooks/mutations/useTimerMutations";
+import { calculateSplitTimes, getCurrentSplitTimes } from "../../../utils/calculateSplitTimes";
 
 export function useTimerActions() {
   const openModal = useModalStore.getState().push;
@@ -24,14 +24,21 @@ export function useTimerActions() {
   const { pauseTimerMutation, resumeTimerMutation, resetTimerMutation, finishTimerMutation, updateTasksMutation } =
     useTimerMutations();
 
-  const startTimer = (timerId?: string) => {
+  const startTimer = (timerId?: string, startTime?: string) => {
     // 일시정지 상태면 재개
-    if (isTimerPaused && timerId) {
-      resumeTimerMutation.mutate(timerId, {
-        onSuccess: () => {
-          setIsTimerPaused(false);
+    if (isTimerPaused && timerId && startTime) {
+      const splitTimes = getCurrentSplitTimes(startTime);
+      resumeTimerMutation.mutate(
+        {
+          timerId,
+          data: { splitTimes },
         },
-      });
+        {
+          onSuccess: () => {
+            setIsTimerPaused(false);
+          },
+        }
+      );
       return;
     }
     openModal({
@@ -215,16 +222,24 @@ export function useTimerActions() {
     });
   };
 
-  const pauseTimer = (timerId?: string) => {
-    if (timerId) {
-      pauseTimerMutation.mutate(timerId, {
-        onSuccess: () => {
-          setIsTimerPaused(true);
+  const pauseTimer = (timerId?: string, startTime?: string) => {
+    if (timerId && startTime) {
+      // 일시정지 시 즉시 동기화 (splitTimes 포함)
+      const splitTimes = getCurrentSplitTimes(startTime);
+      pauseTimerMutation.mutate(
+        {
+          timerId,
+          data: { splitTimes },
         },
-        onError: (error) => {
-          console.error("타이머 일시정지 실패:", error);
-        },
-      });
+        {
+          onSuccess: () => {
+            setIsTimerPaused(true);
+          },
+          onError: (error) => {
+            console.error("타이머 일시정지 실패:", error);
+          },
+        }
+      );
     } else {
       setIsTimerPaused(true);
     }

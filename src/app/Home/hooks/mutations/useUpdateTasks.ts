@@ -23,7 +23,6 @@ export const useUpdateTasks = () => {
       );
     },
     onSuccess: (_, variables) => {
-      // studyLog 상태 갱신
       queryClient.invalidateQueries({ queryKey: [QueryKey.STUDY_LOGS, variables.studyLogId] });
     },
   });
