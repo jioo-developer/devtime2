@@ -80,7 +80,7 @@ export function EndForm({
         )}
 
         {mode === "end" ? (
-          <FormFooter mode="end" onFinish={handleSubmit(onFinishValid, onFinishInvalid)} />
+          <FormFooter mode="end" onFinish={handleSubmit(onFinishValid)} />
         ) : (
           <FormFooter mode="reset" onReset={onReset!} />
         )}
