@@ -16,12 +16,10 @@ export default function TimerPage() {
   const totalPausedDuration = useTimerStore((state) => state.totalPausedDuration);
   const { data: timerData } = useGetTimers();
   const { data: studyLogData } = useGetStudyLog(timerData?.studyLogId);
-
-  useRestoreTimer(timerData, studyLogData);
   const { openTimerModal } = useTimerModal();
   const { resetTimer } = useResetTimerAction();
 
-  const effectiveStartTime = timerData?.startTime || startTimeFromStore;
+  useRestoreTimer(timerData, studyLogData);
 
   const {
     hours,
@@ -35,6 +33,8 @@ export default function TimerPage() {
     isPauseDisabled,
     isFinishDisabled,
   } = useTimerDisplay(timerData);
+
+  const effectiveStartTime = timerData?.startTime || startTimeFromStore;
 
   const handleStartOrResume = () =>
     isTimerPaused ? onResumeClick() : openTimerModal("create");
