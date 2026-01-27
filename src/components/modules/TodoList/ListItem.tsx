@@ -5,11 +5,13 @@ import codeIcon from "@/asset/images/code-icon.png";
 import CommonCheckbox from "@/components/atoms/CommonCheckbox/CommonCheckbox";
 import { TodoStatus, useTodoListItemController } from "./useTodoListController";
 import CommonImage from "@/components/atoms/CommonImage/CommonImage";
+import type { FormMode } from "@/app/timer/component/Form/types";
 
 interface TodoListItemProps {
   text: string;
   initialStatus?: TodoStatus;
-
+  /** edit일 때만 오른쪽(편집/삭제/체크) 노출 */
+  mode?: FormMode;
   onTextChange?: (nextText: string) => void;
   onStatusChange?: (nextStatus: TodoStatus) => void;
   onDelete?: () => void;
@@ -18,6 +20,7 @@ interface TodoListItemProps {
 export default function TodoListItem({
   text,
   initialStatus = "default",
+  mode,
   onTextChange,
   onStatusChange,
   onDelete,
@@ -74,6 +77,7 @@ export default function TodoListItem({
         )}
       </div>
 
+      {mode === "edit" && (
       <div className={styles.rightSection}>
         {/* typing 상태: 저장 체크 */}
         {isTyping && (
@@ -129,6 +133,7 @@ export default function TodoListItem({
           size={20}
         />
       </div>
+      )}
     </div>
   );
 }

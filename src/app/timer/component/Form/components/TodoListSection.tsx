@@ -1,11 +1,13 @@
 import TodoListItem from "@/components/modules/TodoList/ListItem";
 import type { TodoStatus } from "@/components/modules/TodoList/useTodoListController";
+import type { FormMode } from "../types";
 import "../style.css";
 
 export type TodoItem = { content: string; isCompleted: boolean };
 
 interface TodoListSectionProps {
   todos: TodoItem[] | string[];
+  mode?: FormMode;
   onDelete?: (index: number) => void;
   onTextChange?: (index: number) => (nextText: string) => void;
   /** 체크박스(완료) 변경. ListItem의 "disabled" = 완료됨(isCompleted true) */
@@ -20,6 +22,7 @@ function normalizeTodo(item: TodoItem | string): TodoItem {
 
 export function TodoListSection({
   todos,
+  mode,
   onDelete,
   onTextChange,
   onStatusChange,
@@ -37,12 +40,13 @@ export function TodoListSection({
           key={index}
           text={todo.content}
           initialStatus={todo.isCompleted ? "disabled" : "default"}
+          mode={mode}
           onDelete={onDelete ? () => onDelete(index) : undefined}
           onTextChange={onTextChange?.(index)}
           onStatusChange={
             onStatusChange?.(index)
               ? (next: TodoStatus) =>
-                  onStatusChange(index)(next === "disabled")
+                onStatusChange(index)(next === "disabled")
               : undefined
           }
         />

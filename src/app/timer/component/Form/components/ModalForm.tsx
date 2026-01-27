@@ -237,6 +237,7 @@ export default function ModalForm({
 
         <TodoListSection
           todos={listTodos}
+          mode={mode}
           onDelete={!isEndMode ? handleRemoveTodo : undefined}
           onTextChange={!isEndMode ? handleTextChange : undefined}
           onStatusChange={handleStatusChange}
