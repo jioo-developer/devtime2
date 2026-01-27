@@ -37,7 +37,7 @@ export function TodoListSection({
       </div>
       {items.map((todo, index) => (
         <TodoListItem
-          key={index}
+          key={`${index}-${todo.content}`}
           text={todo.content}
           initialStatus={todo.isCompleted ? "disabled" : "default"}
           mode={mode}

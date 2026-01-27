@@ -31,6 +31,7 @@ export const useStartTimer = () => {
 
   return useMutation<StartTimerResponse, Error, StartTimerRequest>({
     mutationFn: async (data) => {
+      setClientStartedAt(Date.now());
       return await ApiClient.post<StartTimerResponse>(
         "/api/timers",
         data,
@@ -54,7 +55,6 @@ export const useStartTimer = () => {
       setTodoTitle(variables.todayGoal);
       setSavedTodos(variables.tasks);
       setStartTime(data.startTime);
-      setClientStartedAt(Date.now());
       setTotalPausedDuration(0);
       setIsTimerRunning(true);
       closeTop();

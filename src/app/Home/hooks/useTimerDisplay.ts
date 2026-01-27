@@ -34,14 +34,14 @@ export function useTimerDisplay(timerData: TimerResponse | undefined) {
     }
     if (isLocalStart) {
       if (localDisplayEpochRef.current === null) {
-        localDisplayEpochRef.current = Date.now();
+        localDisplayEpochRef.current = clientStartedAt;
       }
     } else if (serverBaseMs == null) {
       return;
     }
 
     const baseMs: number = isLocalStart
-      ? (localDisplayEpochRef.current ?? Date.now())
+      ? (localDisplayEpochRef.current ?? clientStartedAt ?? Date.now())
       : (serverBaseMs as number);
 
     const pad = (n: number) => String(n).padStart(2, "0");

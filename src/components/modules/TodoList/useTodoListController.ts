@@ -32,6 +32,11 @@ export function useTodoListItemController({
     setCurrentText(text);
   }, [text]);
 
+  // initialStatus 변경 시 동기화 (위 항목 삭제 등으로 같은 인덱스에 다른 항목이 올 때)
+  useEffect(() => {
+    setStatus(initialStatus);
+  }, [initialStatus]);
+
   const isCompleted = status === "completed";
   const isDisabled = status === "disabled";
   const isTyping = status === "typing";
