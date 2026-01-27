@@ -6,12 +6,12 @@
 .todoSection {
   display: flex;
   flex-direction: column;
-  gap: var(--gap-xl);
+  gap: calc(var(--margin-xl) - 4px);
   height: 100%;
 }
 
 .sectionTitle {
-  font-size: var(--fontsize-body);
+  font-size: var( --fontsize-title);
   font-weight: var(--font-weight-semibold);
   color: var(--gray-700);
   margin: 0 0 var(--gap-md) 0;
@@ -24,14 +24,20 @@
 
 .todoInput {
   display: flex;
-  margin: var(--gap-md) 0 36px 0;
   background: #F0F2F5;
-  padding: var(--gap-2xl);
+  padding: var(--gap-md);
   border-radius: var(--radius-md);
+  margin-top: var(--gap-xl);
 
   input,button {
     border-radius: 0;
+    border: 0;
   }
+}
+
+.todoInput-end {
+  padding: var(--gap-md);
+  margin-top: 0;
 }
 
 .todoInput input {
@@ -73,4 +79,87 @@
 .goalForm .todoInput button:hover:not(:disabled) {
   background: transparent;
   color: var(--primary-core);
+}
+
+.headerSection {
+  margin-bottom: 36px;
+}
+
+.headerTitle {
+  font-size: var( --fontsize-title);
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.headerDescription {
+  font-size: var( --fontsize-body);
+  color: #666;
+}
+
+.todoInputWrapper {
+  margin-bottom: var(--margin-2xl);
+}
+
+.inputNoBorder {
+  border: 0;
+}
+
+.todoInputWrapper {
+  margin-bottom: var(--margin-2xl);
+}
+
+.addButton {
+  width: auto;
+}
+
+.addButtonEnabled {
+  color: var(--primary-core);
+}
+
+.addButtonDisabled {
+  color: #969DA8;
+}
+
+/* TodoListSection */
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--margin-sm);
+  gap: var(--gap-md);
+}
+
+.editButton {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  color: #666;
+  font-size: var( --fontsize-body);
+  cursor: pointer;
+  padding: 0;
+}
+
+.titleInputNoBorder {
+  border: 0 !important;
+  margin-bottom: 12px !important;
+}
+
+.todoInputNoBorder {
+  border: 0;
+}
+
+.reflectionContainer {
+  margin-top: 24px;
+}
+
+.reflectionTextarea {
+  width: 100%;
+  min-height: 120px;
+  border: 1px dashed var(--gray-300);
+  border-radius: 8px;
+  padding: 16px;
+  box-sizing: border-box;
 }

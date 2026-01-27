@@ -1,9 +1,10 @@
-import React from 'react'
+import { redirect } from 'next/navigation';
 
 function Home() {
-  return (
-    <div>home</div>
-  )
+  redirect("/timer");
+  // return (
+  //   <div>home</div>
+  // )
 }
 
 export default Home
