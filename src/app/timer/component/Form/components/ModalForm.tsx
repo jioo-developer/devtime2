@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { FormMode, TodoFormData } from "../types";
 import { useTodoForm } from "../hooks/useTodoForm";
@@ -8,13 +8,20 @@ import { TodoListSection } from "./TodoListSection";
 import { TodoInputSection } from "./TodoInputSection";
 import { FormFooter } from "./FormFooter";
 import { CommonTextArea } from "@/components/atoms/CommonTextArea/CommonTextArea";
+import { useGetStudyLog } from "@/app/timer/hooks/useGetStudyLog";
 import { useStartTimer } from "@/app/timer/hooks/useStartTimer";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerStore } from "@/store/timerStore";
 import "../style.css";
 
-export default function ModalForm({ mode }: { mode: FormMode }) {
+type ModalFormProps = { mode: FormMode; studyLogId?: string };
+
+export default function ModalForm({ mode, studyLogId }: ModalFormProps) {
   const isEndMode = mode === "end";
+  const isEditMode = mode === "edit";
+
+  const { data: studyLog } = useGetStudyLog(isEditMode ? studyLogId : undefined);
+  const savedTodos = useTimerStore((state) => state.savedTodos);
 
   const {
     register,
@@ -32,6 +39,11 @@ export default function ModalForm({ mode }: { mode: FormMode }) {
     handleTextChange,
   } = useTodoForm(watch, reset, []);
 
+  const listTodos =
+    isEditMode && studyLogId
+      ? (studyLog?.data?.tasks ?? savedTodos ?? [])
+      : (todos ?? []);
+
   const canStartTimer =
     mode === "create" && isTimerStartValid(watch("title"), todos);
 
@@ -41,24 +53,19 @@ export default function ModalForm({ mode }: { mode: FormMode }) {
 
   const onStartTimer = () => {
     const title = watch("title");
-    if (title) {
-      startTimer(
-        { todayGoal: title, tasks: [...todos] },
-        {
-          onSuccess: () => {
-            setTodoTitle(title);
-            setSavedTodos(todos);
-            setIsTimerRunning(true);
-            closeTop();
-          },
-          onError: (error) => {
-            if (error.message.includes("409")) {
-              closeTop();
-            }
-          },
-        },
-      );
-    }
+    if (!title) return;
+    const payload = { todayGoal: title, tasks: [...todos] };
+    startTimer(payload, {
+      onSuccess: (_data, { todayGoal, tasks }) => {
+        setTodoTitle(todayGoal);
+        setSavedTodos(tasks);
+        setIsTimerRunning(true);
+        closeTop();
+      },
+      onError: (error) => {
+        if (error.message.includes("409")) closeTop();
+      },
+    });
   };
   const onSave = () => {
     // TODO: 저장 API 연동
@@ -69,6 +76,12 @@ export default function ModalForm({ mode }: { mode: FormMode }) {
       // TODO: 공부 완료 API 연동 (data.reflection, completedTodos 등)
     })();
   };
+
+  useEffect(() => {
+    if (isEditMode && studyLog?.data) {
+      reset({ title: studyLog.data.todayGoal, todoInput: "" });
+    }
+  }, [isEditMode, studyLog, reset]);
 
   return (
     <div className="goalForm">
@@ -92,7 +105,7 @@ export default function ModalForm({ mode }: { mode: FormMode }) {
         )}
 
         <TodoListSection
-          todos={todos}
+          todos={listTodos}
           onDelete={!isEndMode ? handleRemoveTodo : undefined}
           onTextChange={!isEndMode ? handleTextChange : undefined}
         />

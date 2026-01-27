@@ -15,7 +15,7 @@ export function TodoListSection({
   onDelete,
   onTextChange,
 }: TodoListSectionProps) {
-  if (todos.length === 0) return null;
+  if (!todos?.length) return null;
 
   return (
     <div className="todoList">

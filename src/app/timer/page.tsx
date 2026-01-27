@@ -13,6 +13,9 @@ import showListIcon from "@/asset/images/showList.svg";
 import ResetIcon from "@/asset/images/reset.svg";
 import clsx from "clsx";
 import { useTimerModal } from "./hooks/useTimerModal";
+import { useGetTimers } from "./hooks/useGetTimers";
+import { useGetStudyLog } from "./hooks/useGetStudyLog";
+import { useRestoreTimer } from "./hooks/useRestoreTimer";
 import { useTimerStore } from "@/store/timerStore";
 
 export default function TimerPage() {
@@ -25,8 +28,11 @@ export default function TimerPage() {
   const isTimerPaused = useTimerStore((state) => state.isTimerPaused);
   const setIsTimerPaused = useTimerStore((state) => state.setIsTimerPaused);
 
-  const { openTimerModal } = useTimerModal();
+  const { data: timerData } = useGetTimers();
+  const { data: studyLogData } = useGetStudyLog(timerData?.studyLogId);
+  useRestoreTimer(timerData, studyLogData);
 
+  const { openTimerModal } = useTimerModal();
 
   const onPauseClick = () => {
     setIsTimerPaused(true);
@@ -35,7 +41,6 @@ export default function TimerPage() {
     setIsTimerRunning(false);
     setIsTimerPaused(false);
   };
-  const onShowListClick = () => { };
   const onResetClick = () => {
     setIsTimerRunning(false);
     setIsTimerPaused(false);
@@ -123,7 +128,7 @@ export default function TimerPage() {
               className="finishButton"
               aria-label="할일 목록"
               title="할일 목록"
-              onClick={onShowListClick}
+              onClick={() => openTimerModal("edit", timerData?.studyLogId)}
             >
               <CommonImage
                 src={showListIcon}
