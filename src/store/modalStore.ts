@@ -1,5 +1,4 @@
 "use client";
-
 import { create } from "zustand";
 import type { ModalId, ModalItem } from "../types/modalType";
 

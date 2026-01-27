@@ -1,29 +1,44 @@
-import { FormEvent, TextareaHTMLAttributes, useRef } from "react";
-import styles from "./style.module.css";
+import {
+  FormEvent,
+  TextareaHTMLAttributes,
+  useRef,
+  forwardRef,
+  MutableRefObject,
+} from "react";
 import clsx from "clsx";
+import styles from "./style.module.css";
 
-type AutoResizeTextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
-  label?: string;
-  error?: string;
-};
+type AutoResizeTextAreaProps =
+  TextareaHTMLAttributes<HTMLTextAreaElement> & {
+    label?: string;
+    error?: string;
+  };
 
-export function CommonTextArea({
-  onInput,
-  label,
-  error,
-  className,
-  ...props
-}: AutoResizeTextAreaProps) {
-  const ref = useRef<HTMLTextAreaElement>(null);
+export const CommonTextArea = forwardRef<
+  HTMLTextAreaElement,
+  AutoResizeTextAreaProps
+>(function CommonTextArea(props, forwardedRef) {
+  const {
+    label,
+    error,
+    className,
+    onInput,
+    style,
+    rows = 1,
+    ...restProps
+  } = props;
 
-  const handleInput = (e: FormEvent<HTMLTextAreaElement>) => {
-    const el = ref.current;
-    if (!el) return;
+  const internalRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = (forwardedRef ?? internalRef) as MutableRefObject<HTMLTextAreaElement>;
 
-    el.style.height = "auto";
-    el.style.height = `${el.scrollHeight}px`;
+  const handleInput = (event: FormEvent<HTMLTextAreaElement>) => {
+    const textarea = textareaRef.current;
+    if (!textarea) return;
 
-    onInput?.(e);
+    textarea.style.height = "auto";
+    textarea.style.height = `${textarea.scrollHeight}px`;
+
+    onInput?.(event);
   };
 
   return (
@@ -31,19 +46,19 @@ export function CommonTextArea({
       {label && <span>{label}</span>}
 
       <textarea
-        {...props}
-        ref={ref}
-        rows={1}
+        {...restProps}
+        ref={textareaRef}
+        rows={rows}
         onInput={handleInput}
         className={clsx(styles.textarea, className)}
         style={{
           resize: "none",
           overflow: "hidden",
-          ...props.style,
+          ...style,
         }}
       />
 
       {error && <span className="error">{error}</span>}
     </label>
   );
-}
+});

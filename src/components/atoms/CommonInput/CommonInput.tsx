@@ -21,6 +21,7 @@ export interface CommonInputProps<T extends FieldValues> {
   testId?: string;
   success?: string;
   style?: CSSProperties;
+  className?: string;
 }
 
 function CommonInput<T extends FieldValues>({
@@ -35,6 +36,7 @@ function CommonInput<T extends FieldValues>({
   testId,
   success,
   style,
+  className,
 }: CommonInputProps<T>) {
   return (
     <label htmlFor={String(id)} className={styles.labelArea}>
@@ -46,7 +48,7 @@ function CommonInput<T extends FieldValues>({
         value={value}
         placeholder={placeholder}
         data-testid={testId}
-        className={clsx(styles.input)}
+        className={clsx(styles.input, className)}
         style={style}
         {...(register && register(id, validation))}
       />

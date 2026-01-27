@@ -3,10 +3,10 @@ import React from "react";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 
 export const handleLoginError = () => {
-  const openModal = useModalStore.getState().push;
-  const closeModal = useModalStore.getState().closeTop;
+  const push = useModalStore.getState().push;
+  const closeTop = useModalStore.getState().closeTop;
 
-  openModal({
+  push({
     title: "로그인 실패",
     content: "로그인 정보를 다시 확인해 주세요.",
     footer: React.createElement(
@@ -14,7 +14,7 @@ export const handleLoginError = () => {
       {
         theme: "primary",
         onClick: () => {
-          closeModal();
+          closeTop();
           // 모달 닫은 후 이메일 입력창으로 포커스 이동
           setTimeout(() => {
             const emailInput = document.querySelector(
