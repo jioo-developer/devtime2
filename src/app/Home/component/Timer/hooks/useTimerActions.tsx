@@ -4,19 +4,18 @@ import TodoListForm from "@/app/Home/component/Form/Form";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerContext } from "../../../provider/TimerContext";
-import { useTimerMutations } from "../../../hooks/mutations/useTimerMutations";
+import { useTimerMutations } from "../../../hooks/mutations";
 import { calculateSplitTimes, getCurrentSplitTimes } from "../../../utils/calculateSplitTimes";
 
 export function useTimerActions() {
   const openModal = useModalStore.getState().push;
   const closeModal = useModalStore.getState().closeTop;
   const {
-    savedTitle,
     savedTodos,
+    todoTitle,
     isTimerPaused,
     setIsTimerRunning,
     setIsTimerPaused,
-    setSavedTitle,
     setSavedTodos,
     setTodoTitle,
   } = useTimerContext();
@@ -31,7 +30,7 @@ export function useTimerActions() {
       resumeTimerMutation.mutate(
         {
           timerId,
-          data: { splitTimes },
+          splitTimes,
         },
         {
           onSuccess: () => {
@@ -49,7 +48,7 @@ export function useTimerActions() {
           mode="create"
           setTodoTitle={setTodoTitle}
           onTimerStartSuccess={(title, todos) => {
-            setSavedTitle(title);
+            setTodoTitle(title);
             setSavedTodos(todos);
             setIsTimerRunning(true);
             setIsTimerPaused(false);
@@ -70,25 +69,25 @@ export function useTimerActions() {
       content: (
         <TodoListForm
           mode="edit"
-          initialTitle={savedTitle}
+          initialTitle={todoTitle}
           initialTodos={savedTodos}
           onSave={(title, todos) => {
             if (studyLogId) {
               updateTasksMutation.mutate(
                 {
                   studyLogId,
-                  data: { tasks: todos },
+                  tasks: todos,
                 },
                 {
                   onSuccess: () => {
-                    setSavedTitle(title);
+                    setTodoTitle(title);
                     setSavedTodos(todos);
                     closeModal();
                   },
-                  onError: (error) => {
+                  onError: (error: Error) => {
                     console.error("할 일 목록 업데이트 실패:", error);
                     // 에러가 발생해도 로컬 상태는 업데이트
-                    setSavedTitle(title);
+                    setTodoTitle(title);
                     setSavedTodos(todos);
                     closeModal();
                   },
@@ -96,7 +95,7 @@ export function useTimerActions() {
               );
             } else {
               // studyLogId가 없으면 로컬 상태만 업데이트
-              setSavedTitle(title);
+              setTodoTitle(title);
               setSavedTodos(todos);
               closeModal();
             }
@@ -123,16 +122,16 @@ export function useTimerActions() {
             theme="primary"
             onClick={() => {
               if (timerId) {
-                resetTimerMutation.mutate(timerId, {
+                resetTimerMutation.mutate({ timerId }, {
                   onSuccess: () => {
                     setIsTimerRunning(false);
                     setIsTimerPaused(false);
-                    setSavedTitle("");
+                    setTodoTitle("");
                     setSavedTodos([]);
                     setTodoTitle("오늘도 열심히 달려봐요!");
                     closeModal();
                   },
-                  onError: (error) => {
+                  onError: (error: Error) => {
                     console.error("타이머 초기화 실패:", error);
                     closeModal();
                   },
@@ -141,7 +140,7 @@ export function useTimerActions() {
                 // timerId가 없으면 로컬 상태만 초기화
                 setIsTimerRunning(false);
                 setIsTimerPaused(false);
-                setSavedTitle("");
+                setTodoTitle("");
                 setSavedTodos([]);
                 setTodoTitle("오늘도 열심히 달려봐요!");
                 closeModal();
@@ -165,7 +164,7 @@ export function useTimerActions() {
       content: (
         <TodoListForm
           mode="end"
-          initialTitle={savedTitle}
+          initialTitle={todoTitle}
           initialTodos={savedTodos}
           onEditClick={() => {
             closeModal();
@@ -193,12 +192,12 @@ export function useTimerActions() {
                   onSuccess: () => {
                     setIsTimerRunning(false);
                     setIsTimerPaused(false);
-                    setSavedTitle("");
+                    setTodoTitle("");
                     setSavedTodos([]);
                     setTodoTitle("오늘도 열심히 달려봐요!");
                     closeModal();
                   },
-                  onError: (error) => {
+                  onError: (error: Error) => {
                     console.error("타이머 종료 실패:", error);
                     closeModal();
                   },
@@ -208,7 +207,7 @@ export function useTimerActions() {
               // timerId나 startTime이 없으면 로컬 상태만 초기화
               setIsTimerRunning(false);
               setIsTimerPaused(false);
-              setSavedTitle("");
+              setTodoTitle("");
               setSavedTodos([]);
               setTodoTitle("오늘도 열심히 달려봐요!");
               closeModal();
@@ -229,13 +228,13 @@ export function useTimerActions() {
       pauseTimerMutation.mutate(
         {
           timerId,
-          data: { splitTimes },
+          data: splitTimes,
         },
         {
           onSuccess: () => {
             setIsTimerPaused(true);
           },
-          onError: (error) => {
+          onError: (error: Error) => {
             console.error("타이머 일시정지 실패:", error);
           },
         }

@@ -37,6 +37,7 @@ export const ApiClient = {
     endpoint: string,
     data?: unknown,
     headers?: HeadersInit,
+    options?: { onNotOk?: (response: Response) => Promise<never> },
   ): Promise<T> {
     const response = await fetch(`${this.config.baseUrl}${endpoint}`, {
       method: "POST",
@@ -48,6 +49,9 @@ export const ApiClient = {
     });
 
     if (!response.ok) {
+      if (options?.onNotOk) {
+        return options.onNotOk(response);
+      }
       throw new Error(`POST ${endpoint} failed`);
     }
 

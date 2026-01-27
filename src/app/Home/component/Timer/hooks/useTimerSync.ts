@@ -40,7 +40,7 @@ export function useTimerSync({
       syncTimerMutation.mutate(
         {
           timerId,
-          data: { splitTimes },
+          data: splitTimes,
         },
         {
           onError: () => {

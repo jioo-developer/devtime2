@@ -2,19 +2,16 @@ import { useMutation } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { getAuthHeaders } from "@/utils/authUtils";
 import { SplitTime } from "../../utils/calculateSplitTimes";
+import { ResponseMessage, TimerIdWithData } from "./type";
 
-type SyncTimerRequest = {
-  splitTimes: SplitTime[];
-};
-
-type SyncTimerResponse = {
-  message: string;
+interface SyncTimerVariables extends TimerIdWithData {
+  data: SplitTime[];
 };
 
 export const useSyncTimer = () => {
-  return useMutation<SyncTimerResponse, Error, { timerId: string; data: SyncTimerRequest }>({
+  return useMutation<ResponseMessage, Error, SyncTimerVariables>({
     mutationFn: async ({ timerId, data }) => {
-      return await ApiClient.put<SyncTimerResponse>(
+      return await ApiClient.put<ResponseMessage>(
         `/api/timers/${timerId}`,
         data,
         getAuthHeaders()

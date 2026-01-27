@@ -2,23 +2,20 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
 import { getAuthHeaders } from "@/utils/authUtils";
+import { ResponseMessage, StudyLogIdWithData } from "./type";
 
-type UpdateTasksRequest = {
+export interface UpdateTasksVariables extends StudyLogIdWithData {
   tasks: string[];
-};
-
-type UpdateTasksResponse = {
-  message: string;
 };
 
 export const useUpdateTasks = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<UpdateTasksResponse, Error, { studyLogId: string; data: UpdateTasksRequest }>({
-    mutationFn: async ({ studyLogId, data }) => {
-      return await ApiClient.put<UpdateTasksResponse>(
+  return useMutation<ResponseMessage, Error, UpdateTasksVariables>({
+    mutationFn: async ({ studyLogId, tasks }) => {
+      return await ApiClient.put<ResponseMessage>(
         `/api/${studyLogId}/tasks`,
-        data,
+        tasks,
         getAuthHeaders()
       );
     },

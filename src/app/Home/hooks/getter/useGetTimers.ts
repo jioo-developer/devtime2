@@ -31,5 +31,6 @@ export const useGetTimers = (): UseQueryResult<TimerResponse, Error> => {
     staleTime: 0, // 항상 최신 데이터를 가져오도록
     refetchOnMount: true, // 마운트 시 항상 재요청
     refetchOnWindowFocus: true, // 윈도우 포커스 시 재요청
+    initialData: defaultTimerResponse,
   });
 };

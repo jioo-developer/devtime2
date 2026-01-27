@@ -1,15 +1,9 @@
-import { useElapsedTimerCore } from "./useElapsedTimer";
+import { useElapsedTimerCore, type UseElapsedTimerParams } from "./useElapsedTimer";
 
 export type TimerRefs = {
     intervalId: ReturnType<typeof setInterval> | null;
     pauseStartMs: number | null;   // "현재" 일시정지 시작 시각
     totalPausedMs: number;         // "누적" 일시정지 시간
-};
-
-type UseElapsedTimerParams = {
-    startTime: string | undefined;
-    isTimerRunning: boolean;
-    isTimerPaused: boolean;
 };
 
 export function stopInterval(refs: TimerRefs) {
