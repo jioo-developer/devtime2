@@ -29,7 +29,7 @@
   gap: var(--gap-xl);
   font-size: var(--fontsize-body);
   font-weight: var(--font-weight-semibold);
-  color: rgba(2, 62, 153, 1);
+  color: var(--secondary-indigo);
 }
 
 .navigation {
@@ -44,7 +44,7 @@
   font-size: var(--fontsize-body);
   line-height: var(--lineheight-body);
   font-weight: var(--font-weight-semibold);
-  color: rgba(2, 62, 153, 1);
+  color: var(--secondary-indigo);
   transition: all 0.2s ease;
   text-decoration: none;
 }

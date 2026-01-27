@@ -101,6 +101,13 @@
   --state-review-50: #8e98b1;
   --state-shadow1: #d0d3da;
   --state-unselect2: #14141f;
+
+  /* ------------------------ Radius / Shadow / Overlay ------------------------ */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --overlay-dim: rgba(0, 0, 0, 0.1);
+  --shadow-modal: 0px 4px 8px 8px rgba(0, 0, 0, 0.05);
+  --modal-width-default: 480px;
 }
 
 .pageReset {
@@ -143,4 +150,9 @@
   font-size: var(--fontsize-body-small);
   color: #22c55e;
   padding-left: 5px;
+}
+
+
+.modal button {
+  width: auto !important;
 }
