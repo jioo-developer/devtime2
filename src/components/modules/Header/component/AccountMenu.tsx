@@ -8,6 +8,7 @@ import { useLogout } from "@/app/login/hooks/useLogout";
 import { useQuery } from "@tanstack/react-query";
 import { AuthenticatedApiClient } from "@/config/authenticatedApiClient";
 import { QueryKey } from "@/constant/queryKeys";
+import { useIsLoggedIn } from "@/app/Home/hooks/useIsLoggedIn";
 
 type ProfileResponse = {
   nickname?: string;
@@ -16,14 +17,14 @@ type ProfileResponse = {
 
 function AccountMenu() {
   const { mutate: logout } = useLogout();
-  
+  const isLoggedIn = useIsLoggedIn();
+
   const { data: profile } = useQuery({
     queryKey: [QueryKey.PROFILE],
     queryFn: () => AuthenticatedApiClient.get<ProfileResponse>("/api/profile"),
     retry: false,
+    enabled: isLoggedIn,
   });
-
-  const isLoggedIn = !!profile;
   const nickname = profile?.nickname;
   const profileImageUrl = profile?.profileImageUrl;
 

@@ -17,9 +17,12 @@ const defaultTimerResponse: TimerResponse = {
   startTime: "",
 };
 
-export const useGetTimers = (): UseQueryResult<TimerResponse, Error> => {
+export const useGetTimers = (
+  enabled: boolean = true
+): UseQueryResult<TimerResponse, Error> => {
   return useQuery<TimerResponse, Error>({
     queryKey: [QueryKey.TIMERS],
+    enabled,
     queryFn: async () =>
       ApiClient.get<TimerResponse>(
         "/api/timers",
