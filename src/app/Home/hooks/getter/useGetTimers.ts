@@ -20,23 +20,22 @@ const defaultTimerResponse: TimerResponse = {
 export const useGetTimers = (): UseQueryResult<TimerResponse, Error> => {
   return useQuery<TimerResponse, Error>({
     queryKey: [QueryKey.TIMERS],
-    queryFn: async () => {
-      return await ApiClient.get<TimerResponse>(
+    queryFn: async () =>
+      ApiClient.get<TimerResponse>(
         "/api/timers",
         undefined,
-        getAuthHeaders()
-      );
-    },
+        getAuthHeaders(),
+        {
+          onNotOk: async (response) => {
+            if (response.status === 404) return defaultTimerResponse;
+            throw new Error("GET /api/timers failed");
+          },
+        }
+      ),
     retry: 3,
-<<<<<<<< HEAD:src/app/Home/hooks/getter/useGetTimers.ts
-    staleTime: 0, // 항상 최신 데이터를 가져오도록
-    refetchOnMount: true, // 마운트 시 항상 재요청
-    refetchOnWindowFocus: true, // 윈도우 포커스 시 재요청
-========
     staleTime: 0,
     refetchOnMount: true,
     refetchOnWindowFocus: true,
->>>>>>>> origin/week2_feature/timerAction:src/app/timer/hooks/useGetTimers.ts
     initialData: defaultTimerResponse,
   });
 };

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import TimerPage from "./timer/page";
+import HomePage from "./Home/page";
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -13,5 +13,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function Main() {
-  return <TimerPage />;
+  return <HomePage />;
 }

@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
 import { getAuthHeaders } from "@/utils/authUtils";
+import { useModalStore } from "@/store/modalStore";
+import { useTimerStore } from "@/store/timerStore";
 
 type StartTimerRequest = {
   todayGoal: string;
@@ -17,6 +19,15 @@ export type StartTimerResponse = {
 
 export const useStartTimer = () => {
   const queryClient = useQueryClient();
+  const {
+    setTodoTitle,
+    setSavedTodos,
+    setIsTimerRunning,
+    setStartTime,
+    setClientStartedAt,
+    setTotalPausedDuration,
+  } = useTimerStore.getState();
+  const closeTop = useModalStore.getState().closeTop;
 
   return useMutation<StartTimerResponse, Error, StartTimerRequest>({
     mutationFn: async (data) => {
@@ -34,18 +45,24 @@ export const useStartTimer = () => {
             }
 
             throw new Error(message);
-          }
+          },
         },
       );
     },
-    onSuccess: () => {
-      // 타이머 상태 갱신
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.TIMERS] });
+      setTodoTitle(variables.todayGoal);
+      setSavedTodos(variables.tasks);
+      setStartTime(data.startTime);
+      setClientStartedAt(Date.now());
+      setTotalPausedDuration(0);
+      setIsTimerRunning(true);
+      closeTop();
     },
     onError: (error) => {
-      // 409 Conflict 에러 발생 시에도 타이머 상태 갱신 (기존 타이머 복원)
       if (error.message.includes("409")) {
         queryClient.invalidateQueries({ queryKey: [QueryKey.TIMERS] });
+        closeTop();
       }
     },
   });

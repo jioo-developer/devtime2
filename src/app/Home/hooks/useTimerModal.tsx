@@ -3,9 +3,9 @@
 import React from "react";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerStore } from "@/store/timerStore";
-import ModalForm from "@/app/timer/component/Form/components/ModalForm";
-import type { FormMode } from "@/app/timer/component/Form/types";
-import type { ModalFormEndOptions } from "@/app/timer/component/Form/components/ModalForm";
+import ModalForm from "@/app/Home/component/Form/components/ModalForm";
+import type { FormMode } from "@/app/Home/component/Form/types";
+import type { ModalFormEndOptions } from "@/app/Home/component/Form/components/ModalForm";
 
 /** mode "end"일 때만 넘기는 인자. useTimerModal 안에서 endOptions로 바꿔서 ModalForm에 넘김 */
 export type OpenEndParams = {

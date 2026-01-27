@@ -8,13 +8,13 @@ import { TodoListSection } from "./TodoListSection";
 import { TodoInputSection } from "./TodoInputSection";
 import { FormFooter } from "./FormFooter";
 import { CommonTextArea } from "@/components/atoms/CommonTextArea/CommonTextArea";
-import { useGetStudyLog } from "@/app/timer/hooks/getter/useGetStudyLog";
-import { useStartTimer } from "@/app/timer/hooks/mutations/useStartTimer";
-import { useFinishTimer } from "@/app/timer/hooks/mutations/useFinishTimer";
-import { useUpdateStudyLogTasks } from "@/app/timer/hooks/mutations/useUpdateStudyLog";
+import { useGetStudyLog } from "@/app/Home/hooks/getter/useGetStudyLog";
+import { useStartTimer } from "@/app/Home/hooks/mutations/useStartTimer";
+import { useFinishTimer } from "@/app/Home/hooks/mutations/useFinishTimer";
+import { useUpdateStudyLogTasks } from "@/app/Home/hooks/mutations/useUpdateStudyLog";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerStore } from "@/store/timerStore";
-import { buildSplitTimesForStop } from "@/app/timer/utils/calculateSplitTimes";
+import { buildSplitTimesForStop } from "@/app/Home/utils/calculateSplitTimes";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import "../style.css";
 

@@ -11,9 +11,11 @@ export type StudyLogResponse = {
   };
 };
 
-/** 훅이 반환하는 데이터 형태. tasks는 string[] */
+export type StudyLogTaskItem = { content: string; isCompleted: boolean };
+
+/** 훅이 반환하는 데이터 형태. tasks는 { content, isCompleted }[] */
 export type StudyLogData = {
-  data: { todayGoal: string; tasks: string[] };
+  data: { todayGoal: string; tasks: StudyLogTaskItem[] };
 };
 
 export const useGetStudyLog = (
@@ -34,17 +36,15 @@ export const useGetStudyLog = (
     select: (res) => ({
       data: {
         todayGoal: res.data.todayGoal,
-        tasks: (res.data.tasks ?? []).map((task) => task.content),
+        tasks: (res.data.tasks ?? []).map((task) => ({
+          content: task.content,
+          isCompleted: task.isCompleted ?? false,
+        })),
       },
     }),
     enabled: Boolean(studyLogId),
     retry: 3,
-<<<<<<<< HEAD:src/app/Home/hooks/getter/useGetStudyLog.ts
-    staleTime: 0, // 항상 최신 데이터를 가져오도록
-    refetchOnMount: true, // 마운트 시 항상 재요청
-========
     staleTime: 0,
     refetchOnMount: true,
->>>>>>>> origin/week2_feature/timerAction:src/app/timer/hooks/useGetStudyLog.ts
   });
 };

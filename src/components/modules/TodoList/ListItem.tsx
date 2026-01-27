@@ -5,7 +5,7 @@ import codeIcon from "@/asset/images/code-icon.png";
 import CommonCheckbox from "@/components/atoms/CommonCheckbox/CommonCheckbox";
 import { TodoStatus, useTodoListItemController } from "./useTodoListController";
 import CommonImage from "@/components/atoms/CommonImage/CommonImage";
-import type { FormMode } from "@/app/timer/component/Form/types";
+import type { FormMode } from "@/app/Home/component/Form/types";
 
 interface TodoListItemProps {
   text: string;
