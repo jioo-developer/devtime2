@@ -1,0 +1,165 @@
+.goalForm {
+  width: 100%;
+  height: 100%;
+}
+
+.todoSection {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--margin-xl) - 4px);
+  height: 100%;
+}
+
+.sectionTitle {
+  font-size: var( --fontsize-title);
+  font-weight: var(--font-weight-semibold);
+  color: var(--gray-700);
+  margin: 0 0 var(--gap-md) 0;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.todoInput {
+  display: flex;
+  background: #F0F2F5;
+  padding: var(--gap-md);
+  border-radius: var(--radius-md);
+  margin-top: var(--gap-xl);
+
+  input,button {
+    border-radius: 0;
+    border: 0;
+  }
+}
+
+.todoInput-end {
+  padding: var(--gap-md);
+  margin-top: 0;
+}
+
+.todoInput input {
+  flex: 1;
+}
+
+.todoList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+}
+
+
+.footer {
+  margin-top: auto;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0 var(--gap-lg);
+}
+.goalForm #title,
+.goalForm #title::placeholder {
+  font-size: calc(var(--fontsize-body) *2);
+}
+
+.goalForm #title::placeholder{
+  font-weight: var(--font-weight-bold);
+  color:#ccd0d6;
+}
+
+.goalForm #todoInput::placeholder {
+  font-size: var( --fontsize-body);
+  font-weight: var(--font-weight-medium);
+  color:#ccd0d6;
+}
+
+.goalForm .todoInput button:hover:not(:disabled) {
+  background: transparent;
+  color: var(--primary-core);
+}
+
+.headerSection {
+  margin-bottom: 36px;
+}
+
+.headerTitle {
+  font-size: var( --fontsize-title);
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.headerDescription {
+  font-size: var( --fontsize-body);
+  color: #666;
+}
+
+.todoInputWrapper {
+  margin-bottom: var(--margin-2xl);
+}
+
+.inputNoBorder {
+  border: 0;
+}
+
+.todoInputWrapper {
+  margin-bottom: var(--margin-2xl);
+}
+
+.addButton {
+  width: auto;
+}
+
+.addButtonEnabled {
+  color: var(--primary-core);
+}
+
+.addButtonDisabled {
+  color: #969DA8;
+}
+
+/* TodoListSection */
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--margin-sm);
+  gap: var(--gap-md);
+}
+
+.editButton {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+  background: none;
+  border: none;
+  color: #666;
+  font-size: var(--fontsize-body);
+  cursor: pointer;
+  padding: 0;
+}
+
+.titleInputNoBorder {
+  border: 0 !important;
+  margin-bottom: 12px !important;
+}
+
+.todoInputNoBorder {
+  border: 0;
+}
+
+.reflectionContainer {
+  margin-top: 24px;
+}
+
+.reflectionTextarea {
+  width: 100%;
+  min-height: 120px;
+  border: 1px dashed var(--gray-300);
+  border-radius: 8px;
+  padding: 16px;
+  box-sizing: border-box;
+}

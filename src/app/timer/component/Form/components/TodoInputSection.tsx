@@ -1,32 +1,51 @@
+"use client";
+
 import { UseFormRegister } from "react-hook-form";
 import CommonInput from "@/components/atoms/CommonInput/CommonInput";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
-import { TodoFormData } from "../../../types";
-import styles from "./items.module.css";
+import { FormMode, TodoFormData } from "../types";
 
-interface TodoInputSectionProps {
-  mode?: "create" | "edit";
+type TodoInputSectionProps = {
   register: UseFormRegister<TodoFormData>;
-  todoInputValue: string;
+  mode: FormMode;
+  todoInputValue?: string;
   onAddTodo: () => void;
-}
+};
 
 export function TodoInputSection({
-  mode = "create",
   register,
-  todoInputValue,
+  mode,
+  todoInputValue = "",
   onAddTodo,
 }: TodoInputSectionProps) {
+  const canAdd = (todoInputValue?.trim() ?? "").length > 0;
+
   return (
-    <>
-      {mode === "create" && <h3 className="sectionTitle">할일 목록</h3>}
+    <form className="inputGroup" onSubmit={() => onAddTodo()}>
+      {mode === "create" && (
+        <CommonInput
+          id="title"
+          type="text"
+          placeholder="오늘의 목표"
+          register={register}
+          className="titleInputNoBorder"
+          validation={{
+            required: "목표를 입력해 주세요.",
+            maxLength: {
+              value: 30,
+              message: "최대 30자까지 입력 가능합니다.",
+            },
+          }}
+        />
+      )}
+
       <div className="todoInput">
         <CommonInput
           id="todoInput"
           type="text"
           placeholder="할 일을 입력해주세요. (최대 30자)"
           register={register}
-          className={styles.todoInputNoBorder}
+          className="todoInputNoBorder"
           validation={{
             maxLength: {
               value: 30,
@@ -34,16 +53,16 @@ export function TodoInputSection({
             },
           }}
         />
+
         <CommonButton
           type="button"
           theme="none"
-          className={`${styles.addButton} ${todoInputValue.trim() ? styles.addButtonEnabled : styles.addButtonDisabled}`}
-          disabled={!todoInputValue.trim()}
+          disabled={!canAdd}
           onClick={onAddTodo}
         >
           추가
         </CommonButton>
       </div>
-    </>
+    </form>
   );
 }

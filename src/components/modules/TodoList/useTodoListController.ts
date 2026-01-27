@@ -47,7 +47,10 @@ export function useTodoListItemController({
     onTextChange?.(next);
   };
 
-  const normalizedText = useMemo(() => currentText.trim(), [currentText]);
+  const normalizedText = useMemo(
+    () => String(currentText ?? "").trim(),
+    [currentText]
+  );
 
   /** 아이템 클릭을 "완료 토글"로 사용 */
   const onItemClick = () => {

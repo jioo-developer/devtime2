@@ -14,7 +14,6 @@ type AutoResizeTextAreaProps =
     error?: string;
   };
 
-
 export const CommonTextArea = forwardRef<
   HTMLTextAreaElement,
   AutoResizeTextAreaProps
@@ -25,17 +24,15 @@ export const CommonTextArea = forwardRef<
     className,
     onInput,
     style,
+    rows = 1,
     ...restProps
   } = props;
 
   const internalRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = (forwardedRef ?? internalRef) as MutableRefObject<HTMLTextAreaElement>;
 
   const handleInput = (event: FormEvent<HTMLTextAreaElement>) => {
-    const element = (
-      forwardedRef ?? internalRef
-    ) as MutableRefObject<HTMLTextAreaElement>;
-
-    const textarea = element.current;
+    const textarea = textareaRef.current;
     if (!textarea) return;
 
     textarea.style.height = "auto";
@@ -50,8 +47,8 @@ export const CommonTextArea = forwardRef<
 
       <textarea
         {...restProps}
-        ref={forwardedRef ?? internalRef}
-        rows={1}
+        ref={textareaRef}
+        rows={rows}
         onInput={handleInput}
         className={clsx(styles.textarea, className)}
         style={{
