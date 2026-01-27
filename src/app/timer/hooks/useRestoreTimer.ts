@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import type { TimerResponse } from "./useGetTimers";
-import type { StudyLogData } from "./useGetStudyLog";
+import type { TimerResponse } from "./getter/useGetTimers";
+import type { StudyLogData } from "./getter/useGetStudyLog";
 import { useTimerStore } from "@/store/timerStore";
 
 export function useRestoreTimer(

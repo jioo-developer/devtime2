@@ -13,12 +13,11 @@ import showListIcon from "@/asset/images/showList.svg";
 import ResetIcon from "@/asset/images/reset.svg";
 import clsx from "clsx";
 import { useTimerModal } from "./hooks/useTimerModal";
-import { useGetTimers } from "./hooks/useGetTimers";
-import { useGetStudyLog } from "./hooks/useGetStudyLog";
+import { useGetTimers } from "./hooks/getter/useGetTimers";
+import { useGetStudyLog } from "./hooks/getter/useGetStudyLog";
 import { useRestoreTimer } from "./hooks/useRestoreTimer";
 import { useTimerDisplay } from "./hooks/useTimerDisplay";
-import { useFinishTimerAction } from "./hooks/actions/useFinishTimerAction";
-import { useResetTimerAction } from "./hooks/actions/useResetTimerAction";
+import { useResetTimerAction } from "./hooks/useResetTimer";
 import { useTimerStore } from "@/store/timerStore";
 
 export default function TimerPage() {
@@ -30,7 +29,6 @@ export default function TimerPage() {
 
   useRestoreTimer(timerData, studyLogData);
   const { openTimerModal } = useTimerModal();
-  const { finishTimer } = useFinishTimerAction();
   const { resetTimer } = useResetTimerAction();
 
   const effectiveStartTime = timerData?.startTime || startTimeFromStore;
@@ -106,12 +104,13 @@ export default function TimerPage() {
             aria-label="종료"
             title="타이머 종료"
             onClick={() =>
-              finishTimer(
-                timerData?.timerId,
-                effectiveStartTime,
-                timerData?.studyLogId,
-                totalPausedDuration
-              )
+              timerData?.timerId &&
+              effectiveStartTime &&
+              openTimerModal("end", timerData?.studyLogId, {
+                timerId: timerData.timerId,
+                startTime: effectiveStartTime,
+                pausedDuration: totalPausedDuration ?? 0,
+              })
             }
             disabled={isFinishDisabled}
           >

@@ -3,7 +3,7 @@
 import React from "react";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerStore } from "@/store/timerStore";
-import { useResetTimer } from "../useResetTimer";
+import { useResetTimer } from "./mutations/useResetTimer";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 
 const RESET_MODAL_OPTIONS = {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useTimerStore } from "@/store/timerStore";
-import type { TimerResponse } from "./useGetTimers";
+import type { TimerResponse } from "./getter/useGetTimers";
 
 export function useTimerDisplay(timerData: TimerResponse | undefined) {
   const [hours, setHours] = useState("00");

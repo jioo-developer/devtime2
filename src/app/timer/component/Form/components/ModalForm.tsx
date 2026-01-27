@@ -8,10 +8,10 @@ import { TodoListSection } from "./TodoListSection";
 import { TodoInputSection } from "./TodoInputSection";
 import { FormFooter } from "./FormFooter";
 import { CommonTextArea } from "@/components/atoms/CommonTextArea/CommonTextArea";
-import { useGetStudyLog } from "@/app/timer/hooks/useGetStudyLog";
-import { useStartTimer } from "@/app/timer/hooks/useStartTimer";
-import { useFinishTimer } from "@/app/timer/hooks/useFinishTimer";
-import { useUpdateStudyLogTasks } from "@/app/timer/hooks/useUpdateStudyLog";
+import { useGetStudyLog } from "@/app/timer/hooks/getter/useGetStudyLog";
+import { useStartTimer } from "@/app/timer/hooks/mutations/useStartTimer";
+import { useFinishTimer } from "@/app/timer/hooks/mutations/useFinishTimer";
+import { useUpdateStudyLogTasks } from "@/app/timer/hooks/mutations/useUpdateStudyLog";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerStore } from "@/store/timerStore";
 import {
