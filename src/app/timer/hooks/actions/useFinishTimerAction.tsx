@@ -2,6 +2,7 @@
 
 import React from "react";
 import { useModalStore } from "@/store/modalStore";
+import { useTimerStore } from "@/store/timerStore";
 import ModalForm from "@/app/timer/component/Form/components/ModalForm";
 
 const END_MODAL_OPTIONS = {
@@ -21,13 +22,17 @@ export function useFinishTimerAction() {
     studyLogId?: string,
     pausedDuration?: number
   ) => {
+    const endedAt = new Date().toISOString();
+    if (timerId && startTime) {
+      useTimerStore.getState().setTimerEndedAt(endedAt);
+    }
     const endOptions =
       timerId && startTime
         ? {
             timerId,
             startTime,
             pausedDuration: pausedDuration ?? 0,
-            endTime: new Date().toISOString(),
+            endTime: endedAt,
           }
         : undefined;
 

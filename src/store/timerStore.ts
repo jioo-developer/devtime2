@@ -12,6 +12,8 @@ type TimerState = {
   clientStartedAt: number | null;
   /** 일시정지 구간 누적(ms). 표시 = elapsed - totalPausedDuration */
   totalPausedDuration: number;
+  /** 완료 모달이 열린 시각(ISO). timeSpent 계산용 — 제출 시각이 아닌 '종료' 시각 고정 */
+  timerEndedAt: string | null;
 
   setTodoTitle: (todoTitle: string) => void;
   setSavedTodos: (savedTodos: string[]) => void;
@@ -20,6 +22,7 @@ type TimerState = {
   setStartTime: (startTime: string) => void;
   setClientStartedAt: (at: number | null) => void;
   setTotalPausedDuration: (ms: number | ((prev: number) => number)) => void;
+  setTimerEndedAt: (iso: string | null) => void;
 };
 
 export const useTimerStore = create<TimerState>((set) => ({
@@ -30,6 +33,7 @@ export const useTimerStore = create<TimerState>((set) => ({
   startTime: "",
   clientStartedAt: null,
   totalPausedDuration: 0,
+  timerEndedAt: null,
 
   setTodoTitle: (todoTitle) => set({ todoTitle }),
   setSavedTodos: (savedTodos) => set({ savedTodos }),
@@ -41,4 +45,5 @@ export const useTimerStore = create<TimerState>((set) => ({
     set((s) => ({
       totalPausedDuration: typeof ms === "function" ? ms(s.totalPausedDuration) : ms,
     })),
+  setTimerEndedAt: (iso) => set({ timerEndedAt: iso }),
 }));

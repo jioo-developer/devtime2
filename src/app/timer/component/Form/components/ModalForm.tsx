@@ -90,6 +90,7 @@ export default function ModalForm({
     setStartTime,
     setClientStartedAt,
     setTotalPausedDuration,
+    setTimerEndedAt,
   } = useTimerStore.getState();
 
   const onStartTimer = () => {
@@ -149,14 +150,48 @@ export default function ModalForm({
           timerId,
           startTime,
           pausedDuration = 0,
-          endTime: endTimeStr,
+          endTime: endTimeFromProps,
         } = endOptions;
+        /** 모달 열린 시각 고정. props 말고 스토어도 보면 클로저 누락 시에도 동작 */
+        const endTimeStr = endTimeFromProps ?? useTimerStore.getState().timerEndedAt;
         const endTime = endTimeStr ? new Date(endTimeStr) : new Date();
-        const splitTimes = calculateSplitTimes(
+        const splitTimesMs = calculateSplitTimes(
           startTime,
           endTime,
           pausedDuration
         );
+        const startMs = new Date(startTime).getTime();
+        const endMs = endTime.getTime();
+        const expectedStudyMs = Math.max(
+          0,
+          endMs - startMs - pausedDuration
+        );
+        /** 서버는 (요청 수신 시각−시작−일시정지) 기준 검사. 여유 2초 빼서 400 방지 */
+        const allowedSec = Math.max(0, Math.floor(expectedStudyMs / 1000) - 2);
+
+        /** API는 timeSpent를 초(seconds) 단위로 기대. 개별은 floor 후 합이 allowedSec 초과 시 뒤에서 부터 깎음 */
+        const splitTimes = splitTimesMs.map((s) => ({
+          date: s.date,
+          timeSpent: Math.floor(s.timeSpent / 1000),
+        }));
+        const totalSentSec = splitTimes.reduce((acc, s) => acc + s.timeSpent, 0);
+        if (totalSentSec > allowedSec) {
+          let diff = totalSentSec - allowedSec;
+          for (let i = splitTimes.length - 1; i >= 0 && diff > 0; i--) {
+            const deduct = Math.min(splitTimes[i].timeSpent, diff);
+            splitTimes[i].timeSpent -= deduct;
+            diff -= deduct;
+          }
+        }
+
+        if (process.env.NODE_ENV === "development") {
+          console.group("[Finish Timer 디버깅]");
+          console.log("startTime", startTime, "endTime", endTimeStr ?? "(제출 시각)");
+          console.log("pausedDuration (ms)", pausedDuration, "→ allowedSec", allowedSec);
+          console.log("splitTimes 전송", splitTimes, "총(timeSpent 초)", splitTimes.reduce((a, s) => a + s.timeSpent, 0));
+          console.groupEnd();
+        }
+
         finishTimer(
           {
             timerId,
@@ -176,6 +211,7 @@ export default function ModalForm({
               setStartTime("");
               setClientStartedAt(null);
               setTotalPausedDuration(0);
+              setTimerEndedAt(null);
               closeTop();
             },
             onError: (err) => {

@@ -2,15 +2,21 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
 import { getAuthHeaders } from "@/utils/authUtils";
-import type { SplitTime } from "@/app/timer/utils/calculateSplitTimes";
 
+/** POST /api/timers/:timerId/stop 요청 body (스펙 기준) */
 export type FinishTimerTaskItem = {
   content: string;
   isCompleted: boolean;
 };
 
-type FinishTimerRequest = {
-  splitTimes: SplitTime[];
+/** splitTimes[].timeSpent 는 초(seconds) 단위 */
+export type FinishTimerSplitItem = {
+  date: string; // ISO date string
+  timeSpent: number; // seconds
+};
+
+export type FinishTimerRequest = {
+  splitTimes: FinishTimerSplitItem[];
   tasks: FinishTimerTaskItem[];
   review: string;
 };
@@ -20,14 +26,19 @@ type FinishTimerVariables = {
   data: FinishTimerRequest;
 };
 
-type ResponseMessage = { message: string };
+/** POST /api/timers/:timerId/stop 응답 */
+export type FinishTimerResponse = {
+  message: string;
+  totalTime?: number;
+  endTime?: string;
+};
 
 export const useFinishTimer = () => {
   const queryClient = useQueryClient();
 
-  return useMutation<ResponseMessage, Error, FinishTimerVariables>({
+  return useMutation<FinishTimerResponse, Error, FinishTimerVariables>({
     mutationFn: async ({ timerId, data }) => {
-      return await ApiClient.post<ResponseMessage>(
+      return await ApiClient.post<FinishTimerResponse>(
         `/api/timers/${timerId}/stop`,
         data,
         getAuthHeaders(),
