@@ -11,6 +11,7 @@ export const ApiClient = {
     endpoint: string,
     params?: Record<string, string>,
     headers?: HeadersInit,
+    options?: { onNotOk?: (response: Response) => Promise<T> },
   ): Promise<T> {
     const queryString = params
       ? `?${new URLSearchParams(params).toString()}`
@@ -27,6 +28,9 @@ export const ApiClient = {
     );
 
     if (!response.ok) {
+      if (options?.onNotOk) {
+        return options.onNotOk(response);
+      }
       throw new Error(`GET ${endpoint} failed`);
     }
 

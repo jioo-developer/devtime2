@@ -19,8 +19,14 @@ export type StartTimerResponse = {
 
 export const useStartTimer = () => {
   const queryClient = useQueryClient();
-  const { setTodoTitle, setSavedTodos, setIsTimerRunning, setStartTime } =
-    useTimerStore.getState();
+  const {
+    setTodoTitle,
+    setSavedTodos,
+    setIsTimerRunning,
+    setStartTime,
+    setClientStartedAt,
+    setTotalPausedDuration,
+  } = useTimerStore.getState();
   const closeTop = useModalStore.getState().closeTop;
 
   return useMutation<StartTimerResponse, Error, StartTimerRequest>({
@@ -48,6 +54,8 @@ export const useStartTimer = () => {
       setTodoTitle(variables.todayGoal);
       setSavedTodos(variables.tasks);
       setStartTime(data.startTime);
+      setClientStartedAt(Date.now());
+      setTotalPausedDuration(0);
       setIsTimerRunning(true);
       closeTop();
     },

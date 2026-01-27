@@ -151,6 +151,16 @@
   border: 0;
 }
 
+.completedCountText {
+  font-size: var(--fontsize-body);
+  color: var(--gray-600, #4b5563);
+}
+
+.completedCountNumber {
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--primary-core, #2563eb);
+}
+
 .reflectionContainer {
   margin-top: 24px;
 }

@@ -20,13 +20,18 @@ const defaultTimerResponse: TimerResponse = {
 export const useGetTimers = (): UseQueryResult<TimerResponse, Error> => {
   return useQuery<TimerResponse, Error>({
     queryKey: [QueryKey.TIMERS],
-    queryFn: async () => {
-      return await ApiClient.get<TimerResponse>(
+    queryFn: async () =>
+      ApiClient.get<TimerResponse>(
         "/api/timers",
         undefined,
-        getAuthHeaders()
-      );
-    },
+        getAuthHeaders(),
+        {
+          onNotOk: async (response) => {
+            if (response.status === 404) return defaultTimerResponse;
+            throw new Error("GET /api/timers failed");
+          },
+        }
+      ),
     retry: 3,
     staleTime: 0,
     refetchOnMount: true,

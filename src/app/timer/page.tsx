@@ -17,15 +17,23 @@ import { useGetTimers } from "./hooks/useGetTimers";
 import { useGetStudyLog } from "./hooks/useGetStudyLog";
 import { useRestoreTimer } from "./hooks/useRestoreTimer";
 import { useTimerDisplay } from "./hooks/useTimerDisplay";
+import { useFinishTimerAction } from "./hooks/actions/useFinishTimerAction";
+import { useResetTimerAction } from "./hooks/actions/useResetTimerAction";
 import { useTimerStore } from "@/store/timerStore";
 
 export default function TimerPage() {
   const todoTitle = useTimerStore((state) => state.todoTitle);
+  const startTimeFromStore = useTimerStore((state) => state.startTime);
+  const totalPausedDuration = useTimerStore((state) => state.totalPausedDuration);
   const { data: timerData } = useGetTimers();
   const { data: studyLogData } = useGetStudyLog(timerData?.studyLogId);
 
   useRestoreTimer(timerData, studyLogData);
   const { openTimerModal } = useTimerModal();
+  const { finishTimer } = useFinishTimerAction();
+  const { resetTimer } = useResetTimerAction();
+
+  const effectiveStartTime = timerData?.startTime || startTimeFromStore;
 
   const {
     hours,
@@ -35,8 +43,6 @@ export default function TimerPage() {
     isTimerPaused,
     onPauseClick,
     onResumeClick,
-    onFinishClick,
-    onResetClick,
     isStartDisabled,
     isPauseDisabled,
     isFinishDisabled,
@@ -99,7 +105,14 @@ export default function TimerPage() {
             className="finishButton"
             aria-label="종료"
             title="타이머 종료"
-            onClick={onFinishClick}
+            onClick={() =>
+              finishTimer(
+                timerData?.timerId,
+                effectiveStartTime,
+                timerData?.studyLogId,
+                totalPausedDuration
+              )
+            }
             disabled={isFinishDisabled}
           >
             <CommonImage
@@ -132,7 +145,7 @@ export default function TimerPage() {
               className="finishButton"
               aria-label="초기화"
               title="초기화"
-              onClick={onResetClick}
+              onClick={() => resetTimer(timerData?.timerId)}
             >
               <CommonImage
                 src={ResetIcon}

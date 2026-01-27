@@ -11,9 +11,11 @@ export type StudyLogResponse = {
   };
 };
 
-/** 훅이 반환하는 데이터 형태. tasks는 string[] */
+export type StudyLogTaskItem = { content: string; isCompleted: boolean };
+
+/** 훅이 반환하는 데이터 형태. tasks는 { content, isCompleted }[] */
 export type StudyLogData = {
-  data: { todayGoal: string; tasks: string[] };
+  data: { todayGoal: string; tasks: StudyLogTaskItem[] };
 };
 
 export const useGetStudyLog = (
@@ -34,7 +36,10 @@ export const useGetStudyLog = (
     select: (res) => ({
       data: {
         todayGoal: res.data.todayGoal,
-        tasks: (res.data.tasks ?? []).map((task) => task.content),
+        tasks: (res.data.tasks ?? []).map((task) => ({
+          content: task.content,
+          isCompleted: task.isCompleted ?? false,
+        })),
       },
     }),
     enabled: Boolean(studyLogId),

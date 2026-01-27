@@ -10,17 +10,43 @@ import { FormFooter } from "./FormFooter";
 import { CommonTextArea } from "@/components/atoms/CommonTextArea/CommonTextArea";
 import { useGetStudyLog } from "@/app/timer/hooks/useGetStudyLog";
 import { useStartTimer } from "@/app/timer/hooks/useStartTimer";
+import { useFinishTimer } from "@/app/timer/hooks/useFinishTimer";
+import { useUpdateStudyLogTasks } from "@/app/timer/hooks/useUpdateStudyLog";
+import { useModalStore } from "@/store/modalStore";
 import { useTimerStore } from "@/store/timerStore";
+import {
+  calculateSplitTimes,
+} from "@/app/timer/utils/calculateSplitTimes";
+import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import "../style.css";
 
-type ModalFormProps = { mode: FormMode; studyLogId?: string };
+/** mode가 "end"일 때만 전달하는 값 (완료 API 호출용) */
+export type ModalFormEndOptions = {
+  timerId: string;
+  startTime: string;
+  pausedDuration?: number;
+  /** 타이머 종료 시각(모달 열린 순간). 없으면 제출 시각 사용 */
+  endTime?: string;
+};
 
-export default function ModalForm({ mode, studyLogId }: ModalFormProps) {
+type ModalFormProps = {
+  mode: FormMode;
+  studyLogId?: string;
+  endOptions?: ModalFormEndOptions;
+};
+
+export default function ModalForm({
+  mode,
+  studyLogId,
+  endOptions,
+}: ModalFormProps) {
   const isEndMode = mode === "end";
   const isEditMode = mode === "edit";
 
   const { data: studyLog } = useGetStudyLog(isEditMode ? studyLogId : undefined);
   const savedTodos = useTimerStore((state) => state.savedTodos);
+  const setTodoTitle = useTimerStore((state) => state.setTodoTitle);
+  const setSavedTodos = useTimerStore((state) => state.setSavedTodos);
 
   const {
     register,
@@ -30,36 +56,136 @@ export default function ModalForm({ mode, studyLogId }: ModalFormProps) {
     formState: { errors },
   } = useForm<TodoFormData>({ mode: "onChange" });
 
+  const initialTodos =
+    isEditMode && studyLog?.data?.tasks
+      ? studyLog.data.tasks
+      : isEndMode
+        ? (savedTodos ?? []).map((c) => ({ content: c, isCompleted: false }))
+        : [];
+  const resetKey = studyLogId ?? (isEndMode ? "end" : "create");
   const {
     todos,
     todoInputValue,
     handleAddTodo,
     handleRemoveTodo,
     handleTextChange,
-  } = useTodoForm(watch, reset, []);
+    handleStatusChange,
+  } = useTodoForm(watch, reset, initialTodos, resetKey);
 
-  const listTodos =
-    isEditMode && studyLogId
-      ? (studyLog?.data?.tasks ?? savedTodos ?? [])
-      : (todos ?? []);
+  const listTodos = todos ?? [];
+  const completedCount = listTodos.filter((t) => t.isCompleted).length;
 
   const canStartTimer =
-    mode === "create" && isTimerStartValid(watch("title"), todos);
+    mode === "create" &&
+    isTimerStartValid(watch("title"), (todos ?? []).map((t) => t.content));
 
   const { mutate: startTimer } = useStartTimer();
+  const { mutate: finishTimer } = useFinishTimer();
+  const { mutate: updateStudyLogTasks } = useUpdateStudyLogTasks();
+  const openModal = useModalStore((state) => state.push);
+  const closeTop = useModalStore((state) => state.closeTop);
+  const {
+    setIsTimerRunning,
+    setIsTimerPaused,
+    setStartTime,
+    setClientStartedAt,
+    setTotalPausedDuration,
+  } = useTimerStore.getState();
 
   const onStartTimer = () => {
     const title = watch("title");
     if (!title) return;
-    startTimer({ todayGoal: title, tasks: [...todos] });
+    startTimer({
+      todayGoal: title,
+      tasks: (todos ?? []).map((t) => t.content),
+    });
   };
   const onSave = () => {
-    // TODO: 저장 API 연동
+    if (!isEditMode || !studyLogId) return;
+    const title = watch("title") ?? "";
+    const taskList = (todos ?? []).map((t) => ({
+      content: t.content,
+      isCompleted: t.isCompleted,
+    }));
+    updateStudyLogTasks(
+      { studyLogId, tasks: taskList },
+      {
+        onSuccess: () => {
+          setTodoTitle(title);
+          setSavedTodos((todos ?? []).map((t) => t.content));
+          closeTop();
+        },
+        onError: (err) => {
+          console.error("할 일 목록 저장 실패:", err);
+        },
+      }
+    );
   };
   const onFinish = () => {
     handleSubmit((data) => {
-      console.log(data);
-      // TODO: 공부 완료 API 연동 (data.reflection, completedTodos 등)
+      if (isEndMode && endOptions) {
+        if (completedCount === 0) {
+          openModal({
+            width: 360,
+            title: "알림",
+            content: (
+              <>
+                완료한 일이 없습니다.
+                <br />
+                할일 목록을 다시 한번 확인해주시겠어요?
+              </>
+            ),
+            showCloseButton: false,
+            BackdropMiss: true,
+            footer: (
+              <CommonButton theme="primary" onClick={() => closeTop()}>
+                확인
+              </CommonButton>
+            ),
+          });
+          return;
+        }
+        const {
+          timerId,
+          startTime,
+          pausedDuration = 0,
+          endTime: endTimeStr,
+        } = endOptions;
+        const endTime = endTimeStr ? new Date(endTimeStr) : new Date();
+        const splitTimes = calculateSplitTimes(
+          startTime,
+          endTime,
+          pausedDuration
+        );
+        finishTimer(
+          {
+            timerId,
+            data: {
+              splitTimes,
+              tasks: listTodos.map((t) => ({
+                content: t.content,
+                isCompleted: t.isCompleted,
+              })),
+              review: data.reflection ?? "",
+            },
+          },
+          {
+            onSuccess: () => {
+              setIsTimerRunning(false);
+              setIsTimerPaused(false);
+              setStartTime("");
+              setClientStartedAt(null);
+              setTotalPausedDuration(0);
+              closeTop();
+            },
+            onError: (err) => {
+              console.error("공부 완료 처리 실패:", err);
+            },
+          }
+        );
+      } else {
+        console.log(data);
+      }
     })();
   };
 
@@ -94,7 +220,17 @@ export default function ModalForm({ mode, studyLogId }: ModalFormProps) {
           todos={listTodos}
           onDelete={!isEndMode ? handleRemoveTodo : undefined}
           onTextChange={!isEndMode ? handleTextChange : undefined}
+          onStatusChange={handleStatusChange}
         />
+
+        {isEndMode && (
+          <div className="completedCountWrap">
+            <span className="completedCountText">
+              <span className="completedCountNumber">{completedCount}</span>개
+              완료
+            </span>
+          </div>
+        )}
 
         {isEndMode && (
           <div className="reflectionContainer">
