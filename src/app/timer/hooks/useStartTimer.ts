@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
 import { getAuthHeaders } from "@/utils/authUtils";
+import { useModalStore } from "@/store/modalStore";
+import { useTimerStore } from "@/store/timerStore";
 
 type StartTimerRequest = {
   todayGoal: string;
@@ -17,6 +19,9 @@ export type StartTimerResponse = {
 
 export const useStartTimer = () => {
   const queryClient = useQueryClient();
+  const { setTodoTitle, setSavedTodos, setIsTimerRunning } =
+    useTimerStore.getState();
+  const closeTop = useModalStore.getState().closeTop;
 
   return useMutation<StartTimerResponse, Error, StartTimerRequest>({
     mutationFn: async (data) => {
@@ -38,12 +43,17 @@ export const useStartTimer = () => {
         },
       );
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.TIMERS] });
+      setTodoTitle(variables.todayGoal);
+      setSavedTodos(variables.tasks);
+      setIsTimerRunning(true);
+      closeTop();
     },
     onError: (error) => {
       if (error.message.includes("409")) {
         queryClient.invalidateQueries({ queryKey: [QueryKey.TIMERS] });
+        closeTop();
       }
     },
   });

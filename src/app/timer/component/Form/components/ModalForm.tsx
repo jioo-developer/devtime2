@@ -10,7 +10,6 @@ import { FormFooter } from "./FormFooter";
 import { CommonTextArea } from "@/components/atoms/CommonTextArea/CommonTextArea";
 import { useGetStudyLog } from "@/app/timer/hooks/useGetStudyLog";
 import { useStartTimer } from "@/app/timer/hooks/useStartTimer";
-import { useModalStore } from "@/store/modalStore";
 import { useTimerStore } from "@/store/timerStore";
 import "../style.css";
 
@@ -47,25 +46,12 @@ export default function ModalForm({ mode, studyLogId }: ModalFormProps) {
   const canStartTimer =
     mode === "create" && isTimerStartValid(watch("title"), todos);
 
-  const closeTop = useModalStore((state) => state.closeTop);
-  const { setTodoTitle, setSavedTodos, setIsTimerRunning } = useTimerStore.getState();
   const { mutate: startTimer } = useStartTimer();
 
   const onStartTimer = () => {
     const title = watch("title");
     if (!title) return;
-    const payload = { todayGoal: title, tasks: [...todos] };
-    startTimer(payload, {
-      onSuccess: (_data, { todayGoal, tasks }) => {
-        setTodoTitle(todayGoal);
-        setSavedTodos(tasks);
-        setIsTimerRunning(true);
-        closeTop();
-      },
-      onError: (error) => {
-        if (error.message.includes("409")) closeTop();
-      },
-    });
+    startTimer({ todayGoal: title, tasks: [...todos] });
   };
   const onSave = () => {
     // TODO: 저장 API 연동
