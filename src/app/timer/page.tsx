@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+
 import "./style.css";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import CommonImage from "@/components/atoms/CommonImage/CommonImage";
@@ -16,42 +16,31 @@ import { useTimerModal } from "./hooks/useTimerModal";
 import { useGetTimers } from "./hooks/useGetTimers";
 import { useGetStudyLog } from "./hooks/useGetStudyLog";
 import { useRestoreTimer } from "./hooks/useRestoreTimer";
+import { useTimerDisplay } from "./hooks/useTimerDisplay";
 import { useTimerStore } from "@/store/timerStore";
 
 export default function TimerPage() {
-  const [hours, setHours] = useState("00");
-  const [minutes, setMinutes] = useState("00");
-  const [seconds, setSeconds] = useState("00");
   const todoTitle = useTimerStore((state) => state.todoTitle);
-  const isTimerRunning = useTimerStore((state) => state.isTimerRunning);
-  const setIsTimerRunning = useTimerStore((state) => state.setIsTimerRunning);
-  const isTimerPaused = useTimerStore((state) => state.isTimerPaused);
-  const setIsTimerPaused = useTimerStore((state) => state.setIsTimerPaused);
-
   const { data: timerData } = useGetTimers();
   const { data: studyLogData } = useGetStudyLog(timerData?.studyLogId);
-  useRestoreTimer(timerData, studyLogData);
 
+  useRestoreTimer(timerData, studyLogData);
   const { openTimerModal } = useTimerModal();
 
-  const onPauseClick = () => {
-    setIsTimerPaused(true);
-  };
-  const onFinishClick = () => {
-    setIsTimerRunning(false);
-    setIsTimerPaused(false);
-  };
-  const onResetClick = () => {
-    setIsTimerRunning(false);
-    setIsTimerPaused(false);
-    setHours("00");
-    setMinutes("00");
-    setSeconds("00");
-  };
-
-  const isStartDisabled = isTimerRunning && !isTimerPaused;
-  const isPauseDisabled = !isTimerRunning || isTimerPaused;
-  const isFinishDisabled = !isTimerRunning;
+  const {
+    hours,
+    minutes,
+    seconds,
+    isTimerRunning,
+    isTimerPaused,
+    onPauseClick,
+    onResumeClick,
+    onFinishClick,
+    onResetClick,
+    isStartDisabled,
+    isPauseDisabled,
+    isFinishDisabled,
+  } = useTimerDisplay(timerData);
 
   return (
     <main className="mainPageWrap">
@@ -78,7 +67,7 @@ export default function TimerPage() {
             className="startButton"
             aria-label="시작"
             title={isTimerPaused ? "타이머 재개" : "타이머 시작"}
-            onClick={() => openTimerModal("create")}
+            onClick={() => (isTimerPaused ? onResumeClick() : openTimerModal("create"))}
             disabled={isStartDisabled}
           >
             <CommonImage

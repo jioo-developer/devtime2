@@ -19,7 +19,7 @@ export type StartTimerResponse = {
 
 export const useStartTimer = () => {
   const queryClient = useQueryClient();
-  const { setTodoTitle, setSavedTodos, setIsTimerRunning } =
+  const { setTodoTitle, setSavedTodos, setIsTimerRunning, setStartTime } =
     useTimerStore.getState();
   const closeTop = useModalStore.getState().closeTop;
 
@@ -43,10 +43,11 @@ export const useStartTimer = () => {
         },
       );
     },
-    onSuccess: (_data, variables) => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: [QueryKey.TIMERS] });
       setTodoTitle(variables.todayGoal);
       setSavedTodos(variables.tasks);
+      setStartTime(data.startTime);
       setIsTimerRunning(true);
       closeTop();
     },
