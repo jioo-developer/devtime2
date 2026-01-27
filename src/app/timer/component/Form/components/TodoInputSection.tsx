@@ -1,5 +1,4 @@
 "use client";
-
 import { UseFormRegister } from "react-hook-form";
 import CommonInput from "@/components/atoms/CommonInput/CommonInput";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";

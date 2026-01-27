@@ -39,12 +39,7 @@ export const useGetStudyLog = (
     }),
     enabled: Boolean(studyLogId),
     retry: 3,
-<<<<<<<< HEAD:src/app/Home/hooks/getter/useGetStudyLog.ts
-    staleTime: 0, // 항상 최신 데이터를 가져오도록
-    refetchOnMount: true, // 마운트 시 항상 재요청
-========
     staleTime: 0,
     refetchOnMount: true,
->>>>>>>> origin/week2_feature/timerAction:src/app/timer/hooks/useGetStudyLog.ts
   });
 };
