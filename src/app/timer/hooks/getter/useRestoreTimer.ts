@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { TimerResponse } from "./useGetTimers";
-import { useTimerContext } from "../../provider/TimerContext";
+import { useTimerContext } from "@/app/timer/provider/TimerContext";
 
 export function useRestoreTimer({ timerData }: { timerData: TimerResponse | undefined }) {
   const { setIsTimerRunning, setIsTimerPaused } = useTimerContext();

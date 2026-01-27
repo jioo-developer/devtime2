@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { useSyncTimer } from "../../../hooks/mutations/useSyncTimer";
-import { calculateSplitTimes } from "../../../utils/calculateSplitTimes";
+import { useSyncTimer } from "../mutations/useSyncTimer";
+import { calculateSplitTimes } from "@/app/timer/utils/calculateSplitTimes";
 
 type UseTimerSyncParams = {
   timerId: string | undefined;

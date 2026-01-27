@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
 import { getAuthHeaders } from "@/utils/authUtils";
-import { SplitTime } from "../../utils/calculateSplitTimes";
+import { SplitTime } from "@/app/timer/utils/calculateSplitTimes";
 import { ResponseMessage, TimerIdWithData } from "./type";
 
 type FinishTimerRequest = {

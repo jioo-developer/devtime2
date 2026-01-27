@@ -2,20 +2,20 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
 import { getAuthHeaders } from "@/utils/authUtils";
-import { SplitTime } from "../../utils/calculateSplitTimes";
+import { SplitTime } from "@/app/timer/utils/calculateSplitTimes";
 import { ResponseMessage, TimerIdWithData } from "./type";
-
-interface ResumeTimerVariables extends TimerIdWithData {
-  splitTimes: SplitTime[];
+interface PauseTimerVariables extends TimerIdWithData {
+  data: SplitTime[];
 };
 
-export const useResumeTimer = () => {
+export const usePauseTimer = () => {
   const queryClient = useQueryClient();
-  return useMutation<ResponseMessage, Error, ResumeTimerVariables>({
-    mutationFn: async ({ timerId, splitTimes }) => {
+
+  return useMutation<ResponseMessage, Error, PauseTimerVariables>({
+    mutationFn: async ({ timerId, data }) => {
       return await ApiClient.put<ResponseMessage>(
         `/api/timers/${timerId}`,
-        splitTimes,
+        data,
         getAuthHeaders()
       );
     },

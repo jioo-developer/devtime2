@@ -1,14 +1,9 @@
-"use client";
-import Timer from "@/app/Home/component/Timer/TimerController";
-import { TimerProvider } from "@/app/Home/provider/TimerContext";
-import "./style.css";
+import React from 'react'
 
-export default function Home() {
+function Home() {
   return (
-    <main className="mainPageWrap">
-      <TimerProvider>
-        <Timer />
-      </TimerProvider>
-    </main>
-  );
+    <div>home</div>
+  )
 }
+
+export default Home

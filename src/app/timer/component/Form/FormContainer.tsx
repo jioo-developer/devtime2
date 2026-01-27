@@ -8,19 +8,18 @@ import { EditForm } from "./components/editor/EditForm";
 import { EndForm } from "./components/editor/EndForm";
 import "./style.css";
 
-function TodoListForm(props: TodoListFormProps) {
-  // useForm 관련 셋팅
+function FormContainer(props: TodoListFormProps) {
+  const { mode, initialTitle = "", initialTodos = [] } = props;
+
   const form = useForm<TodoFormData>({
     defaultValues: {
-      title: props.initialTitle ?? "",
+      title: initialTitle,
       todoInput: "",
       reflection: "",
     },
     mode: "onChange",
   });
   const { watch, reset, getValues } = form;
-  // useForm 관련 셋팅
-
 
   const {
     todos,
@@ -28,21 +27,18 @@ function TodoListForm(props: TodoListFormProps) {
     handleAddTodo,
     handleRemoveTodo,
     handleTextChange,
-  } = useTodoForm(watch, reset, props.initialTodos ?? []);
+  } = useTodoForm(watch, reset, initialTodos);
 
-  if (props.mode === "create") {
+  if (mode === "create") {
+    const { setTodoTitle, onTimerStartSuccess } = props;
     const titleValue = watch("title");
     const canStartTimer = isTimerStartValid(titleValue, todos);
 
     const onStartTimer = () => {
       const trimmed = titleValue.trim();
-
-      if (trimmed) props.setTodoTitle(trimmed);
-
-      if (canStartTimer) {
-        props.onTimerStartSuccess(trimmed, todos);
-      }
-    }
+      if (trimmed) setTodoTitle(trimmed);
+      if (canStartTimer) onTimerStartSuccess(trimmed, todos);
+    };
 
     return (
       <CreateForm
@@ -58,7 +54,8 @@ function TodoListForm(props: TodoListFormProps) {
     );
   }
 
-  if (props.mode === "edit") {
+  if (mode === "edit") {
+    const { onSave } = props;
     return (
       <EditForm
         form={form}
@@ -69,23 +66,24 @@ function TodoListForm(props: TodoListFormProps) {
         handleTextChange={handleTextChange}
         handleSave={() => {
           const { title } = getValues();
-          props.onSave(title, todos);
+          onSave(title, todos);
         }}
       />
     );
   }
 
-  if (props.mode === "end") {
+  if (mode === "end") {
+    const { onEditClick, onFinish } = props;
     return (
       <EndForm
         mode="end"
-        onEditClick={props.onEditClick}
+        onEditClick={onEditClick}
         form={form}
         todos={todos}
-        initialTodos={props.initialTodos ?? []}
+        initialTodos={initialTodos}
         handleRemoveTodo={handleRemoveTodo}
         handleTextChange={handleTextChange}
-        onFinish={props.onFinish}
+        onFinish={onFinish}
       />
     );
   }
@@ -93,4 +91,4 @@ function TodoListForm(props: TodoListFormProps) {
   return null;
 }
 
-export default TodoListForm;
+export default FormContainer;
