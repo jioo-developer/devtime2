@@ -1,5 +1,4 @@
 "use client";
-
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import CommonImage from "@/components/atoms/CommonImage/CommonImage";
 import StartOff from "@/asset/images/start_off.svg";

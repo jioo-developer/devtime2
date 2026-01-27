@@ -8,7 +8,7 @@ import { useRestoreTimer } from "./hooks/useRestoreTimer";
 import { useTimerDisplay } from "./hooks/useTimerDisplay";
 import { useResetTimerAction } from "./hooks/useResetTimer";
 import { useTimerStore } from "@/store/timerStore";
-import { TimerControls } from "./TimerControls";
+import { TimerControls } from "./component/TimerControls";
 
 export default function TimerPage() {
   const todoTitle = useTimerStore((state) => state.todoTitle);
