@@ -3,23 +3,19 @@ import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
 import { getAuthHeaders } from "@/utils/authUtils";
 import { SplitTime } from "../../utils/calculateSplitTimes";
+import { ResponseMessage, TimerIdWithData } from "./type";
 
-type ResumeTimerRequest = {
+interface ResumeTimerVariables extends TimerIdWithData {
   splitTimes: SplitTime[];
-};
-
-type ResumeTimerResponse = {
-  message: string;
 };
 
 export const useResumeTimer = () => {
   const queryClient = useQueryClient();
-
-  return useMutation<ResumeTimerResponse, Error, { timerId: string; data: ResumeTimerRequest }>({
-    mutationFn: async ({ timerId, data }) => {
-      return await ApiClient.put<ResumeTimerResponse>(
+  return useMutation<ResponseMessage, Error, ResumeTimerVariables>({
+    mutationFn: async ({ timerId, splitTimes }) => {
+      return await ApiClient.put<ResponseMessage>(
         `/api/timers/${timerId}`,
-        data,
+        splitTimes,
         getAuthHeaders()
       );
     },

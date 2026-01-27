@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import { useGetTimers } from "../../hooks/useGetTimers";
-import { useRestoreTimer } from "../../hooks/useRestoreTimer";
+import { useGetTimers } from "../../hooks/getter/useGetTimers";
+import { useRestoreTimer } from "../../hooks/getter/useRestoreTimer";
 import { useTimerActions } from "./hooks/useTimerActions";
 import { useElapsedTimer } from "./hooks/ElapsedTimerHelper";
 import { useTimerSync } from "./hooks/useTimerSync";
@@ -12,15 +12,13 @@ function Timer() {
     const { data: timerData } = useGetTimers();
     const { isTimerRunning, isTimerPaused, todoTitle } = useTimerContext();
     const { startTimer, pauseTimer, showListTimer, resetTimer, finishTimer } = useTimerActions();
-    useRestoreTimer({ timerData });
-
     const { hours, minutes, seconds, pausedDuration } = useElapsedTimer({
         startTime: timerData?.startTime,
         isTimerRunning,
         isTimerPaused,
     });
 
-    // 타이머 재생 중 10분 주기 자동 동기화
+    useRestoreTimer({ timerData });
     useTimerSync({
         timerId: timerData?.timerId,
         startTime: timerData?.startTime,
@@ -28,6 +26,7 @@ function Timer() {
         isTimerPaused,
         pausedDuration,
     });
+    // 타이머 재생 중 10분 주기 자동 동기화
 
     return (
         <TimerView

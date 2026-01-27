@@ -8,7 +8,7 @@ import {
   type TimerRefs,
 } from "./ElapsedTimerHelper";
 
-type UseElapsedTimerParams = {
+export type UseElapsedTimerParams = {
   startTime: string | undefined; // ISO date string
   isTimerRunning: boolean;
   isTimerPaused: boolean;
