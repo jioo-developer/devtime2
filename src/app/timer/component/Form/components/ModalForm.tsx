@@ -14,9 +14,7 @@ import { useFinishTimer } from "@/app/timer/hooks/mutations/useFinishTimer";
 import { useUpdateStudyLogTasks } from "@/app/timer/hooks/mutations/useUpdateStudyLog";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerStore } from "@/store/timerStore";
-import {
-  calculateSplitTimes,
-} from "@/app/timer/utils/calculateSplitTimes";
+import { buildSplitTimesForStop } from "@/app/timer/utils/calculateSplitTimes";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 import "../style.css";
 
@@ -43,7 +41,9 @@ export default function ModalForm({
   const isEndMode = mode === "end";
   const isEditMode = mode === "edit";
 
-  const { data: studyLog } = useGetStudyLog(isEditMode ? studyLogId : undefined);
+  const { data: studyLog } = useGetStudyLog(
+    isEditMode || isEndMode ? studyLogId : undefined
+  );
   const savedTodos = useTimerStore((state) => state.savedTodos);
   const setTodoTitle = useTimerStore((state) => state.setTodoTitle);
   const setSavedTodos = useTimerStore((state) => state.setSavedTodos);
@@ -60,9 +60,13 @@ export default function ModalForm({
     isEditMode && studyLog?.data?.tasks
       ? studyLog.data.tasks
       : isEndMode
-        ? (savedTodos ?? []).map((c) => ({ content: c, isCompleted: false }))
+        ? (studyLog?.data?.tasks ?? (savedTodos ?? []).map((c) => ({ content: c, isCompleted: false })))
         : [];
-  const resetKey = studyLogId ?? (isEndMode ? "end" : "create");
+  // end 모드에서 studyLog 로드 후 할 일 목록이 바뀌면 useTodoForm이 다시 동기화하도록 key 보강
+  const resetKey =
+    isEndMode && studyLogId
+      ? `${studyLogId}-${studyLog?.data ? "loaded" : "pending"}`
+      : studyLogId ?? (isEndMode ? "end" : "create");
   const {
     todos,
     todoInputValue,
@@ -155,48 +159,27 @@ export default function ModalForm({
         /** 모달 열린 시각 고정. props 말고 스토어도 보면 클로저 누락 시에도 동작 */
         const endTimeStr = endTimeFromProps ?? useTimerStore.getState().timerEndedAt;
         const endTime = endTimeStr ? new Date(endTimeStr) : new Date();
-        const splitTimesMs = calculateSplitTimes(
-          startTime,
-          endTime,
-          pausedDuration
-        );
-        const startMs = new Date(startTime).getTime();
-        const endMs = endTime.getTime();
-        const expectedStudyMs = Math.max(
-          0,
-          endMs - startMs - pausedDuration
-        );
-        /** 서버는 (요청 수신 시각−시작−일시정지) 기준 검사. 여유 2초 빼서 400 방지 */
-        const allowedSec = Math.max(0, Math.floor(expectedStudyMs / 1000) - 2);
+        /** 서버는 date를 구간 시작 시각으로 해석. timeSpent는 초(seconds). 합=allowedSec, safeSec 캡 적용 */
+        const splitTimes = buildSplitTimesForStop(startTime, endTime, pausedDuration);
+        const rawRangeMs = Math.max(0, endTime.getTime() - new Date(startTime).getTime() - pausedDuration);
+        const allowedSec = Math.floor(rawRangeMs / 1000);
+        const BUFFER_SEC = 10;
+        const safeSec = Math.max(0, allowedSec - BUFFER_SEC);
 
-        /** API는 timeSpent를 초(seconds) 단위로 기대. 개별은 floor 후 합이 allowedSec 초과 시 뒤에서 부터 깎음 */
-        const splitTimes = splitTimesMs.map((s) => ({
-          date: s.date,
-          timeSpent: Math.floor(s.timeSpent / 1000),
-        }));
-        const totalSentSec = splitTimes.reduce((acc, s) => acc + s.timeSpent, 0);
-        if (totalSentSec > allowedSec) {
-          let diff = totalSentSec - allowedSec;
-          for (let i = splitTimes.length - 1; i >= 0 && diff > 0; i--) {
-            const deduct = Math.min(splitTimes[i].timeSpent, diff);
-            splitTimes[i].timeSpent -= deduct;
-            diff -= deduct;
-          }
-        }
-
-        if (process.env.NODE_ENV === "development") {
-          console.group("[Finish Timer 디버깅]");
-          console.log("startTime", startTime, "endTime", endTimeStr ?? "(제출 시각)");
-          console.log("pausedDuration (ms)", pausedDuration, "→ allowedSec", allowedSec);
-          console.log("splitTimes 전송", splitTimes, "총(timeSpent 초)", splitTimes.reduce((a, s) => a + s.timeSpent, 0));
-          console.groupEnd();
+        // 서버 end 기준 차이 대비해 합계를 safeSec 이하로 (뒤에서부터 감소)
+        const payloadSplitTimes = splitTimes.map((s) => ({ date: s.date, timeSpent: s.timeSpent }));
+        let toDeduct = payloadSplitTimes.reduce((a, s) => a + s.timeSpent, 0) - safeSec;
+        for (let i = payloadSplitTimes.length - 1; i >= 0 && toDeduct > 0; i--) {
+          const take = Math.min(payloadSplitTimes[i].timeSpent, toDeduct);
+          payloadSplitTimes[i].timeSpent -= take;
+          toDeduct -= take;
         }
 
         finishTimer(
           {
             timerId,
             data: {
-              splitTimes,
+              splitTimes: payloadSplitTimes,
               tasks: listTodos.map((t) => ({
                 content: t.content,
                 isCompleted: t.isCompleted,
@@ -212,6 +195,8 @@ export default function ModalForm({
               setClientStartedAt(null);
               setTotalPausedDuration(0);
               setTimerEndedAt(null);
+              setTodoTitle("오늘도 열심히 달려봐요!");
+              setSavedTodos([]);
               closeTop();
             },
             onError: (err) => {
@@ -219,8 +204,6 @@ export default function ModalForm({
             },
           }
         );
-      } else {
-        console.log(data);
       }
     })();
   };

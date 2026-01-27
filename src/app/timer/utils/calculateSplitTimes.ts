@@ -1,143 +1,149 @@
 /**
- * startTime부터 현재까지의 시간을 날짜별로 분할
- * 자정을 기준으로 날짜가 바뀌면 분리
+ * 서버 stop API용: splitTimes[].date는 "해당 구간의 시작 시각" ISO.
+ * timeSpent는 초(seconds) 정수이며, 전체 합은 floor((end-start-paused)/1000)와 같게 맞춤.
  */
+
+/** 구간 시작 시각 ISO + 해당 구간에 쓴 시간(초). stop API 전송용 */
+export type SplitTimeForStop = {
+  date: string; // 구간 시작 시각 ISO (예: startTime 또는 자정 경계 "…T00:00:00.000Z")
+  timeSpent: number; // seconds (정수)
+};
+
+/**
+ * start ~ end 구간을 UTC 자정 기준으로 쪼갠 뒤, 각 chunk의 시작 시각을 date로 하는 split 생성.
+ * 합계 = allowedSec = floor((end - start - paused) / 1000). 비율 배분 후 floor, 나머지는 마지막 구간에.
+ */
+export function buildSplitTimesForStop(
+  startTime: string,
+  endTime: Date,
+  pausedDurationMs: number = 0
+): SplitTimeForStop[] {
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  const totalMs = Math.max(0, end.getTime() - start.getTime() - pausedDurationMs);
+  const allowedSec = Math.floor(totalMs / 1000);
+  if (allowedSec <= 0) return [];
+
+  const startMidnightUtc = new Date(
+    Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate(), 0, 0, 0, 0)
+  );
+  const endMidnightUtc = new Date(
+    Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate(), 0, 0, 0, 0)
+  );
+
+  type Chunk = { startDate: Date; durationMs: number };
+  const chunks: Chunk[] = [];
+
+  if (startMidnightUtc.getTime() === endMidnightUtc.getTime()) {
+    chunks.push({ startDate: start, durationMs: totalMs });
+  } else {
+    const firstEnd = new Date(startMidnightUtc);
+    firstEnd.setUTCDate(firstEnd.getUTCDate() + 1);
+    const firstMs = firstEnd.getTime() - start.getTime();
+    chunks.push({ startDate: start, durationMs: firstMs });
+
+    let cur = new Date(firstEnd);
+    while (cur.getTime() < endMidnightUtc.getTime()) {
+      const next = new Date(cur);
+      next.setUTCDate(next.getUTCDate() + 1);
+      chunks.push({ startDate: new Date(cur), durationMs: next.getTime() - cur.getTime() });
+      cur = next;
+    }
+    const lastMs = end.getTime() - endMidnightUtc.getTime();
+    if (lastMs > 0) {
+      chunks.push({ startDate: new Date(endMidnightUtc), durationMs: lastMs });
+    }
+  }
+
+  const totalRawMs = chunks.reduce((s, c) => s + c.durationMs, 0);
+  const ratio = totalRawMs > 0 ? allowedSec / (totalRawMs / 1000) : 0;
+  const result: SplitTimeForStop[] = chunks.map((c) => ({
+    date: c.startDate.toISOString(),
+    timeSpent: Math.max(0, Math.floor((c.durationMs / 1000) * ratio)),
+  }));
+
+  const sum = result.reduce((a, r) => a + r.timeSpent, 0);
+  if (sum < allowedSec && result.length > 0) {
+    result[result.length - 1].timeSpent += allowedSec - sum;
+  }
+
+  return result;
+}
+
+// ——— 기존 (getCurrentSplitTimes 등에서 사용, date=자정 키 / timeSpent=ms) ———
+
 export type SplitTime = {
-  date: string; // ISO date string (예: "2026-01-26T15:25:11.412Z") ← 실제로는 자정 ISO를 넣음
+  date: string; // UTC 자정 ISO (날짜 키 용도)
   timeSpent: number; // 밀리초
 };
+
+function toUTCMidnightISO(date: Date): string {
+  const y = date.getUTCFullYear();
+  const m = date.getUTCMonth();
+  const d = date.getUTCDate();
+  return new Date(Date.UTC(y, m, d, 0, 0, 0, 0)).toISOString();
+}
 
 export function calculateSplitTimes(
   startTime: string,
   endTime: Date = new Date(),
-  pausedDuration: number = 0 // 밀리초
+  pausedDuration: number = 0
 ): SplitTime[] {
-  // 1) 입력을 Date로 파싱
   const start = new Date(startTime);
   const end = new Date(endTime);
-
-  // 2) 결과 배열
-  const splitTimes: SplitTime[] = [];
-
-  // 3) 실제 공부 시간 = (종료 - 시작) - (일시정지)
   const totalTimeSpent = end.getTime() - start.getTime() - pausedDuration;
-
-  // 4) 공부 시간이 0 이하이면 의미 없으니 빈 배열
   if (totalTimeSpent <= 0) return [];
 
-  // 5) 시작일의 자정(00:00:00.000) 만들기
-  const startMidnight = new Date(start);
-  startMidnight.setHours(0, 0, 0, 0);
+  const startMidnightUtc = new Date(
+    Date.UTC(start.getUTCFullYear(), start.getUTCMonth(), start.getUTCDate(), 0, 0, 0, 0)
+  );
+  const endMidnightUtc = new Date(
+    Date.UTC(end.getUTCFullYear(), end.getUTCMonth(), end.getUTCDate(), 0, 0, 0, 0)
+  );
 
-  // 6) 종료일의 자정 만들기
-  const endMidnight = new Date(end);
-  endMidnight.setHours(0, 0, 0, 0);
-
-  // 7) 시작과 종료가 "같은 날짜"라면 (자정 기준 동일)
-  if (startMidnight.getTime() === endMidnight.getTime()) {
-    // 해당 날짜에 totalTimeSpent 전부를 넣고 끝
-    splitTimes.push({
-      date: formatDate(startMidnight), // 자정 ISO
-      timeSpent: Math.max(0, totalTimeSpent),
-    });
-    return splitTimes;
+  if (startMidnightUtc.getTime() === endMidnightUtc.getTime()) {
+    return [{ date: toUTCMidnightISO(start), timeSpent: Math.max(0, totalTimeSpent) }];
   }
 
-  // -------------------------
-  // 날짜가 여러 날에 걸친 경우
-  // -------------------------
+  const firstDayEndUtc = new Date(startMidnightUtc);
+  firstDayEndUtc.setUTCDate(firstDayEndUtc.getUTCDate() + 1);
+  const firstDayTime = firstDayEndUtc.getTime() - start.getTime();
 
-  // 8) 첫 날: startTime ~ 다음날 자정
-  const firstDayEnd = new Date(startMidnight);
-  firstDayEnd.setDate(firstDayEnd.getDate() + 1); // 다음 날 자정
-  const firstDayTime = firstDayEnd.getTime() - start.getTime();
-  // 첫날 running time(일시정지 차감 전)
-
-  // 9) 중간 날들: "완전한 하루"들(자정~자정)을 수집
-  const currentDay = new Date(startMidnight);
-  currentDay.setDate(currentDay.getDate() + 1); // 시작 다음날 자정부터 시작
-
+  const currentDay = new Date(startMidnightUtc);
+  currentDay.setUTCDate(currentDay.getUTCDate() + 1);
   const middleDays: { date: Date; timeSpent: number }[] = [];
-
-  while (currentDay.getTime() < endMidnight.getTime()) {
+  while (currentDay.getTime() < endMidnightUtc.getTime()) {
     const dayEnd = new Date(currentDay);
-    dayEnd.setDate(dayEnd.getDate() + 1); // 다음날 자정
-
-    const dayTime = dayEnd.getTime() - currentDay.getTime();
-
-    middleDays.push({
-      date: new Date(currentDay), // 해당 날짜의 자정
-      timeSpent: dayTime, // 24시간
-    });
-
-    // 다음 날짜로 이동
-    currentDay.setDate(currentDay.getDate() + 1);
+    dayEnd.setUTCDate(dayEnd.getUTCDate() + 1);
+    middleDays.push({ date: new Date(currentDay), timeSpent: dayEnd.getTime() - currentDay.getTime() });
+    currentDay.setUTCDate(currentDay.getUTCDate() + 1);
   }
 
-  // 10) 마지막 날: 종료일 자정 ~ endTime
-  const lastDayTime = end.getTime() - endMidnight.getTime();
-
-  // 11) "일시정지 차감 전" 총 시간(첫날 + 중간날들 + 마지막날)
+  const lastDayTime = end.getTime() - endMidnightUtc.getTime();
   const totalRawTime =
-    firstDayTime +
-    middleDays.reduce((sum, day) => sum + day.timeSpent, 0) +
-    lastDayTime;
-
-  // 12) 일시정지를 날짜별로 정확히 분배할 수 없으니
-  //     전체 running time 대비 실제 공부시간(totalTimeSpent) 비율을 구해서
-  //     각 날짜 running time에 곱하는 방식으로 "비례 차감"
+    firstDayTime + middleDays.reduce((s, d) => s + d.timeSpent, 0) + lastDayTime;
   const adjustmentRatio = totalRawTime > 0 ? totalTimeSpent / totalRawTime : 0;
 
-  // 13) 첫 날 조정값 = floor(첫날 running time * 비율)
-  const adjustedFirstDayTime = Math.max(0, Math.floor(firstDayTime * adjustmentRatio));
-  splitTimes.push({
-    date: formatDate(startMidnight),
-    timeSpent: adjustedFirstDayTime,
-  });
+  const splitTimes: SplitTime[] = [];
+  const adjustedFirst = Math.max(0, Math.floor(firstDayTime * adjustmentRatio));
+  splitTimes.push({ date: toUTCMidnightISO(start), timeSpent: adjustedFirst });
+  let totalAdjusted = adjustedFirst;
 
-  // 14) 지금까지 누적된 조정 합
-  let totalAdjusted = adjustedFirstDayTime;
-
-  // 15) 중간 날들도 동일하게 비율 곱하고 floor
   middleDays.forEach((day) => {
-    const adjustedTime = Math.max(0, Math.floor(day.timeSpent * adjustmentRatio));
-    splitTimes.push({
-      date: formatDate(day.date),
-      timeSpent: adjustedTime,
-    });
-    totalAdjusted += adjustedTime;
+    const t = Math.max(0, Math.floor(day.timeSpent * adjustmentRatio));
+    splitTimes.push({ date: toUTCMidnightISO(day.date), timeSpent: t });
+    totalAdjusted += t;
   });
 
-  // 16) 마지막 날: 남은 시간을 "전부 몰아서" 넣어 총합을 정확히 맞춤
   if (lastDayTime > 0) {
-    const remainingTime = totalTimeSpent - totalAdjusted;
-    splitTimes.push({
-      date: formatDate(endMidnight),
-      timeSpent: Math.max(0, remainingTime),
-    });
-  } else {
-    if (splitTimes.length > 0) {
-      splitTimes[0].timeSpent += totalTimeSpent - totalAdjusted;
-    }
+    splitTimes.push({ date: toUTCMidnightISO(end), timeSpent: totalTimeSpent - totalAdjusted });
+  } else if (splitTimes.length > 0) {
+    splitTimes[0].timeSpent += totalTimeSpent - totalAdjusted;
   }
-
-  // 18) 날짜별 분할 결과 반환
   return splitTimes;
 }
 
-function formatDate(date: Date): string {
-  // 19) 입력 date를 자정으로 고정하고 ISO로 반환
-  const isoDate = new Date(date);
-  isoDate.setHours(0, 0, 0, 0);
-  return isoDate.toISOString();
-}
-
-/**
- * startTime부터 현재까지의 splitTimes를 계산
- */
 export function getCurrentSplitTimes(startTime?: string, pausedDuration: number = 0): SplitTime[] {
-  // 20) startTime 없으면 빈 배열
   if (!startTime) return [];
-  // 21) endTime은 "현재"로 넣어서 계산
   return calculateSplitTimes(startTime, new Date(), pausedDuration);
 }
