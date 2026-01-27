@@ -26,6 +26,7 @@ export function useTimerModal() {
     if (mode === "end" && endParams) {
       const endedAt = new Date().toISOString();
       useTimerStore.getState().setTimerEndedAt(endedAt);
+
       endOptions = {
         timerId: endParams.timerId,
         startTime: endParams.startTime,

@@ -4,16 +4,14 @@ import { QueryKey } from "@/constant/queryKeys";
 import { getAuthHeaders } from "@/utils/authUtils";
 import { parseErrorDetail } from "@/utils/parseErrorDetail";
 
-/** POST /api/timers/:timerId/stop 요청 body (스펙 기준) */
 export type FinishTimerTaskItem = {
   content: string;
   isCompleted: boolean;
 };
 
-/** splitTimes[].date = 구간 시작 시각 ISO, timeSpent = 초(정수). 합계는 floor((end-start-paused)/1000)에 맞춤 */
 export type FinishTimerSplitItem = {
-  date: string; // 구간 시작 시각 ISO (예: startTime 또는 자정 경계 시각)
-  timeSpent: number; // seconds (정수)
+  date: string;
+  timeSpent: number;
 };
 
 export type FinishTimerRequest = {
@@ -27,7 +25,6 @@ type FinishTimerVariables = {
   data: FinishTimerRequest;
 };
 
-/** POST /api/timers/:timerId/stop 응답 */
 export type FinishTimerResponse = {
   message: string;
   totalTime?: number;

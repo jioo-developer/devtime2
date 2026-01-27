@@ -3,7 +3,6 @@ import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
 import { getAuthHeaders } from "@/utils/authUtils";
 
-/** API 스펙: tasks는 항상 { id, content, isCompleted }[] */
 export type StudyLogResponse = {
   data: {
     todayGoal: string;
@@ -13,7 +12,6 @@ export type StudyLogResponse = {
 
 export type StudyLogTaskItem = { content: string; isCompleted: boolean };
 
-/** 훅이 반환하는 데이터 형태. tasks는 { content, isCompleted }[] */
 export type StudyLogData = {
   data: { todayGoal: string; tasks: StudyLogTaskItem[] };
 };

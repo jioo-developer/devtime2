@@ -9,16 +9,11 @@ import { TodoInputSection } from "./TodoInputSection";
 import { FormFooter } from "./FormFooter";
 import { CommonTextArea } from "@/components/atoms/CommonTextArea/CommonTextArea";
 import { useGetStudyLog } from "@/app/Home/hooks/getter/useGetStudyLog";
-import { useStartTimer } from "@/app/Home/hooks/mutations/useStartTimer";
-import { useFinishTimer } from "@/app/Home/hooks/mutations/useFinishTimer";
-import { useUpdateStudyLogTasks } from "@/app/Home/hooks/mutations/useUpdateStudyLog";
-import { useModalStore } from "@/store/modalStore";
 import { useTimerStore } from "@/store/timerStore";
-import { buildSplitTimesForStop } from "@/app/Home/utils/calculateSplitTimes";
-import CommonButton from "@/components/atoms/CommonButton/CommonButton";
+import { useModalFormActions } from "../hooks/useModalFormActions";
+import { useFinishTimerAction } from "../hooks/useFinishTimerAction";
 import "../style.css";
 
-/** mode가 "end"일 때만 전달하는 값 (완료 API 호출용) */
 export type ModalFormEndOptions = {
   timerId: string;
   startTime: string;
@@ -32,20 +27,15 @@ type ModalFormProps = {
   endOptions?: ModalFormEndOptions;
 };
 
-export default function ModalForm({
-  mode,
-  studyLogId,
-  endOptions,
-}: ModalFormProps) {
+export default function ModalForm({ mode, studyLogId, endOptions }: ModalFormProps) {
   const isEndMode = mode === "end";
   const isEditMode = mode === "edit";
+  const isCreateMode = mode === "create";
 
   const { data: studyLog } = useGetStudyLog(
     isEditMode || isEndMode ? studyLogId : undefined
   );
   const savedTodos = useTimerStore((state) => state.savedTodos);
-  const setTodoTitle = useTimerStore((state) => state.setTodoTitle);
-  const setSavedTodos = useTimerStore((state) => state.setSavedTodos);
 
   const {
     register,
@@ -55,16 +45,24 @@ export default function ModalForm({
     formState: { errors },
   } = useForm<TodoFormData>({ mode: "onChange" });
 
-  const initialTodos =
-    isEditMode && studyLog?.data?.tasks
-      ? studyLog.data.tasks
-      : isEndMode
-        ? (studyLog?.data?.tasks ?? (savedTodos ?? []).map((c) => ({ content: c, isCompleted: false })))
-        : [];
-  const resetKey =
-    isEndMode && studyLogId
-      ? `${studyLogId}-${studyLog?.data ? "loaded" : "pending"}`
-      : studyLogId ?? (isEndMode ? "end" : "create");
+  const getInitialTodos = () => {
+    if (isEditMode && studyLog?.data?.tasks) return studyLog.data.tasks;
+    if (isEndMode) {
+      return studyLog?.data?.tasks ?? (savedTodos ?? []).map((content) => ({
+        content,
+        isCompleted: false,
+      }));
+    }
+    return [];
+  };
+
+  const getResetKey = () => {
+    if (isEndMode && studyLogId) {
+      return `${studyLogId}-${studyLog?.data ? "loaded" : "pending"}`;
+    }
+    return studyLogId ?? (isEndMode ? "end" : "create");
+  };
+
   const {
     todos,
     todoInputValue,
@@ -72,136 +70,35 @@ export default function ModalForm({
     handleRemoveTodo,
     handleTextChange,
     handleStatusChange,
-  } = useTodoForm(watch, reset, initialTodos, resetKey);
+  } = useTodoForm(watch, reset, getInitialTodos(), getResetKey());
 
-  const listTodos = todos ?? [];
-  const completedCount = listTodos.filter((t) => t.isCompleted).length;
-
+  const completedCount = (todos ?? []).filter((todo) => todo.isCompleted).length;
   const canStartTimer =
-    mode === "create" &&
-    isTimerStartValid(watch("title"), (todos ?? []).map((t) => t.content));
+    isCreateMode &&
+    isTimerStartValid(watch("title"), (todos ?? []).map((todo) => todo.content));
 
-  const { mutate: startTimer } = useStartTimer();
-  const { mutate: finishTimer } = useFinishTimer();
-  const { mutate: updateStudyLogTasks } = useUpdateStudyLogTasks();
-  const openModal = useModalStore((state) => state.push);
-  const closeTop = useModalStore((state) => state.closeTop);
-  const {
-    setIsTimerRunning,
-    setIsTimerPaused,
-    setStartTime,
-    setClientStartedAt,
-    setTotalPausedDuration,
-    setTimerEndedAt,
-  } = useTimerStore.getState();
+  const { startTimerAction, saveTasksAction } = useModalFormActions();
+  const { finishTimerAction } = useFinishTimerAction();
 
   const onStartTimer = () => {
     const title = watch("title");
-    if (!title) return;
-    startTimer({
-      todayGoal: title,
-      tasks: (todos ?? []).map((t) => t.content),
-    });
+    startTimerAction(title, todos ?? []);
   };
+
   const onSave = () => {
     if (!isEditMode || !studyLogId) return;
     const title = watch("title") ?? "";
-    const taskList = (todos ?? []).map((t) => ({
-      content: t.content,
-      isCompleted: t.isCompleted,
-    }));
-    updateStudyLogTasks(
-      { studyLogId, tasks: taskList },
-      {
-        onSuccess: () => {
-          setTodoTitle(title);
-          setSavedTodos((todos ?? []).map((t) => t.content));
-          closeTop();
-        },
-        onError: (err) => {
-          console.error("할 일 목록 저장 실패:", err);
-        },
-      }
-    );
+    saveTasksAction(studyLogId, title, todos ?? []);
   };
+
   const onFinish = () => {
     handleSubmit((data) => {
       if (isEndMode && endOptions) {
-        if (completedCount === 0) {
-          openModal({
-            width: 360,
-            title: "알림",
-            content: (
-              <>
-                완료한 일이 없습니다.
-                <br />
-                할일 목록을 다시 한번 확인해주시겠어요?
-              </>
-            ),
-            showCloseButton: false,
-            BackdropMiss: true,
-            footer: (
-              <CommonButton theme="primary" onClick={() => closeTop()}>
-                확인
-              </CommonButton>
-            ),
-          });
-          return;
-        }
-        const {
-          timerId,
-          startTime,
-          pausedDuration = 0,
-          endTime: endTimeFromProps,
-        } = endOptions;
-        /** 모달 열린 시각 고정. props 말고 스토어도 보면 클로저 누락 시에도 동작 */
-        const endTimeStr = endTimeFromProps ?? useTimerStore.getState().timerEndedAt;
-        const endTime = endTimeStr ? new Date(endTimeStr) : new Date();
-        /** 서버는 date를 구간 시작 시각으로 해석. timeSpent는 초(seconds). 합=allowedSec, safeSec 캡 적용 */
-        const splitTimes = buildSplitTimesForStop(startTime, endTime, pausedDuration);
-        const rawRangeMs = Math.max(0, endTime.getTime() - new Date(startTime).getTime() - pausedDuration);
-        const allowedSec = Math.floor(rawRangeMs / 1000);
-        const BUFFER_SEC = 10;
-        const safeSec = Math.max(0, allowedSec - BUFFER_SEC);
-
-        // 서버 end 기준 차이 대비해 합계를 safeSec 이하로 (뒤에서부터 감소)
-        const payloadSplitTimes = splitTimes.map((s) => ({ date: s.date, timeSpent: s.timeSpent }));
-        let toDeduct = payloadSplitTimes.reduce((a, s) => a + s.timeSpent, 0) - safeSec;
-        for (let i = payloadSplitTimes.length - 1; i >= 0 && toDeduct > 0; i--) {
-          const take = Math.min(payloadSplitTimes[i].timeSpent, toDeduct);
-          payloadSplitTimes[i].timeSpent -= take;
-          toDeduct -= take;
-        }
-
-        finishTimer(
-          {
-            timerId,
-            data: {
-              splitTimes: payloadSplitTimes,
-              tasks: listTodos.map((t) => ({
-                content: t.content,
-                isCompleted: t.isCompleted,
-              })),
-              review: data.reflection ?? "",
-            },
-          },
-          {
-            onSuccess: () => {
-              setIsTimerRunning(false);
-              setIsTimerPaused(false);
-              setStartTime("");
-              setClientStartedAt(null);
-              setTotalPausedDuration(0);
-              setTimerEndedAt(null);
-              setTodoTitle("오늘도 열심히 달려봐요!");
-              setSavedTodos([]);
-              closeTop();
-            },
-            onError: (err) => {
-              console.error("공부 완료 처리 실패:", err);
-            },
-          }
-        );
+        const tasks = (todos ?? []).map((todo) => ({
+          content: todo.content,
+          isCompleted: todo.isCompleted,
+        }));
+        finishTimerAction(endOptions, tasks, data.reflection ?? "", completedCount);
       }
     })();
   };
@@ -234,7 +131,7 @@ export default function ModalForm({
         )}
 
         <TodoListSection
-          todos={listTodos}
+          todos={todos ?? []}
           mode={mode}
           onDelete={!isEndMode ? handleRemoveTodo : undefined}
           onTextChange={!isEndMode ? handleTextChange : undefined}

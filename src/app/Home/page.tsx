@@ -1,5 +1,4 @@
 "use client";
-
 import "./style.css";
 import { useTimerModal } from "./hooks/useTimerModal";
 import { useGetTimers } from "./hooks/getter/useGetTimers";
@@ -9,6 +8,7 @@ import { useTimerDisplay } from "./hooks/useTimerDisplay";
 import { useResetTimerAction } from "./hooks/useResetTimer";
 import { useTimerStore } from "@/store/timerStore";
 import { TimerControls } from "./component/TimerControls";
+import { TimerDisplay } from "./component/TimerDisplay";
 
 export default function TimerPage() {
   const todoTitle = useTimerStore((state) => state.todoTitle);
@@ -56,19 +56,7 @@ export default function TimerPage() {
       <div className="timerContainer">
         <h2 className="timerTitle">{todoTitle}</h2>
 
-        <div className="timerDisplay">
-          <div className="timeSegment">
-            <div className="timeValue">{hours}</div>
-          </div>
-          <span className="colon">:</span>
-          <div className="timeSegment">
-            <div className="timeValue">{minutes}</div>
-          </div>
-          <span className="colon">:</span>
-          <div className="timeSegment">
-            <div className="timeValue">{seconds}</div>
-          </div>
-        </div>
+        <TimerDisplay hours={hours} minutes={minutes} seconds={seconds} />
 
         <TimerControls
           isTimerRunning={isTimerRunning}
