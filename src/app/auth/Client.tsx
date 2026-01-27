@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { useCheckEmail } from "./hooks/useCheckEmail";
 import { useCheckNickname } from "./hooks/useCheckNickname";
 import { useSignup } from "./hooks/useSignup";
+import Link from "next/link";
 
 export type AuthFormData = {
   email: string;
@@ -210,7 +211,10 @@ function AuthPage({ onSubmit }: AuthPageProps = {}) {
         </form>
         <div className="goLogin">
           <p>
-            회원이신가요? <span>로그인 바로가기</span>
+            회원이신가요?
+            <Link href="/login" prefetch>
+              <span>로그인 바로가기</span>
+            </Link>
           </p>
         </div>
       </section>
