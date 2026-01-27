@@ -3,6 +3,8 @@
   padding: var(--gap-lg) 0;
   border-bottom: 1px solid var(--gray-200);
   background-color: transparent;
+  position: relative;
+  z-index: 10;
 }
 
 .headerIn {
@@ -33,9 +35,8 @@
 .navigation {
   display: flex;
   gap: var(--gap-xl);
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  align-items: center;
+  margin-top: 10px;
 }
 
 .navigation li,

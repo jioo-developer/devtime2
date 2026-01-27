@@ -1,28 +1,66 @@
+"use client";
 import React from "react";
-import styles from "./style.module.css";
+import styles from "../style.module.css";
 import CommonImage from "@/components/atoms/CommonImage/CommonImage";
 import DefaultImage from "@/asset/images/default_profile_image.svg";
-interface AccountMenuProps {
-  isLoggedIn: boolean;
-}
+import Link from "next/link";
+import { useLogout } from "@/app/login/hooks/useLogout";
+import { useQuery } from "@tanstack/react-query";
+import { AuthenticatedApiClient } from "@/config/authenticatedApiClient";
+import { QueryKey } from "@/constant/queryKeys";
 
-function AccountMenu({ isLoggedIn }: AccountMenuProps) {
+type ProfileResponse = {
+  nickname?: string;
+  profileImageUrl?: string;
+};
+
+function AccountMenu() {
+  const { mutate: logout } = useLogout();
+  
+  const { data: profile } = useQuery({
+    queryKey: [QueryKey.PROFILE],
+    queryFn: () => AuthenticatedApiClient.get<ProfileResponse>("/api/profile"),
+    retry: false,
+  });
+
+  const isLoggedIn = !!profile;
+  const nickname = profile?.nickname;
+  const profileImageUrl = profile?.profileImageUrl;
+
   return (
     <ul className={styles.navigation}>
       {isLoggedIn ? (
-        <div className={styles.profileCard}>
-          <CommonImage
-            src={DefaultImage}
-            alt="기본 프로필 이미지"
-            width={40}
-            height={40}
-          />
-          <p className={styles.profileName}>DevTime</p>
-        </div>
+        <>
+          <div className={styles.profileCard}>
+            <CommonImage
+              src={profileImageUrl || DefaultImage}
+              alt="기본 프로필 이미지"
+              width={40}
+              height={40}
+            />
+            <p className={styles.profileName}>{nickname || "DevTime"}</p>
+          </div>
+          <li>
+            <button
+              onClick={() => logout()}
+              className={styles.logoutButton}
+            >
+              로그아웃
+            </button>
+          </li>
+        </>
       ) : (
         <>
-          <li>로그인</li>
-          <li>회원가입</li>
+          <li>
+            <Link href="/login" prefetch>
+              로그인
+            </Link>
+          </li>
+          <li>
+            <Link href="/auth" prefetch>
+              회원가입
+            </Link>
+          </li>
         </>
       )}
     </ul>

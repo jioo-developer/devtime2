@@ -1,5 +1,5 @@
+"use client";
 import React from "react";
-import { cookies } from "next/headers";
 import HeaderLogo from "@/asset/images/header_logo.svg";
 import styles from "./style.module.css";
 import CommonImage from "@/components/atoms/CommonImage/CommonImage";
@@ -8,8 +8,6 @@ import AccountMenu from "./component/AccountMenu";
 import Link from "next/link";
 
 function Header() {
-  const token = cookies().get("authToken")?.value;
-
   return (
     <header className={styles.header}>
       <div className={styles.headerIn}>
@@ -20,7 +18,7 @@ function Header() {
           <Navigation />
         </div>
         <div className={styles.rightCon}>
-          <AccountMenu isLoggedIn={!!token} />
+          <AccountMenu />
         </div>
       </div>
     </header>
