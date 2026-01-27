@@ -23,7 +23,6 @@ export type ModalFormEndOptions = {
   timerId: string;
   startTime: string;
   pausedDuration?: number;
-  /** 타이머 종료 시각(모달 열린 순간). 없으면 제출 시각 사용 */
   endTime?: string;
 };
 
@@ -62,7 +61,6 @@ export default function ModalForm({
       : isEndMode
         ? (studyLog?.data?.tasks ?? (savedTodos ?? []).map((c) => ({ content: c, isCompleted: false })))
         : [];
-  // end 모드에서 studyLog 로드 후 할 일 목록이 바뀌면 useTodoForm이 다시 동기화하도록 key 보강
   const resetKey =
     isEndMode && studyLogId
       ? `${studyLogId}-${studyLog?.data ? "loaded" : "pending"}`
