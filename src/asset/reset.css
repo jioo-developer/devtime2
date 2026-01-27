@@ -5,6 +5,10 @@
   font-family: var(--font-pretendard);
 }
 
+body {
+  background: #f2f3f880;
+}
+
 ul,
 li {
   list-style: none;
