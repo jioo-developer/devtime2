@@ -2,28 +2,77 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { FormMode, TodoFormData } from "../types";
+import { useTodoForm } from "../hooks/useTodoForm";
+import { isTimerStartValid } from "../utils/timerValidation";
 import { TodoListSection } from "./TodoListSection";
 import { TodoInputSection } from "./TodoInputSection";
 import { FormFooter } from "./FormFooter";
 import { CommonTextArea } from "@/components/atoms/CommonTextArea/CommonTextArea";
+import { useStartTimer } from "@/app/timer/hooks/useStartTimer";
+import { useModalStore } from "@/store/modalStore";
+import { useTimerStore } from "@/store/timerStore";
 import "../style.css";
-
-const SAMPLE_TODOS = ["오늘의 목표 정하기", "할일 목록 작성하기", "타이머 시작하기"];
 
 export default function ModalForm({ mode }: { mode: FormMode }) {
   const isEndMode = mode === "end";
 
   const {
     register,
+    watch,
+    reset,
+    handleSubmit,
     formState: { errors },
-  } = useForm<TodoFormData>({
-    mode: "onChange",
-  });
+  } = useForm<TodoFormData>({ mode: "onChange" });
+
+  const {
+    todos,
+    todoInputValue,
+    handleAddTodo,
+    handleRemoveTodo,
+    handleTextChange,
+  } = useTodoForm(watch, reset, []);
+
+  const canStartTimer =
+    mode === "create" && isTimerStartValid(watch("title"), todos);
+
+  const closeTop = useModalStore((state) => state.closeTop);
+  const { setTodoTitle, setSavedTodos, setIsTimerRunning } = useTimerStore.getState();
+  const { mutate: startTimer } = useStartTimer();
+
+  const onStartTimer = () => {
+    const title = watch("title");
+    if (title) {
+      startTimer(
+        { todayGoal: title, tasks: [...todos] },
+        {
+          onSuccess: () => {
+            setTodoTitle(title);
+            setSavedTodos(todos);
+            setIsTimerRunning(true);
+            closeTop();
+          },
+          onError: (error) => {
+            if (error.message.includes("409")) {
+              closeTop();
+            }
+          },
+        },
+      );
+    }
+  };
+  const onSave = () => {
+    // TODO: 저장 API 연동
+  };
+  const onFinish = () => {
+    handleSubmit((data) => {
+      console.log(data);
+      // TODO: 공부 완료 API 연동 (data.reflection, completedTodos 등)
+    })();
+  };
 
   return (
     <div className="goalForm">
       <div className="todoSection">
-        {/* end 모드 헤더 */}
         {isEndMode && (
           <div>
             <h2 className="headerTitle">오늘도 수고하셨어요!</h2>
@@ -33,28 +82,30 @@ export default function ModalForm({ mode }: { mode: FormMode }) {
           </div>
         )}
 
-        {!isEndMode && <TodoInputSection register={register} mode={mode} />}
+        {!isEndMode && (
+          <TodoInputSection
+            register={register}
+            mode={mode}
+            todoInputValue={todoInputValue}
+            onAddTodo={handleAddTodo}
+          />
+        )}
 
-        {/* todo list */}
-        <TodoListSection todos={SAMPLE_TODOS} />
+        <TodoListSection
+          todos={todos}
+          onDelete={!isEndMode ? handleRemoveTodo : undefined}
+          onTextChange={!isEndMode ? handleTextChange : undefined}
+        />
 
-        {/* end 모드 회고 */}
         {isEndMode && (
           <div className="reflectionContainer">
             <h3 className="sectionTitle">학습 회고</h3>
-
             <CommonTextArea
               rows={8}
               {...register("reflection", {
                 required: "학습 회고를 작성해 주세요.",
-                minLength: {
-                  value: 15,
-                  message: "15자 이상 작성해 주세요.",
-                },
-                maxLength: {
-                  value: 500,
-                  message: "500자 이하로 작성해 주세요.",
-                },
+                minLength: { value: 15, message: "15자 이상 작성해 주세요." },
+                maxLength: { value: 500, message: "500자 이하로 작성해 주세요." },
               })}
               placeholder="오늘 학습한 내용을 회고해 보세요. (15자 이상 작성 필수)"
               className="reflectionTextarea"
@@ -63,7 +114,13 @@ export default function ModalForm({ mode }: { mode: FormMode }) {
           </div>
         )}
 
-        <FormFooter mode={mode} />
+        <FormFooter
+          mode={mode}
+          canStartTimer={canStartTimer}
+          onStartTimer={onStartTimer}
+          onSave={onSave}
+          onFinish={onFinish}
+        />
       </div>
     </div>
   );

@@ -133,11 +133,11 @@
 .editButton {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: var(--gap-md);
   background: none;
   border: none;
   color: #666;
-  font-size: var( --fontsize-body);
+  font-size: var(--fontsize-body);
   cursor: pointer;
   padding: 0;
 }

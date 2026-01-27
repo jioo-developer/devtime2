@@ -6,10 +6,14 @@ import "../style.css";
 interface TodoListSectionProps {
   mode?: FormMode;
   todos: string[];
+  onDelete?: (index: number) => void;
+  onTextChange?: (index: number) => (nextText: string) => void;
 }
 
 export function TodoListSection({
   todos,
+  onDelete,
+  onTextChange,
 }: TodoListSectionProps) {
   if (todos.length === 0) return null;
 
@@ -17,8 +21,11 @@ export function TodoListSection({
     <div className="todoList">
       <div className="headerContainer">
         <h3 className="sectionTitle">할 일 목록</h3>
-        <CommonButton theme="none" type="button"
-          style={{ display: "flex", alignItems: "center", gap: "var(--gap-md)", padding: 0 }}>
+        <CommonButton
+          theme="none"
+          type="button"
+          className="editButton"
+        >
           <MdEdit size={16} />
           <span>할일 수정</span>
         </CommonButton>
@@ -27,6 +34,8 @@ export function TodoListSection({
         <TodoListItem
           key={index}
           text={todo}
+          onDelete={onDelete ? () => onDelete(index) : undefined}
+          onTextChange={onTextChange?.(index)}
         />
       ))}
     </div>

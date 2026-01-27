@@ -8,11 +8,20 @@ import { FormMode, TodoFormData } from "../types";
 type TodoInputSectionProps = {
   register: UseFormRegister<TodoFormData>;
   mode: FormMode;
+  todoInputValue?: string;
+  onAddTodo: () => void;
 };
 
-export function TodoInputSection({ register, mode }: TodoInputSectionProps) {
+export function TodoInputSection({
+  register,
+  mode,
+  todoInputValue = "",
+  onAddTodo,
+}: TodoInputSectionProps) {
+  const canAdd = (todoInputValue?.trim() ?? "").length > 0;
+
   return (
-    <form className="inputGroup">
+    <form className="inputGroup" onSubmit={() => onAddTodo()}>
       {mode === "create" && (
         <CommonInput
           id="title"
@@ -45,7 +54,12 @@ export function TodoInputSection({ register, mode }: TodoInputSectionProps) {
           }}
         />
 
-        <CommonButton type="button" theme="none">
+        <CommonButton
+          type="button"
+          theme="none"
+          disabled={!canAdd}
+          onClick={onAddTodo}
+        >
           추가
         </CommonButton>
       </div>

@@ -13,20 +13,21 @@ import showListIcon from "@/asset/images/showList.svg";
 import ResetIcon from "@/asset/images/reset.svg";
 import clsx from "clsx";
 import { useTimerModal } from "./hooks/useTimerModal";
+import { useTimerStore } from "@/store/timerStore";
 
 export default function TimerPage() {
-  const [todoTitle] = useState("임시 할일");
   const [hours, setHours] = useState("00");
   const [minutes, setMinutes] = useState("00");
   const [seconds, setSeconds] = useState("00");
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [isTimerPaused, setIsTimerPaused] = useState(false);
+  const todoTitle = useTimerStore((state) => state.todoTitle);
+  const isTimerRunning = useTimerStore((state) => state.isTimerRunning);
+  const setIsTimerRunning = useTimerStore((state) => state.setIsTimerRunning);
+  const isTimerPaused = useTimerStore((state) => state.isTimerPaused);
+  const setIsTimerPaused = useTimerStore((state) => state.setIsTimerPaused);
 
   const { openTimerModal } = useTimerModal();
 
-  const onStartClick = () => {
-    openTimerModal("end");
-  };
+
   const onPauseClick = () => {
     setIsTimerPaused(true);
   };
@@ -72,7 +73,7 @@ export default function TimerPage() {
             className="startButton"
             aria-label="시작"
             title={isTimerPaused ? "타이머 재개" : "타이머 시작"}
-            onClick={onStartClick}
+            onClick={() => openTimerModal("create")}
             disabled={isStartDisabled}
           >
             <CommonImage
