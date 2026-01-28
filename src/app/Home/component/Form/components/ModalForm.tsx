@@ -11,7 +11,7 @@ import { CommonTextArea } from "@/components/atoms/CommonTextArea/CommonTextArea
 import { useGetStudyLog } from "@/app/Home/hooks/getter/useGetStudyLog";
 import { useTimerStore } from "@/store/timerStore";
 import { useModalFormActions } from "../hooks/useModalFormActions";
-import { useFinishTimerAction } from "../hooks/useFinishTimerAction";
+import { useFinishTimerAction } from "../../../hooks/mutations/finishTimer/useFinishTimerAction";
 import "../style.css";
 
 export type ModalFormEndOptions = {
@@ -70,7 +70,12 @@ export default function ModalForm({ mode, studyLogId, endOptions }: ModalFormPro
     handleRemoveTodo,
     handleTextChange,
     handleStatusChange,
-  } = useTodoForm(watch, reset, getInitialTodos(), getResetKey());
+  } = useTodoForm({
+    watch,
+    reset,
+    initialTodos: getInitialTodos(),
+    resetKey: getResetKey(),
+  });
 
   const completedCount = (todos ?? []).filter((todo) => todo.isCompleted).length;
   const canStartTimer =

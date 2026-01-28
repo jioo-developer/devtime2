@@ -17,7 +17,7 @@ type ProfileResponse = {
 
 function AccountMenu() {
   const { mutate: logout } = useLogout();
-  const isLoggedIn = useIsLoggedIn();
+  const { isLoggedIn } = useIsLoggedIn();
 
   const { data: profile } = useQuery({
     queryKey: [QueryKey.PROFILE],

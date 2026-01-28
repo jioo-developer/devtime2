@@ -20,7 +20,13 @@ export function TodoInputSection({
   const canAdd = (todoInputValue?.trim() ?? "").length > 0;
 
   return (
-    <form className="inputGroup" onSubmit={() => onAddTodo()}>
+    <form
+      className="inputGroup"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onAddTodo();
+      }}
+    >
       {mode === "create" && (
         <CommonInput
           id="title"

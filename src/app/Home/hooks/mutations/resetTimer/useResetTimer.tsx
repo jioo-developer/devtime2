@@ -1,10 +1,32 @@
 "use client";
-
 import React from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useShallow } from "zustand/react/shallow";
+import { ApiClient } from "@/config/apiConfig";
+import { QueryKey } from "@/constant/queryKeys";
+import { getAuthHeaders } from "@/utils/authUtils";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerStore } from "@/store/timerStore";
-import { useResetTimer } from "./mutations/useResetTimer";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
+
+type ResetTimerRequest = { timerId: string };
+type ResponseMessage = { message: string };
+
+export const useResetTimer = () => {
+  const queryClient = useQueryClient();
+  return useMutation<ResponseMessage, Error, ResetTimerRequest>({
+    mutationFn: async ({ timerId }) => {
+      return await ApiClient.delete<ResponseMessage>(
+        `/api/timers/${timerId}`,
+        undefined,
+        getAuthHeaders()
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [QueryKey.TIMERS] });
+    },
+  });
+};
 
 const RESET_MODAL_OPTIONS = {
   width: 360,
@@ -17,6 +39,8 @@ const RESET_MODAL_OPTIONS = {
 export function useResetTimerAction() {
   const openModal = useModalStore.getState().push;
   const closeModal = useModalStore.getState().closeTop;
+  const { mutate: resetTimerMutation } = useResetTimer();
+
   const {
     setIsTimerRunning,
     setIsTimerPaused,
@@ -25,8 +49,18 @@ export function useResetTimerAction() {
     setStartTime,
     setClientStartedAt,
     setTotalPausedDuration,
-  } = useTimerStore.getState();
-  const resetTimerMutation = useResetTimer();
+  } = useTimerStore(
+    useShallow((state) => ({
+      setIsTimerRunning: state.setIsTimerRunning,
+      setIsTimerPaused: state.setIsTimerPaused,
+      setTodoTitle: state.setTodoTitle,
+      setSavedTodos: state.setSavedTodos,
+      setStartTime: state.setStartTime,
+      setClientStartedAt: state.setClientStartedAt,
+      setTotalPausedDuration: state.setTotalPausedDuration,
+    }))
+  );
+
 
   const clearAndClose = () => {
     setIsTimerRunning(false);
@@ -51,7 +85,7 @@ export function useResetTimerAction() {
             theme="primary"
             onClick={() => {
               if (timerId) {
-                resetTimerMutation.mutate(
+                resetTimerMutation(
                   { timerId },
                   {
                     onSuccess: clearAndClose,

@@ -1,7 +1,7 @@
 import { useTimerStore } from "@/store/timerStore";
 import { useModalStore } from "@/store/modalStore";
-import { useStartTimer } from "@/app/Home/hooks/mutations/useStartTimer";
-import { useUpdateStudyLogTasks } from "@/app/Home/hooks/mutations/useUpdateStudyLog";
+import { useStartTimer } from "@/app/Home/hooks/mutations/startTimer/useStartTimer";
+import { useUpdateStudyLogTasks } from "@/app/Home/hooks/mutations/updateStudyList/updateStudyList";
 
 type TodoTask = {
   content: string;
@@ -28,7 +28,7 @@ export function useModalFormActions() {
       content: todo.content,
       isCompleted: todo.isCompleted,
     }));
-    
+
     updateStudyLogTasks(
       { studyLogId, tasks: taskList },
       {
