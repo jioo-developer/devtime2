@@ -1,0 +1,526 @@
+.dashboardPage {
+  --dashboard-max: 1200px;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--gray-50);
+  max-width: var(--dashboard-max);
+  margin: 0 auto;
+  padding: var(--margin-xl) var(--gap-2xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--margin-2xl);
+}
+
+/* ---------- KPI + 요일별 (시안: 2x2 + 오른쪽 큰 차트) ---------- */
+.kpiSection {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: var(--gap-xl);
+}
+
+/* 넓은 화면에서만 3열 + 요일별 690px */
+@media (min-width: 1123px) {
+  .kpiSection {
+    grid-template-columns: 1fr 1fr minmax(690px, 1fr);
+  }
+}
+
+.kpiCard {
+  background: var(--gray-white);
+  border-radius: var(--radius-md);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  padding: var(--gap-2xl);
+  border: 1px solid var(--gray-200);
+}
+
+.kpiCardLabel {
+  font-size: var(--fontsize-body-small);
+  color: var(--gray-500);
+  margin-bottom: var(--gap-md);
+  font-weight: var(--font-weight-medium);
+}
+
+.kpiCardValue {
+  font-size: var(--fontsize-title);
+  font-weight: var(--font-weight-bold);
+  color:#023E99;
+  line-height: 1.2;
+}
+
+.kpiCardValueLarge {
+  font-size: var(--fontsize-heading);
+}
+
+.kpiError {
+  grid-column: 1 / -1;
+  font-size: var(--fontsize-body-small);
+  color: var(--gray-500);
+}
+
+/* 요일별 카드: 파란 블럭, 흰 글·막대 (시안) */
+.kpiCardChart {
+  grid-row: auto;
+  grid-column: 1 / -1;
+  display: flex;
+  min-height: 200px;
+  background: var(--primary-core);
+  border-color: var(--secondary-indigo);
+  color: var(--gray-white);
+  justify-content: space-between;
+}
+
+@media (min-width: 1123px) {
+  .kpiCardChart {
+    grid-row: 1 / -1;
+    grid-column: 3;
+  }
+}
+
+.weekdayChartTitle {
+  font-size: var(--fontsize-subtitle);
+  color: var(--gray-white);
+  margin-bottom: var(--gap-xl);
+  font-weight: var(--font-weight-semibold);
+}
+
+.weekdayChartBody {
+  display: flex;
+  gap: var(--gap-lg);
+  margin-top: var(--margin-md);
+  min-height: 140px;
+}
+
+.weekdayYAxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: var(--fontsize-caption);
+  color: var(--gray-white);
+  width: 40px;
+  flex-shrink: 0;
+  padding-bottom: 28px;
+}
+
+.weekdayChartRight {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md);
+  min-width: 0;
+}
+
+.weekdayBarsWrap {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  gap: var(--gap-md);
+  min-width: 0;
+  min-height: 0;
+}
+
+.weekdayBarCol {
+  width: 36px;
+  flex: 0 0 36px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.weekdayBarEmpty {
+  min-height: 0;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+}
+
+.weekdayBarFill {
+  min-height: 0;
+  background: var(--gray-white);
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+}
+
+.weekdayLabels {
+  display: flex;
+  gap: var(--gap-md);
+  font-size: var(--fontsize-caption);
+  color: var(--gray-white);
+}
+
+.weekdayLabelCell {
+  width: 36px;
+  flex: 0 0 36px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.weekdayLabelCircle {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* ---------- 공부 시간 바다 (히트맵) ---------- */
+.heatmapSection {
+  background: var(--gray-white);
+  border-radius: var(--radius-md);
+  padding: var(--gap-2xl);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  min-height: 200px;
+}
+
+.heatmapTitle {
+  font-size: var(--fontsize-subtitle);
+  font-weight: var(--font-weight-semibold);
+  color: #969DA8;
+  margin-bottom: var(--gap-xl);
+}
+
+.heatmapMonths {
+  display: flex;
+  gap: 0;
+  margin-bottom: var(--gap-sm);
+  font-size: var(--fontsize-caption);
+  color: var(--gray-500);
+}
+
+.heatmapMonth {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.heatmapGridWrap {
+  display: flex;
+  gap: var(--gap-md);
+  width: 100%;
+  min-height: 140px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gray-300) var(--gray-100);
+}
+
+.heatmapGridWrap::-webkit-scrollbar {
+  height: 8px;
+}
+
+.heatmapGridWrap::-webkit-scrollbar-track {
+  background: var(--gray-100);
+  border-radius: 4px;
+}
+
+.heatmapGridWrap::-webkit-scrollbar-thumb {
+  background: var(--gray-300);
+  border-radius: 4px;
+}
+
+.heatmapGridWrap::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-400);
+}
+
+.heatmapWeekdays {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  font-size: var(--fontsize-caption);
+  color: var(--gray-500);
+  flex-shrink: 0;
+  gap: var(--gap-md);
+}
+
+.heatmapGrid {
+  flex: 0 0 auto;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(53, minmax(6px, 1fr));
+  grid-template-rows: repeat(7, minmax(10px, 1fr));
+  gap: 2px;
+}
+
+.heatmapCell {
+  min-width: 6px;
+  min-height: 10px;
+  border-radius: 2px;
+  background: var(--gray-200);
+  cursor: default;
+  transition: background 0.15s ease;
+}
+
+.heatmapCell[data-level="0"] {
+  background: var(--gray-100);
+}
+
+.heatmapCell[data-level="1"] {
+  background: #bfdbfe;
+}
+
+.heatmapCell[data-level="2"] {
+  background: #93c5fd;
+}
+
+.heatmapCell[data-level="3"] {
+  background: #60a5fa;
+}
+
+.heatmapCell[data-level="4"] {
+  background: var(--primary-core);
+}
+
+.heatmapCell[data-level="5"] {
+  background: var(--secondary-indigo);
+}
+
+.heatmapCell:hover {
+  outline: 2px solid var(--gray-900);
+  outline-offset: 1px;
+  z-index: 1;
+  position: relative;
+}
+
+.heatmapLegend {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+  margin-top: var(--gap-xl);
+  font-size: var(--fontsize-caption);
+  color: var(--gray-500);
+}
+
+.heatmapLegendLabel {
+  flex-shrink: 0;
+}
+
+.heatmapLegendBar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.heatmapLegendCell {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+}
+
+.heatmapMockNotice {
+  margin-top: var(--gap-xl);
+  font-size: var(--fontsize-caption);
+  color: var(--secondary-negative);
+}
+
+.heatmapError {
+  margin-top: var(--gap-md);
+  font-size: var(--fontsize-body-small);
+  color: var(--gray-500);
+}
+
+/* ---------- 학습 기록 ---------- */
+.recordsEmpty {
+  text-align: center;
+  padding: var(--gap-2xl);
+  color: var(--gray-500);
+}
+
+.recordsSection {
+  background: var(--gray-white);
+  border-radius: var(--radius-md);
+  padding: var(--gap-2xl);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.recordsTitle {
+  font-size: var(--fontsize-subtitle);
+  font-weight: var(--font-weight-semibold);
+  color:#969DA8;
+  margin-bottom: var(--gap-xl);
+}
+
+.recordsTableWrap {
+  overflow-x: auto;
+}
+
+.recordsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fontsize-body-small);
+}
+
+.recordsTable th {
+  text-align: left;
+  padding: var(--gap-lg) var(--gap-md);
+  font-size: var(--fontsize-body-small);
+  color: #023E99;
+  font-weight: var(--font-weight-semibold);
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.recordsTable td {
+  padding: var(--gap-xl) var(--gap-md);
+  border-bottom: 1px solid var(--gray-100);
+  color: var(--gray-700);
+}
+
+.recordsTable tbody tr:hover {
+  background: var(--gray-50);
+}
+
+.recordsTable .colDate {
+  white-space: nowrap;
+  color: var(--gray-600);
+}
+
+.recordsTable .colGoal {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.recordsTable .colDelete {
+  width: 44px;
+  text-align: center;
+}
+
+.recordsTable .colDelete button {
+  background: none;
+  border: none;
+  padding: var(--gap-sm);
+  cursor: pointer;
+  color: var(--gray-400);
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.recordsTable .colDelete button:hover {
+  color: var(--secondary-negative);
+  background: var(--secondary-negative-light);
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--gap-sm);
+  margin-top: var(--margin-xl);
+}
+
+.pagination button {
+  width: auto;
+  min-width: 30px;
+  height: 36px;
+  padding: 0 var(--gap-md);
+  border: 1px solid var(--gray-200);
+  background: var(--gray-white);
+  border-radius: var(--radius-sm);
+  font-size: var(--fontsize-body-small);
+  color: var(--gray-700);
+  cursor: pointer;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination button[aria-current="page"] {
+  background: var(--primary-core);
+  border-color: var(--primary-core);
+  color: var(--gray-white);
+}
+
+.recordGoalButton {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.recordGoalButton:hover {
+  color: var(--primary-core);
+}
+
+.studyLogModalGoal {
+  font-weight: var(--font-weight-medium);
+  margin-bottom: var(--gap-lg);
+  color: var(--gray-800);
+}
+.studyLogModalTasks {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--gap-xl);
+  font-size: var(--fontsize-body-small);
+}
+.studyLogModalTasks .taskDone {
+  color: var(--gray-500);
+  text-decoration: line-through;
+}
+.studyLogModalTasks .taskTodo {
+  color: var(--gray-800);
+}
+.studyLogModalTasks li + li {
+  margin-top: var(--gap-sm);
+}
+.studyLogModalActions {
+  display: flex;
+  gap: var(--gap-md);
+  justify-content: flex-end;
+}
+.studyLogModalActions button {
+  padding: var(--gap-sm) var(--gap-lg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gray-200);
+  background: var(--gray-white);
+  font-size: var(--fontsize-body-small);
+  cursor: pointer;
+}
+.studyLogModalDelete {
+  border-color: var(--secondary-negative) !important;
+  color: var(--secondary-negative) !important;
+  background: var(--secondary-negative-light) !important;
+}
+.studyLogModalConfirmText {
+  margin-bottom: var(--gap-lg);
+  font-size: var(--fontsize-body-small);
+  color: var(--gray-700);
+}
+.studyLogModalLoading {
+  color: var(--gray-500);
+  font-size: var(--fontsize-body-small);
+}
+
+@media (max-width: 1024px) {
+  .kpiSection {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto;
+  }
+
+  .kpiCardChart {
+    grid-row: auto;
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 640px) {
+  .kpiSection {
+    grid-template-columns: 1fr;
+  }
+
+  .kpiCardChart {
+    grid-column: 1;
+  }
+}
