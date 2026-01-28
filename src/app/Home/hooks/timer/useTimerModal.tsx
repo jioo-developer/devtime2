@@ -2,7 +2,6 @@
 
 import React from "react";
 import { useModalStore } from "@/store/modalStore";
-import { useTimerStore } from "@/store/timerStore";
 import ModalForm from "@/app/Home/component/Form/components/ModalForm";
 import type { FormMode } from "@/app/Home/component/Form/types";
 import type { ModalFormEndOptions } from "@/app/Home/component/Form/components/ModalForm";
@@ -25,8 +24,6 @@ export function useTimerModal() {
     let endOptions: ModalFormEndOptions | undefined;
     if (mode === "end" && endParams) {
       const endedAt = new Date().toISOString();
-      useTimerStore.getState().setTimerEndedAt(endedAt);
-
       endOptions = {
         timerId: endParams.timerId,
         startTime: endParams.startTime,

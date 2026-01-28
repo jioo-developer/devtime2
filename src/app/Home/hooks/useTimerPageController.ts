@@ -79,11 +79,9 @@ export function useTimerPageController() {
     openTimerModal("create");
   };
 
-  // 종료 버튼: 스토어에서 running 끄고 → "종료" 모달(end)에 timerId/startTime/pausedDuration 넘겨서 오픈
+  // 종료 버튼: "종료" 모달만 연다. 스토어/타이머는 "공부 완료하기" 제출 시에만 초기화(취소 시에는 그대로 유지)
   const handleFinish = () => {
     if (!timerData?.timerId || !startTimeISO) return;
-
-    controls.onFinish();
 
     openTimerModal("end", timerData.studyLogId, {
       timerId: timerData.timerId,
