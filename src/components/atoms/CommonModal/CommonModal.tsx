@@ -15,6 +15,7 @@ export type UIModalBaseProps = {
   zIndex: number; //   스택 쌓임 순서를 위한 z-index
   testId?: string; // 테스트용 식별자
   width?: string | number; // 모달 너비
+  height?: string | number; // 모달 높이 (지정 시 고정, 없으면 콘텐츠에 맞게)
 };
 
 export default function UIModalBase({
@@ -28,6 +29,7 @@ export default function UIModalBase({
   zIndex,
   testId,
   width,
+  height,
 }: UIModalBaseProps) {
   //   SSR 환경(서버)에서는 document/body가 없으므로 렌더를 막음
   if (typeof window === "undefined") return null;
@@ -57,6 +59,7 @@ export default function UIModalBase({
         style={{
           pointerEvents: isTop ? "auto" : "none", //   아래 모달 클릭 불가
           ...(width && { width: typeof width === "number" ? `${width}px` : width }),
+          ...(height && { height: typeof height === "number" ? `${height}px` : height }),
         }}
         role="dialog" //   접근성 기본
         aria-modal={isTop ? "true" : undefined} //   top만 modal 취급
