@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
-import { getAuthHeaders } from "@/utils/authUtils";
+import { getAccessToken } from "@/config/utils/tokenStorage";
 
 export type UpdateStudyLogTasksItem = {
   content: string;
@@ -21,10 +21,12 @@ export const useUpdateStudyLogTasks = () => {
 
   return useMutation<void, Error, UpdateStudyLogTasksRequest>({
     mutationFn: async ({ studyLogId, tasks }) => {
+      const token = getAccessToken();
+      const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
       await ApiClient.put(
         `/api/${studyLogId}/tasks`,
         { tasks },
-        getAuthHeaders()
+        headers
       );
     },
     onSuccess: (_, variables) => {

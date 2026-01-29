@@ -22,6 +22,7 @@ export interface CommonInputProps<T extends FieldValues> {
   success?: string;
   style?: CSSProperties;
   className?: string;
+  autoComplete?: string;
 }
 
 function CommonInput<T extends FieldValues>({
@@ -37,6 +38,7 @@ function CommonInput<T extends FieldValues>({
   success,
   style,
   className,
+  autoComplete,
 }: CommonInputProps<T>) {
   return (
     <label htmlFor={String(id)} className={styles.labelArea}>
@@ -51,6 +53,7 @@ function CommonInput<T extends FieldValues>({
         className={clsx(styles.input, className)}
         style={style}
         {...(register && register(id, validation))}
+        autoComplete={autoComplete}
       />
 
       {error && <span className="error">{error.message}</span>}

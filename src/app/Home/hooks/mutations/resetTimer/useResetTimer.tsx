@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useShallow } from "zustand/react/shallow";
 import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
-import { getAuthHeaders } from "@/utils/authUtils";
+import { getAccessToken } from "@/config/utils/tokenStorage";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerStore } from "@/store/timerStore";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
@@ -16,10 +16,12 @@ export const useResetTimer = () => {
   const queryClient = useQueryClient();
   return useMutation<ResponseMessage, Error, ResetTimerRequest>({
     mutationFn: async ({ timerId }) => {
+      const token = getAccessToken();
+      const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
       return await ApiClient.delete<ResponseMessage>(
         `/api/timers/${timerId}`,
         undefined,
-        getAuthHeaders()
+        headers
       );
     },
     onSuccess: () => {

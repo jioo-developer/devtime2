@@ -13,7 +13,6 @@ export type ModalItem = {
   testId?: string;
 
   width?: string | number; // 모달 너비
-  height?: string | number; // 모달 높이
 
   onClose?: () => void; //   닫힐 때 후처리 콜백
 };

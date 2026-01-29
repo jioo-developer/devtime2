@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
-import { getAuthHeaders } from "@/utils/authUtils";
+import { getAccessToken } from "@/config/utils/tokenStorage";
 import { useModalStore } from "@/store/modalStore";
 import { useTimerStore } from "@/store/timerStore";
 
@@ -32,10 +32,12 @@ export const useStartTimer = () => {
   return useMutation<StartTimerResponse, Error, StartTimerRequest>({
     mutationFn: async (data) => {
       setClientStartedAt(Date.now());
+      const token = getAccessToken();
+      const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
       return await ApiClient.post<StartTimerResponse>(
         "/api/timers",
         data,
-        getAuthHeaders(),
+        headers,
         {
           onNotOk: async (response) => {
             let message = "POST /api/timers failed";

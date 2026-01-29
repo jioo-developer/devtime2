@@ -11,14 +11,12 @@ import { useForm } from "react-hook-form";
 import { useCheckEmail } from "./hooks/useCheckEmail";
 import { useCheckNickname } from "./hooks/useCheckNickname";
 import { useSignup } from "./hooks/useSignup";
+import { handleSignupSuccess, handleSignupError } from "./hooks/handleSignupModal";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import type { AuthFormData } from "./types";
 
-export type AuthFormData = {
-  email: string;
-  nickname: string;
-  password: string;
-  passwordConfirmation: string;
-};
+export type { AuthFormData } from "./types";
 
 interface AuthPageProps {
   onSubmit?: (data: AuthFormData) => Promise<void>;
@@ -51,6 +49,7 @@ function AuthPage({ onSubmit }: AuthPageProps = {}) {
     setSuccessMessage: setNicknameSuccess,
   });
 
+  const router = useRouter();
   const { mutate } = useSignup();
 
   const { email, nickname, password, passwordConfirmation } = watch();
@@ -67,10 +66,13 @@ function AuthPage({ onSubmit }: AuthPageProps = {}) {
     agreed;
 
   const handleFormSubmit = async (data: AuthFormData) => {
-    if (onSubmit) {
+    if (onSubmit) { // 테스트 코드용 if
       await onSubmit(data);
     } else {
-      mutate(data);
+      mutate(data, {
+        onSuccess: () => handleSignupSuccess(router),
+        onError: handleSignupError,
+      });
     }
   };
 

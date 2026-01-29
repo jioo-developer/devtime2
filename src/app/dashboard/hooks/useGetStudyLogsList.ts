@@ -1,7 +1,7 @@
 import { useQuery, UseQueryResult } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
-import { getAuthHeaders } from "@/utils/authUtils";
+import { getAccessToken } from "@/config/utils/tokenStorage";
 import type {
   StudyLogsListApiResponse,
   StudyLogsListResult,
@@ -83,13 +83,14 @@ export function useGetStudyLogsList(
       };
 
       // 인증 헤더 포함 (예: Authorization)
-      const authHeaders = getAuthHeaders();
+      const token = getAccessToken();
+      const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
 
       const apiResponse =
         await ApiClient.get<StudyLogsListApiResponse>(
           "/api/study-logs",
           queryParams,
-          authHeaders
+          headers
         );
 
       // API DTO → 프론트 결과 모델 변환

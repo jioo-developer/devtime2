@@ -1,5 +1,9 @@
 import { getAccessToken, clearTokens } from "./utils/tokenStorage";
-import { ensureAccessTokenOrRedirect, redirectToLogin } from "./utils/authRedirect";
+import {
+  getAccessTokenOrThrow,
+  UnauthorizedError,
+  redirectToLogin,
+} from "./utils/authRedirect";
 import { refreshAccessToken } from "./utils/tokenRefresh";
 
 /**
@@ -14,12 +18,20 @@ async function request<T>(
   init: RequestInit & { _retried?: boolean } = {},
 ): Promise<T> {
   // 최초 요청에서 토큰 없으면 즉시 리다이렉트(왕복 X)
+  let token: string | null = null;
   if (!init._retried) {
-    const token = ensureAccessTokenOrRedirect(getAccessToken);
-    if (!token) throw new Error(`${init.method ?? "GET"} ${endpoint} unauthorized`);
+    try {
+      token = getAccessTokenOrThrow(getAccessToken);
+    } catch (error) {
+      if (error instanceof UnauthorizedError) {
+        clearTokens();
+        redirectToLogin();
+      }
+      throw error;
+    }
+  } else {
+    token = getAccessToken();
   }
-
-  const token = getAccessToken();
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",

@@ -51,7 +51,6 @@ export default function UIModalStack() {
             isTop={isTop} //   top 여부 전달
             zIndex={BASE_Z + index * GAP_Z} //   스택 순서대로 위로 쌓기
             width={modal.width}
-            height={modal.height}
           >
             {modal.content}
           </UIModalBase>

@@ -13,16 +13,23 @@ export function redirectToLogin() {
 }
 
 /**
- * Access Token이 없으면 로그인 페이지로 리다이렉트
- * - 토큰이 없으면 네트워크 요청 자체를 보내지 않고 즉시 로그인으로 이동
+ * Access Token이 없으면 에러를 던짐
+ * - 토큰이 없으면 네트워크 요청 자체를 보내지 않고 에러 발생
+ * - 리다이렉트는 호출부에서 처리해야 함
  */
-export function ensureAccessTokenOrRedirect(
+export class UnauthorizedError extends Error {
+  constructor(message = "Unauthorized") {
+    super(message);
+    this.name = "UnauthorizedError";
+  }
+}
+
+export function getAccessTokenOrThrow(
   getAccessToken: () => string | null,
-): string | null {
+): string {
   const token = getAccessToken();
-  if (token) return token;
-  // 토큰이 아예 없으면 네트워크 요청 자체를 보내지 않고 즉시 로그인으로
-  clearTokens();
-  redirectToLogin();
-  return null;
+  if (!token) {
+    throw new UnauthorizedError("Access token is required");
+  }
+  return token;
 }

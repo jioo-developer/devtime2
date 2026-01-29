@@ -34,7 +34,6 @@ export function useTimerModal() {
 
     openModal({
       width: 640,
-      height: 815,
       showCloseButton: false,
       footer: null,
       BackdropMiss: false,

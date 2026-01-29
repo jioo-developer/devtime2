@@ -13,11 +13,9 @@ vi.mock("@/config/apiConfig", () => ({
 describe("useSignup", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.spyOn(console, "log").mockImplementation(() => {});
-    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
-  it("회원가입에 성공하면 성공 로그를 출력한다", async () => {
+  it("회원가입에 성공하면 isSuccess가 true가 된다", async () => {
     const queryClient = createTestQueryClient();
     const wrapper = createWrapper(queryClient);
 
@@ -51,11 +49,9 @@ describe("useSignup", () => {
       password: "password123!",
       confirmPassword: "password123!",
     });
-
-    expect(console.log).toHaveBeenCalledWith("회원가입 성공:", mockResponse);
   });
 
-  it("회원가입 실패 시 에러 로그를 출력한다", async () => {
+  it("회원가입 실패 시 isError가 true가 된다", async () => {
     const queryClient = createTestQueryClient();
     const wrapper = createWrapper(queryClient);
 
@@ -78,8 +74,6 @@ describe("useSignup", () => {
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
     });
-
-    expect(console.error).toHaveBeenCalledWith("회원가입 오류:", mockError);
   });
 
   it("폼 데이터를 올바른 API 형식으로 변환한다", async () => {

@@ -2,23 +2,12 @@ import { useMutation } from "@tanstack/react-query";
 import { AuthenticatedApiClient } from "@/config/authenticatedApiClient";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { clearTokenExpiryCookies } from "@/utils/cookieUtils";
+import { clearTokens } from "@/config/utils/tokenStorage";
 
 type LogoutResponse = {
   success: boolean;
   message?: string;
 };
-
-function clearTokens() {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.removeItem("accessToken");
-    window.localStorage.removeItem("refreshToken");
-    clearTokenExpiryCookies(); // 쿠키도 삭제
-  } catch {
-    // ignore
-  }
-}
 
 export const useLogout = () => {
   const router = useRouter();
@@ -39,7 +28,6 @@ export const useLogout = () => {
     onError: (error) => {
       console.error("로그아웃 오류:", error);
       clearTokens();
-      queryClient.clear();
       router.replace("/login");
     },
   });

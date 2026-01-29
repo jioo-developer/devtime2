@@ -9,6 +9,10 @@ import CommonCheckbox from "@/components/atoms/CommonCheckbox/CommonCheckbox";
 import LoginBgImage from "@/asset/images/login-background-image.png";
 import LogoBlue from "@/asset/images/logo_blue.svg";
 import { useLogin } from "./hooks/useLogin";
+import { handleDuplicateLogin } from "./hooks/handleDuplicateLogin";
+import { handleLoginError } from "./hooks/handleLoginError";
+import { setTokens } from "@/config/utils/tokenStorage";
+import type { LoginResponse } from "./types";
 import "./style.css";
 import Link from "next/link";
 import { safeInternalPath } from "@/utils/pathUtils";
@@ -41,6 +45,26 @@ function Client() {
   const isFormValid =
     !!email && !!password && !errors.email && !errors.password;
 
+  const handleLoginSuccess = (result: LoginResponse) => {
+    if (result.success) {
+      // 중복 로그인 처리
+      if (result.isDuplicateLogin) {
+        handleDuplicateLogin(result, router, searchParams);
+      } else {
+        // 일반 로그인 처리
+        setTokens(result.accessToken, result.refreshToken);
+        if (result.isFirstLogin) {
+          router.replace("/profile");
+        } else {
+          const redirectParam = safeInternalPath(
+            searchParams.get("redirect"),
+          );
+          router.replace(redirectParam ?? "/");
+        }
+      }
+    }
+  };
+
   const onSubmit = async (data: LoginFormData) => {
     if (isFormValid) {
       // 체크박스 상태 확인하여 이메일 저장
@@ -49,7 +73,10 @@ function Client() {
       } else {
         localStorage.removeItem("savedEmail");
       }
-      login(data);
+      login(data, {
+        onSuccess: handleLoginSuccess,
+        onError: handleLoginError,
+      });
     } else {
       await trigger(["email", "password"]);
     }
@@ -108,7 +135,8 @@ function Client() {
               id="email"
               testId="email-input"
               label="아이디"
-              type="text"
+              type="email"
+              autoComplete="email"
               placeholder="이메일 주소를 입력해 주세요."
               register={register}
               validation={{
@@ -148,6 +176,7 @@ function Client() {
               testId="password-input"
               label="비밀번호"
               type="password"
+              autoComplete="current-password"
               placeholder="비밀번호를 입력해 주세요."
               register={register}
               validation={{

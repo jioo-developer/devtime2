@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { ApiClient } from "@/config/apiConfig";
 import { QueryKey } from "@/constant/queryKeys";
-import { getAuthHeaders } from "@/utils/authUtils";
+import { getAccessToken } from "@/config/utils/tokenStorage";
 import { parseErrorDetail } from "@/utils/parseErrorDetail";
 
 export type FinishTimerTaskItem = {
@@ -36,10 +36,12 @@ export const useFinishTimer = () => {
 
   return useMutation<FinishTimerResponse, Error, FinishTimerVariables>({
     mutationFn: async ({ timerId, data }) => {
+      const token = getAccessToken();
+      const headers: HeadersInit = token ? { Authorization: `Bearer ${token}` } : {};
       const res = await ApiClient.post<FinishTimerResponse>(
         `/api/timers/${timerId}/stop`,
         data,
-        getAuthHeaders(),
+        headers,
         {
           onNotOk: async (response) => {
             const err = await parseErrorDetail(response);

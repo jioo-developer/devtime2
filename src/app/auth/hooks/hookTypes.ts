@@ -1,5 +1,5 @@
 import { UseFormClearErrors, UseFormSetError } from "react-hook-form";
-import { AuthFormData } from "../Client";
+import { AuthFormData } from "../types";
 
 export interface CheckDuplicateResponse {
   success: boolean;
