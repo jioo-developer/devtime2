@@ -1,20 +1,84 @@
 @font-face {
-    font-family: "DigitalNumbers";
-    src: url("/fonts/DigitalNumbers-Regular.woff") format("woff");
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
+  font-family: "DigitalNumbers";
+  src: url("/fonts/DigitalNumbers-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
-  .mainPageWrap {
-    padding-top : calc(var(--gap-3xl) * 3);
-  }
+.timerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--margin-xl) * 2);
+}
 
-  .motivationalText {
-    font-size: calc(var(--fontsize-heading) * 3);
-    font-weight: var(--font-weight-bold);
-    color: var(--primary-30);
-    line-height: var(--lineheight-heading);
-    margin: 0;
-    text-align: center;
+.timerDisplay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--margin-2xl);
+}
+
+.timeSegment {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: url("../../asset/images/time_card.svg") no-repeat center center;
+  background-size: 100% 100%;
+  width: 264px;
+  height: 298px;
+}
+
+.timeValue,
+.colon {
+  font-size: calc(var(--fontsize-title) * 7.7);
+  font-weight: var(--font-weight-bold);
+  color: var(--primary-core);
+}
+
+.timeValue {
+  font-family: "DigitalNumbers", monospace;
+  line-height: 1.5;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--margin-xl) * 2);
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--gap-md);
+  margin-top: var(--gap-xl);
+}
+
+@media all and (max-width: 1200px) {
+  .timerDisplay {
+    gap: var(--gap-xl);
   }
+}
+
+.isTimerRunning {
+  display: flex;
+  gap: var(--gap-2xl);
+}
+
+.isTimerRunningHidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.timerTitle {
+  font-size: calc(var(--fontsize-heading) * 3);
+  font-weight: var(--font-weight-bold);
+  color: var(--primary-30);
+  line-height: var(--lineheight-heading);
+  margin: 0;
+  text-align: center;
+  padding-top: calc(var(--gap-3xl) * 3);
+}

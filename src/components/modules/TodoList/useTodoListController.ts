@@ -32,6 +32,11 @@ export function useTodoListItemController({
     setCurrentText(text);
   }, [text]);
 
+  // initialStatus 변경 시 동기화 (위 항목 삭제 등으로 같은 인덱스에 다른 항목이 올 때)
+  useEffect(() => {
+    setStatus(initialStatus);
+  }, [initialStatus]);
+
   const isCompleted = status === "completed";
   const isDisabled = status === "disabled";
   const isTyping = status === "typing";
@@ -42,12 +47,21 @@ export function useTodoListItemController({
     onStatusChange?.(next);
   };
 
-  const updateText = (next: string) => {
+  /** 부모에 반영(부모 state·key가 바뀌면 항목이 리마운트되므로, finishEdit 시에만 호출) */
+  const commitText = (next: string) => {
     setCurrentText(next);
     onTextChange?.(next);
   };
 
-  const normalizedText = useMemo(() => currentText.trim(), [currentText]);
+  /** 입력 중 로컬 state만 갱신. 부모는 finishEdit 시 commitText로 반영 */
+  const setCurrentTextLocal = (next: string) => {
+    setCurrentText(next);
+  };
+
+  const normalizedText = useMemo(
+    () => String(currentText ?? "").trim(),
+    [currentText]
+  );
 
   /** 아이템 클릭을 "완료 토글"로 사용 */
   const onItemClick = () => {
@@ -69,12 +83,12 @@ export function useTodoListItemController({
     const trimmed = normalizedText;
 
     if (!trimmed) {
-      updateText("");
+      commitText("");
       updateStatus("empty");
       return;
     }
 
-    updateText(trimmed);
+    commitText(trimmed);
 
     // 편집 종료 후 상태 정책: 기본적으로 active로 복귀
     updateStatus("active");
@@ -82,6 +96,7 @@ export function useTodoListItemController({
 
   const cancelEdit = () => {
     if (isDisabled) return;
+    setCurrentText(text); // 로컬만 원래 값으로 되돌림, 부모는 그대로
     updateStatus("active");
   };
 
@@ -119,8 +134,8 @@ export function useTodoListItemController({
     isTyping,
     isEmpty,
 
-    // setters
-    setCurrentText: updateText,
+    // setters (input용: 로컬만 갱신, 부모는 finishEdit 시 반영)
+    setCurrentText: setCurrentTextLocal,
 
     // handlers
     onItemClick,

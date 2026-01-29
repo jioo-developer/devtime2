@@ -7,8 +7,7 @@ import React from "react";
 import CommonButton from "@/components/atoms/CommonButton/CommonButton";
 
 export const useSignup = () => {
-  const openModal = useModalStore((state) => state.push);
-  const closeModal = useModalStore((state) => state.closeTop);
+  const push = useModalStore((state) => state.push);
   const router = useRouter();
 
   return useMutation({
@@ -22,7 +21,8 @@ export const useSignup = () => {
       return ApiClient.post("/api/signup", payload);
     },
     onSuccess: () => {
-      openModal({
+      const closeTop = useModalStore.getState().closeTop;
+      push({
         title: "회원가입 성공",
         content: "회원가입이 완료되었습니다.",
         footer: React.createElement(
@@ -30,7 +30,7 @@ export const useSignup = () => {
           {
             theme: "primary",
             onClick: () => {
-              closeModal();
+              closeTop();
               router.push("/login");
             },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -41,19 +41,20 @@ export const useSignup = () => {
       });
     },
     onError: (error) => {
+      const closeTop = useModalStore.getState().closeTop;
       const errorMessage =
         error instanceof Error
           ? error.message
           : "회원가입 중 오류가 발생했습니다.";
 
-      openModal({
+      push({
         title: "회원가입 실패",
         content: errorMessage,
         footer: React.createElement(
           CommonButton,
           {
             theme: "primary",
-            onClick: () => closeModal(),
+            onClick: () => closeTop(),
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any,
           "확인",

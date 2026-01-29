@@ -14,11 +14,11 @@ export const handleDuplicateLogin = (
   router: ReturnType<typeof useRouter>,
   searchParams: ReturnType<typeof useSearchParams>,
 ) => {
-  const openModal = useModalStore.getState().push;
-  const closeModal = useModalStore.getState().closeTop;
+  const push = useModalStore.getState().push;
+  const closeTop = useModalStore.getState().closeTop;
 
   // 중복 로그인된 다른 기기가 존재하는 경우 안내 메시지 표시
-  openModal({
+  push({
     title: "중복 로그인",
     content: "다른 기기에서 로그인되어 기존 기기의 로그인이 해제되었습니다.",
     footer: React.createElement(
@@ -26,7 +26,7 @@ export const handleDuplicateLogin = (
       {
         theme: "primary",
         onClick: () => {
-          closeModal();
+          closeTop();
           // 토큰 저장 및 리다이렉트
           if (result.accessToken) {
             localStorage.setItem("accessToken", result.accessToken);
