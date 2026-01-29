@@ -212,7 +212,7 @@ function AuthPage({ onSubmit }: AuthPageProps = {}) {
         <div className="goLogin">
           <p>
             회원이신가요?
-            <Link href="/login" prefetch>
+            <Link href="/login">
               <span>로그인 바로가기</span>
             </Link>
           </p>

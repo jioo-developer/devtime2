@@ -32,15 +32,15 @@ function AccountMenu() {
     <ul className={styles.navigation}>
       {isLoggedIn ? (
         <>
-          <div className={styles.profileCard}>
+          <li className={styles.profileCard}>
             <CommonImage
-              src={profileImageUrl || DefaultImage}
+              src={profileImageUrl ?? DefaultImage}
               alt="기본 프로필 이미지"
               width={40}
               height={40}
             />
             <p className={styles.profileName}>{nickname || "DevTime"}</p>
-          </div>
+          </li>
           <li>
             <button
               onClick={() => logout()}
@@ -53,12 +53,12 @@ function AccountMenu() {
       ) : (
         <>
           <li>
-            <Link href="/login" prefetch>
+            <Link href="/login">
               로그인
             </Link>
           </li>
           <li>
-            <Link href="/auth" prefetch>
+            <Link href="/auth">
               회원가입
             </Link>
           </li>

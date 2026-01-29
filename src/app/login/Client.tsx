@@ -42,7 +42,7 @@ function Client() {
     !!email && !!password && !errors.email && !errors.password;
 
   const onSubmit = async (data: LoginFormData) => {
-    if(isFormValid) {
+    if (isFormValid) {
       // 체크박스 상태 확인하여 이메일 저장
       if (checkboxRef.current?.checked) {
         localStorage.setItem("savedEmail", data.email);
@@ -55,11 +55,11 @@ function Client() {
     }
   };
 
-  
+
   // 저장된 이메일 불러오기
   useEffect(() => {
     if (typeof window === "undefined") return;
-    
+
     const saved = localStorage.getItem("savedEmail");
     if (saved) {
       setValue("email", saved);
@@ -73,7 +73,7 @@ function Client() {
   // 로그인된 상태면 로그인 페이지 접근 불가 (렌더링 전에 체크)
   useEffect(() => {
     if (typeof window === "undefined") return;
-    
+
     // 쿠키에서 만료 시간 확인
     if (isAccessTokenValid()) {
       const token = localStorage.getItem("accessToken");
@@ -120,7 +120,7 @@ function Client() {
               }}
               error={errors.email}
             />
-              <div className="saveEmailCheckboxWrap">
+            <div className="saveEmailCheckboxWrap">
               <CommonCheckbox
                 size={18}
                 ref={checkboxRef}
@@ -174,7 +174,7 @@ function Client() {
             </CommonButton>
           </form>
 
-          <Link href="/auth" prefetch>
+          <Link href="/auth">
             <CommonButton theme="none" className="goSignup">
               <span>회원가입</span>
             </CommonButton>

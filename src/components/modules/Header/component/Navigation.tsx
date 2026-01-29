@@ -13,12 +13,12 @@ function Navigation() {
       {isLoggedIn ? (
         <ul className={styles.navigation}>
           <li>
-            <Link href="/dashboard" prefetch>
+            <Link href="/dashboard">
               대시보드
             </Link>
           </li>
           <li>
-            <Link href="/ranking" prefetch>
+            <Link href="/ranking">
               랭킹
             </Link>
           </li>
